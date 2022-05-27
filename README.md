@@ -13,7 +13,7 @@ https://championlab.shinyapps.io/printmap-r/
 
 
 To run locally in RStudio:
- * Download [R](https://www.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/)
+ * Download and install [R](https://www.r-project.org/) and [RStudio](https://www.rstudio.com/products/rstudio/download/)
  * Ensure that the shiny package is loaded `install.packages(shiny)` and active `library(shiny)`
  * Change your working directory to the path that contains 'ui.R' and 'Server.R' `setwd('path/to/directory')`
  * Open either 'ui.R' or 'Server.R'
