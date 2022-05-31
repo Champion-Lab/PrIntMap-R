@@ -187,7 +187,6 @@ server <- function(input, output) {
                                        data.frame(difference = difference_vec()),
                                        data.frame(fold_change = fold_change_vec())))
  
-  output$test_table <- renderTable(wide_data_comb_plot())
   
   ggplot_intensity2 <- reactive({
     if (input$two_sample_comparison == "Difference") {
