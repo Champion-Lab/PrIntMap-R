@@ -52,7 +52,10 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                        textInput(inputId = "sample_name2", 
                                                  label = "Input sample name",
                                                  value = "Sample 2"),
-                                       textOutput("choosePEP2")),
+                                       radioButtons(inputId = "two_sample_comparison",
+                                                    label = "Type of Comparison",
+                                                    choices = c("Overlay", "Difference", "Fold Change"),
+                                                    selected = "Overlay")),
                                      withSpinner(
                                        plotlyOutput("plot_intensity2")
                                      ),

@@ -1,0 +1,11 @@
+name: printmap-r
+title:
+username:
+account: championlab
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6384359
+bundleId: 5951679
+url: https://championlab.shinyapps.io/printmap-r/
+when: 1653660906.98734
+lastSyncTime: 1653660906.98734
