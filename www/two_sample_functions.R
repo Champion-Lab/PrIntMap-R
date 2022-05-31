@@ -47,3 +47,32 @@ plot_intensity_comb <- function(AA_df, protein, intensity_label = "PSM",
   }
   return(plot)
 }
+
+
+plot_difference_comb <- function(AA_df, protein, intensity_label = "PSM",
+                                 font_size = 15,
+                                 alpha = 1, plot_type = "line") {
+  plot <- ggplot(data = AA_df) +
+    geom_line(aes(x = AA_index, y = difference), alpha = alpha) +
+    geom_point(aes(x = AA_index, y = difference, AA = AA),
+               size = 0, alpha = 0) +
+    theme_bw(base_size = font_size) +
+    theme(panel.grid = element_blank(), legend.position = "none") +
+    labs(title = protein, x = "Amino Acid Number", y = "Difference in Intensity (S2 - S1)")
+  
+  return(plot)
+}
+
+plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
+                                 font_size = 15,
+                                 alpha = 1, plot_type = "line") {
+  plot <- ggplot(data = AA_df) +
+    geom_line(aes(x = AA_index, y = fold_change), alpha = alpha) +
+    geom_point(aes(x = AA_index, y = fold_change, AA = AA),
+               size = 0, alpha = 0) +
+    theme_bw(base_size = font_size) +
+    theme(panel.grid = element_blank(), legend.position = "none") +
+    labs(title = protein, x = "Amino Acid Number", y = "Ratio Intensity (S2 / S1)")
+  
+  return(plot)
+}

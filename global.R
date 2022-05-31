@@ -5,6 +5,7 @@ library(seqinr)
 library(plotly)
 library(scales)
 library(dplyr)
+library(tidyr)
 library(shinycssloaders)
 
 #source functions and libraries

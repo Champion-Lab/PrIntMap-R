@@ -151,13 +151,57 @@ server <- function(input, output) {
   AA_df_origin_comb <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin2b()))
   AA_df_intensity_comb <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin2b()))
   
-  ggplot_intensity2 <- reactive({
+  AA_df_origin_comb_wide <- reactive({
+    cbind(AA_df_origin_comb()[AA_df_origin_comb()$sample == input$sample_name1,],
+          AA_df_origin_comb()[AA_df_origin_comb()$sample == input$sample_name2,])
+    })
+  AA_df_intensity_comb_wide <- reactive({
+    cbind(AA_df_intensity_comb()[AA_df_intensity_comb()$sample == input$sample_name1,],
+          AA_df_intensity_comb()[AA_df_intensity_comb()$sample == input$sample_name2,])
+  })
+  
+  wide_data_comb <- reactive({
     if (input$disp_origin) {
+      data.frame(AA_df_origin_comb_wide())
+    } else {
+      data.frame(AA_df_intensity_comb_wide())
+    }
+  })
+  
+ difference_vec <- reactive({
+   wide_data_comb()$intensity.1 - wide_data_comb()$intensity
+ })
+ 
+ fold_change_vec_nan <- reactive({
+   wide_data_comb()$intensity.1 / wide_data_comb()$intensity
+ })
+ 
+ fold_change_vec <- reactive({
+   vec <- fold_change_vec_nan()
+   vec[is.infinite(vec)] <- max(vec[is.finite(vec)], na.rm = T)*1.25
+   vec[is.na(vec)] <- 0
+   return(vec)
+ })
+ 
+ wide_data_comb_plot <- reactive(cbind(wide_data_comb(),
+                                       data.frame(difference = difference_vec()),
+                                       data.frame(fold_change = fold_change_vec())))
+ 
+  output$test_table <- renderTable(wide_data_comb_plot())
+  
+  ggplot_intensity2 <- reactive({
+    if (input$two_sample_comparison == "Difference") {
+      plot_difference_comb(wide_data_comb_plot(), protein_obj1()[2])
+    } else if (input$two_sample_comparison == "Fold Change"){
+      plot_foldchange_comb(wide_data_comb_plot(), protein_obj1()[2])
+    } else if (input$two_sample_comparison == "Overlay"){
+      if (input$disp_origin) {
         plot_origin_comb(AA_df_origin_comb(), protein_obj1()[2],
                          intensity_label = input$intensity_metric)
-    } else {
+      } else {
         plot_intensity_comb(AA_df_intensity_comb(), protein_obj1()[2],
                             intensity_label = input$intensity_metric)
+      }
     }
   })
   

@@ -53,12 +53,13 @@ create_stacked_line_plot <- function(peptide_dataframe, protein_name, protein_se
                  size = 1, lineend = "round") +
     theme_bw(base_size = 15) +
     theme(panel.grid = element_blank(),
-          legend.position = "none",
+          legend.position = "right",
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank()) +
     labs(x = "Amino Acid Position", y = element_blank(),
-         title = protein_name) +
-    scale_x_continuous(limits = c(0, nchar(protein_seq)))
+         title = protein_name, color = element_blank()) +
+    scale_x_continuous(limits = c(0, nchar(protein_seq))) +
+    scale_colour_gradient(low = "turquoise", high = "red", na.value = "black")
   return(plot)
 }
 
