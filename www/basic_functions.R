@@ -52,6 +52,7 @@ create_AA_df <- function(protein) {
 #options to add a sample name, and a filter which removes any proteins that contain
 ###that string in the Accession column
 read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA) {
+  check_file(peptide_file, "PEAKS")
   peptides <- read.csv(peptide_file)
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
   names(peptides)[9] <- "Area"
@@ -73,6 +74,7 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
 #options to add a sample name, and a filter which removes any proteins that contain
 ###that string in the Accession column
 read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+  check_file(peptide_file, "PEAKS")
   peptide_import <- read.csv(peptide_file)
   names(peptide_import)[names(peptide_import) == "X.Spec"] <- "total_spectra"
   peptides <- peptide_import
@@ -111,6 +113,7 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
 #options to add a sample name, and a filter which removes any proteins that contain
 ###that string in the Accession column
 read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter = NA) {
+  check_file(peptide_file, "MSfragger")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
   peptides$sequence <- peptides$Peptide
   names(peptides)[10] <- "Intensity"
@@ -133,6 +136,7 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
 #options to add a sample name, and a filter which removes any proteins that contain
 ###that string in the Accession column
 read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+  check_file(peptide_file, "MSfragger")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
   names(peptide_import) <- str_replace_all(string = names(peptide_import), pattern = "MaxLFQ.Intensity", replacement = "MaxLFQ.Area")
   peptides <- peptide_import
@@ -173,6 +177,7 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
 #options to add a sample name, and a filter which removes any proteins that contain
 ###that string in the Accession column
 read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+  check_file(peptide_file, "MaxQuant")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
   names(peptide_import)[names(peptide_import) == "Intensity"] <- "summed_intensity"
   peptides <- peptide_import

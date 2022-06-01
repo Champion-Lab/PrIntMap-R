@@ -15,3 +15,26 @@ errorfun <- function(peptides) {
       stop("sequence problem")}
   }
 }
+
+#Function to check whether file type is correct
+check_file <- function(file_name, search_engine){
+  if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ) {
+    if(search_engine == "MSfragger"){
+      stop("For the search software MSFragger, the expected file type is .tsv")
+    }
+  }
+  else if(!"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){
+    if(search_engine == "MaxQuant"){
+      stop("For the search software MaxQuant, the expected file type is .tsv")
+    }
+  }
+  else if( !"," %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ) { 
+    if(search_engine == "PEAKS"){
+      stop("For the search software PEAKS, the expected file type is .csv")
+    }
+  }
+}
+
+
+
+  
