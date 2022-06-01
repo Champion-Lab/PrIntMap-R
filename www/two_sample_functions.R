@@ -70,9 +70,18 @@ plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
     geom_line(aes(x = AA_index, y = fold_change), alpha = alpha) +
     geom_point(aes(x = AA_index, y = fold_change, AA = AA),
                size = 0, alpha = 0) +
+    geom_point(data = AA_df[AA_df$fold_change_label == "Zero",], aes(x = AA_index,
+                                                                     y = fold_change,
+                                                                     AA = AA),
+               size = 0.5, color = "red") +
+    geom_point(data = AA_df[AA_df$fold_change_label == "Infinite",], aes(x = AA_index,
+                                                                     y = fold_change,
+                                                                     AA = AA),
+               size = 0.5, color = "green") +
     theme_bw(base_size = font_size) +
     theme(panel.grid = element_blank(), legend.position = "none") +
-    labs(title = protein, x = "Amino Acid Number", y = "Ratio Intensity (S2 / S1)")
+    labs(title = protein, x = "Amino Acid Number", y = "Ratio Intensity (S2 / S1)") +
+    scale_alpha_manual(values = c(0.5, 0.75, 1))
   
   return(plot)
 }

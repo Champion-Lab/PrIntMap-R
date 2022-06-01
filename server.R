@@ -176,6 +176,20 @@ server <- function(input, output) {
    wide_data_comb()$intensity.1 / wide_data_comb()$intensity
  })
  
+ fold_change_label_vec <- reactive({
+   return_vec <- rep("", length(fold_change_vec_nan()))
+   for (i in 1:length(return_vec)) {
+     if(is.infinite(wide_data_comb()$intensity.1[i] / wide_data_comb()$intensity[i])) {
+       return_vec[i] <- "Infinite"
+     } else if (is.na(wide_data_comb()$intensity.1[i] / wide_data_comb()$intensity[i])) {
+       return_vec[i] <- "Zero"
+     } else {
+       return_vec[i] <- "Normal"
+     }
+   }
+   return(return_vec)
+ })
+ 
  fold_change_vec <- reactive({
    vec <- fold_change_vec_nan()
    vec[is.infinite(vec)] <- max(vec[is.finite(vec)], na.rm = T)*1.25
@@ -183,9 +197,11 @@ server <- function(input, output) {
    return(vec)
  })
  
+ 
  wide_data_comb_plot <- reactive(cbind(wide_data_comb(),
                                        data.frame(difference = difference_vec()),
-                                       data.frame(fold_change = fold_change_vec())))
+                                       data.frame(fold_change = fold_change_vec()),
+                                       data.frame(fold_change_label = fold_change_label_vec())))
  
   
   ggplot_intensity2 <- reactive({

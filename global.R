@@ -14,4 +14,4 @@ source("www/basic_functions.R")
 source("www/two_sample_functions.R")
 source("www/annotation_functions.R")
 source("www/stacked_plot_functions.R")
-
+source("www/error_handling.R")
