@@ -54,6 +54,7 @@ create_AA_df <- function(protein) {
 read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA) {
   check_file(peptide_file, "PEAKS")
   peptides <- read.csv(peptide_file)
+  filetype(peptides, "Individual")
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
   names(peptides)[9] <- "Area"
   names(peptides)[10] <- "Intensity"
@@ -64,7 +65,7 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  errorfun(peptides)
+  last_check(peptides)
   return(peptides)
 }
 
@@ -76,6 +77,7 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
 read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
   check_file(peptide_file, "PEAKS")
   peptide_import <- read.csv(peptide_file)
+  filetype(peptide_import, "Combined")
   names(peptide_import)[names(peptide_import) == "X.Spec"] <- "total_spectra"
   peptides <- peptide_import
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
@@ -104,7 +106,7 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  errorfun(peptides)
+  last_check(peptides)
   return(peptides)
 }
 
@@ -115,6 +117,7 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
 read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter = NA) {
   check_file(peptide_file, "MSfragger")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
+  filetype(peptides, "Individual")
   peptides$sequence <- peptides$Peptide
   names(peptides)[10] <- "Intensity"
   names(peptides)[9] <- "PSM"
@@ -126,7 +129,7 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  errorfun(peptides)
+  last_check(peptides)
   return(peptides)
 }
 
@@ -138,6 +141,7 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
 read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
   check_file(peptide_file, "MSfragger")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
+  filetype(peptide_import, "Combined")
   names(peptide_import) <- str_replace_all(string = names(peptide_import), pattern = "MaxLFQ.Intensity", replacement = "MaxLFQ.Area")
   peptides <- peptide_import
   peptides$sequence <- peptides$Peptide.Sequence
@@ -167,7 +171,7 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  errorfun(peptides)
+  last_check(peptides)
   return(peptides)
 }
 
@@ -208,7 +212,7 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  errorfun(peptides)
+  last_check(peptides)
   return(peptides)
 }
 
