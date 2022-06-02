@@ -1,6 +1,7 @@
 #import database
 #returns seqinr fasta list
 import_db <- function(db_file) {
+  fasta_check(db_file)
   db <- read.fasta(file = db_file,
                    seqtype = "AA",
                    as.string = T,

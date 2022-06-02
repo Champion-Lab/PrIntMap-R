@@ -55,6 +55,13 @@ check_file <- function(file_name, search_engine){
    }
   }
   
+#check that fasta file is correct
+fasta_check <- function(db_file){
+  store <- strsplit(readLines(db_file, n=1)[1], split = " ")[[1]]
+  if(!grepl('>', substr(store[1], 1, 1))){
+    stop("For the database file input, a fasta file is expected.")
+  }
+}
 
 
 
