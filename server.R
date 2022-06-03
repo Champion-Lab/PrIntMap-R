@@ -84,13 +84,23 @@ server <- function(input, output) {
     )
     if (input$disp_origin) {
       create_plotly({
-        plot_origin(AA_df_origin1(), protein_obj1()[2],
+        return_plot <- plot_origin(AA_df_origin1(), protein_obj1()[2],
                     intensity_label = input$intensity_metric)
+        if(input$y_axis_scale == "log"){
+          return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                          breaks = base_breaks())
+        }
+        return(return_plot)
       })
     } else {
       create_plotly({
-        plot_intensity(AA_df_intensity1(), protein_obj1()[2],
+        return_plot <- plot_intensity(AA_df_intensity1(), protein_obj1()[2],
                          intensity_label = input$intensity_metric)
+        if(input$y_axis_scale == "log"){
+          return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                          breaks = base_breaks())
+        }
+        return(return_plot)
       })
     } 
   })
@@ -220,7 +230,16 @@ server <- function(input, output) {
     }
   })
   
-  output$plot_intensity2 <- renderPlotly(create_plotly(ggplot_intensity2()))
+  output$plot_intensity2 <- renderPlotly({
+    if(input$y_axis_scale == "log"){
+      return_plot <- ggplot_intensity2() + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                      breaks = base_breaks())
+      create_plotly(return_plot)
+    } else {
+      create_plotly(ggplot_intensity2())
+    }
+      
+  })
   
   
   output$sample1_label <- renderText(paste0("Sample 1 (orange): ", input$sample_name1))
@@ -258,12 +277,17 @@ server <- function(input, output) {
   
   annotation_plot <- reactive({
     if (input$disp_origin) {
-        plot_origin(AA_df_origin1(), protein_obj1()[2],
+        return_plot <- plot_origin(AA_df_origin1(), protein_obj1()[2],
                     intensity_label = input$intensity_metric)
     } else {
-        plot_intensity(AA_df_intensity1(), protein_obj1()[2],
+        return_plot <- plot_intensity(AA_df_intensity1(), protein_obj1()[2],
                        intensity_label = input$intensity_metric)
     } 
+    if(input$y_axis_scale == "log"){
+      return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                      breaks = base_breaks())
+    }
+    return(return_plot)
   })
   
   annotation_plot2 <- reactive({

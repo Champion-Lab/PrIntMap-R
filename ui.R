@@ -25,7 +25,11 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                             radioButtons(inputId = "intensity_metric",
                                          label = "Intensity Metric",
                                          choices = c("PSM", "Area", "Intensity"),
-                                         selected = "PSM")
+                                         selected = "PSM"),
+                            radioButtons(inputId = "y_axis_scale",
+                                         label = "y-Axis Scale",
+                                         choices = c("Linear", "log"),
+                                         selected = "Linear")
                           ),
                           flowLayout(
                             textOutput("AccessionID"),
