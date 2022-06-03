@@ -2,6 +2,9 @@ create_annotation_vec <- function(pattern, protein) {
   split_AA <- str_split(protein, "")
   AA_df <- data.frame(AA = split_AA[[1]])
   AA_df$AA_index <- 1:nrow(AA_df)
+  if(pattern == ""){
+    stop("Please enter a custom annotation.")
+  }else{
   motifs <- str_locate_all(protein, pattern)[[1]]
   matches_count <- nrow(motifs)
   motif_vector <- rep(F, nrow(AA_df))
@@ -10,8 +13,9 @@ create_annotation_vec <- function(pattern, protein) {
       start <- motifs[[j,1]]
       end <- motifs[[j,2]]
       motif_vector[start:end] <- T
-    }
-  }
+    }}else{
+    stop("The specified annotation is not present in this protein.")
+  }}
   return(motif_vector) 
 }
 

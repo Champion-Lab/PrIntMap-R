@@ -57,9 +57,9 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
   peptides <- read.csv(peptide_file)
   filetype(peptides, "Individual")
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
-  names(peptides)[9] <- "Area"
-  names(peptides)[10] <- "Intensity"
-  names(peptides)[13] <- "PSM"
+  names(peptides)[grepl("Area", names(peptides))] <- "Area"
+  names(peptides)[grepl("Intensity", names(peptides))] <- "Intensity"
+  names(peptides)[grepl("Spec", names(peptides))] <- "PSM"
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
@@ -120,8 +120,8 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
   filetype(peptides, "Individual")
   peptides$sequence <- peptides$Peptide
-  names(peptides)[10] <- "Intensity"
-  names(peptides)[9] <- "PSM"
+  names(peptides)[grepl("Intensity", names(peptides))] <- "Intensity"
+  names(peptides)[grepl("Spec", names(peptides))] <- "PSM"
   peptides <- peptides[peptides$PSM > 0,]
   peptides$Area <- peptides$Intensity
   if (!is.na(sample)) {
@@ -389,4 +389,12 @@ covert_to_download_df <- function(AA_df, intensity_name) {
   AA_df$origin_pep <- gsub("[\r\n]", ";", AA_df$origin_pep)
   names(AA_df)[3] <- intensity_name
   return(AA_df)
+}
+
+#to format y-axis for log scale
+
+base_breaks <- function(n = 10){
+  function(x) {
+    axisTicks(log10(range(x, na.rm = TRUE)), log = TRUE, n = n)
+  }
 }
