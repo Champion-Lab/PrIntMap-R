@@ -382,6 +382,46 @@ server <- function(input, output) {
     }
   )
   
+  
+  repeat_vector <- reactive({
+    create_repeat_vec(peptides1(),
+                      protein_obj1()[1],
+                      protein_obj1()[2],
+                      database(),
+                      intensity = input$intensity_metric)
+  })
+  
+  AA_df_unique_intensity <- reactive({
+    return_df <- AA_df_intensity1()
+    return_df$repeated <- repeat_vector()
+    return(return_df)
+  })
+  
+  AA_df_unique_origin <- reactive({
+    return_df <- AA_df_origin1()
+    return_df$repeated <- repeat_vector()
+    return(return_df)
+  })
+  
+  unique_plot <- reactive({
+    if (input$disp_origin) {
+      plot <- create_unique_plot_origin(AA_df_unique_origin(),
+                                 protein_obj1()[2],
+                                 intensity_label = input$intensity_metric)
+    } else {
+      plot <- create_unique_plot_intensity(AA_df_unique_intensity(),
+                                 protein_obj1()[2],
+                                 intensity_label = input$intensity_metric)
+    }
+    if(input$y_axis_scale == "log"){
+      plot <- plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                      breaks = base_breaks())
+    }
+    return(plot)
+  })
+  
+  output$test <- renderPlotly(create_plotly(unique_plot()))
+  
 }
   
  

@@ -289,7 +289,7 @@ plot_intensity <- function(AA_df, protein, intensity_label = "PSM",
 
 #create interactive plot object
 create_plotly <- function(plot) {
-  plotly <- ggplotly(plot, tooltip = c("AA", "x", "y", "sample", "origin_pep"))
+  plotly <- ggplotly(plot, tooltip = c("AA", "x", "y", "sample", "origin_pep", "repeated"))
   show(plotly)
   return(plotly)
 }

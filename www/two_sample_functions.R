@@ -18,7 +18,8 @@ plot_origin_comb <- function(AA_df, protein,
       geom_point(aes(x = AA_index, y = intensity, AA = AA, origin_pep = origin_pep, color = sample),
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
-      theme(panel.grid = element_blank(), legend.position = "none") +
+      theme(panel.grid = element_blank(), legend.position = "right",
+            legend.text = element_text(size = 8)) +
       labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
       scale_x_continuous(breaks = pretty_breaks(10))
   }
@@ -45,7 +46,8 @@ plot_intensity_comb <- function(AA_df, protein, intensity_label = "PSM",
       geom_point(aes(x = AA_index, y = intensity, AA = AA, sample = sample),
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
-      theme(panel.grid = element_blank(), legend.position = "none") +
+      theme(panel.grid = element_blank(), legend.position = "right",
+            legend.text = element_text(size = 8)) +
       labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
       scale_x_continuous(breaks = pretty_breaks(10))
   }

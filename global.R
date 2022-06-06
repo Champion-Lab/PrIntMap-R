@@ -16,6 +16,7 @@ source("www/two_sample_functions.R")
 source("www/annotation_functions.R")
 source("www/stacked_plot_functions.R")
 source("www/error_handling.R")
+source("www/unique_peptide_functions.R")
 
 #allow user to see error messages
 options(shiny.sanitize.errors = FALSE)

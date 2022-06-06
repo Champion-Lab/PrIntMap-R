@@ -93,7 +93,10 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                        plotlyOutput("annotation_plotly")
                                      ),
                                     ),
-                            tabPanel("Unique Peptides", "Coming Soon"),
+                            tabPanel("Unique Peptides",
+                                     withSpinner(
+                                       plotlyOutput("test")
+                                     )),
                             tabPanel("Stacked Peptide Plot",
                                      radioButtons(inputId = "stacked_peptides_yunits",
                                                   label = "Units for y-axis",
