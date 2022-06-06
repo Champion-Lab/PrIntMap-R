@@ -45,8 +45,8 @@ create_stack_line_df <- function(peptide_df,
   return(peptide_df)
 }
 
-#create plot for stacked plot
-create_stacked_line_plot <- function(peptide_dataframe, protein_name, protein_seq){
+#create plot for stacked plot with y value as y_val
+create_stacked_line_plot_yval <- function(peptide_dataframe, protein_name, protein_seq){
   plot <- ggplot(peptide_dataframe) +
     geom_segment(aes(y = y_val, x = start, xend = end, yend = y_val,
                      color = intensity_value, length = length, peptide = peptide),
@@ -57,6 +57,23 @@ create_stacked_line_plot <- function(peptide_dataframe, protein_name, protein_se
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank()) +
     labs(x = "Amino Acid Position", y = element_blank(),
+         title = protein_name, color = element_blank()) +
+    scale_x_continuous(limits = c(0, nchar(protein_seq)), breaks = pretty_breaks(10)) +
+    scale_colour_gradient(low = "turquoise", high = "red", na.value = "black")
+  return(plot)
+}
+
+#create plot for stacked plot with intensity as y_val
+create_stacked_line_plot_intensity <- function(peptide_dataframe, protein_name, protein_seq,
+                                               intensity_label = "PSM"){
+  plot <- ggplot(peptide_dataframe) +
+    geom_segment(aes(y = intensity_value, x = start, xend = end, yend = intensity_value,
+                     color = intensity_value, length = length, peptide = peptide),
+                 size = 1, lineend = "round") +
+    theme_bw(base_size = 15) +
+    theme(panel.grid = element_blank(),
+          legend.position = "right") +
+    labs(x = "Amino Acid Position", y = intensity_label,
          title = protein_name, color = element_blank()) +
     scale_x_continuous(limits = c(0, nchar(protein_seq)), breaks = pretty_breaks(10)) +
     scale_colour_gradient(low = "turquoise", high = "red", na.value = "black")

@@ -64,7 +64,8 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                        plotlyOutput("plot_intensity2")
                                      ),
                                     textOutput("sample1_label"),
-                                    textOutput("sample2_label")),
+                                    textOutput("sample2_label"),
+                                    tableOutput("test_table")),
                             tabPanel("Annotation",
                                      flowLayout(
                                        selectInput(inputId = "annotation",
@@ -94,6 +95,10 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                     ),
                             tabPanel("Unique Peptides", "Coming Soon"),
                             tabPanel("Stacked Peptide Plot",
+                                     radioButtons(inputId = "stacked_peptides_yunits",
+                                                  label = "Units for y-axis",
+                                                  choices = c("AA Position", "Intensity"),
+                                                  selected = "AA Position"),
                                       withSpinner(
                                         plotlyOutput("stacked_plotly") 
                                       )

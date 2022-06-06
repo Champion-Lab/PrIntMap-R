@@ -183,15 +183,18 @@ server <- function(input, output) {
  })
  
  fold_change_vec_nan <- reactive({
-   wide_data_comb()$intensity.1 / wide_data_comb()$intensity
+   vec <- wide_data_comb()$intensity.1 / wide_data_comb()$intensity
+   return(vec)
  })
  
  fold_change_label_vec <- reactive({
    return_vec <- rep("", length(fold_change_vec_nan()))
    for (i in 1:length(return_vec)) {
-     if(is.infinite(wide_data_comb()$intensity.1[i] / wide_data_comb()$intensity[i])) {
+     if(is.infinite(fold_change_vec_nan()[i])) {
        return_vec[i] <- "Infinite"
-     } else if (is.na(wide_data_comb()$intensity.1[i] / wide_data_comb()$intensity[i])) {
+     } else if (is.na(fold_change_vec_nan()[i])) {
+       return_vec[i] <- "Normal"
+     } else if (fold_change_vec_nan()[i] == 0){
        return_vec[i] <- "Zero"
      } else {
        return_vec[i] <- "Normal"
@@ -213,7 +216,7 @@ server <- function(input, output) {
                                        data.frame(fold_change = fold_change_vec()),
                                        data.frame(fold_change_label = fold_change_label_vec())))
  
-  
+ 
   ggplot_intensity2 <- reactive({
     if (input$two_sample_comparison == "Difference") {
       plot_difference_comb(wide_data_comb_plot(), protein_obj1()[2])
@@ -317,9 +320,23 @@ server <- function(input, output) {
   })
   
   stacked_plot <- reactive({
-    create_stacked_line_plot(stacked_plot_dataframe(),
-                             protein_name = protein_obj1()[2],
-                             protein_seq = protein_obj1()[1])
+    if (input$stacked_peptides_yunits == "AA Position") {
+      return_plot <- create_stacked_line_plot_yval(stacked_plot_dataframe(),
+                                    protein_name = protein_obj1()[2],
+                                    protein_seq = protein_obj1()[1])
+    } else {
+      stacked_intensity_df <- stacked_plot_dataframe()
+      stacked_intensity_df$intensity_value[is.na(stacked_intensity_df$intensity_value)] <- 0
+      return_plot <- create_stacked_line_plot_intensity(stacked_intensity_df,
+                                    protein_name = protein_obj1()[2],
+                                    protein_seq = protein_obj1()[1],
+                                    intensity_label = input$intensity_metric)
+      if(input$y_axis_scale == "log"){
+        return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                        breaks = base_breaks())
+      }
+    }
+    return(return_plot)
   })
   
   output$stacked_plotly <- renderPlotly({
