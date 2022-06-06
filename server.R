@@ -292,14 +292,19 @@ server <- function(input, output) {
   
   annotation_plot2 <- reactive({
     if (input$disp_overlay_annot) {
-      add_annotation_layer(plot = ggplot_intensity2(),
+      return_plot <- add_annotation_layer(plot = ggplot_intensity2(),
                            annotation_df = annotation_df(),
                            color = input$annot_color)
     } else {
-      add_annotation_layer(plot = annotation_plot(),
+      return_plot <- add_annotation_layer(plot = annotation_plot(),
                            annotation_df = annotation_df(),
                            color = input$annot_color)
     }
+    if(input$y_axis_scale == "log"){
+      return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                      breaks = base_breaks())
+    }
+    return(return_plot)
   })
   
   output$annotation_plotly <- renderPlotly(annotation_plot2())

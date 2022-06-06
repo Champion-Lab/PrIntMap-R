@@ -10,7 +10,8 @@ plot_origin_comb <- function(AA_df, protein,
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank(), legend.position = "none") +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label) +
+      scale_x_continuous(breaks = pretty_breaks(10))
   } else {
     plot <- ggplot(data = AA_df) +
       geom_line(aes(x = AA_index, y = intensity, color = sample), alpha = alpha) +
@@ -18,7 +19,8 @@ plot_origin_comb <- function(AA_df, protein,
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank(), legend.position = "none") +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
+      scale_x_continuous(breaks = pretty_breaks(10))
   }
   return(plot)
 }
@@ -35,7 +37,8 @@ plot_intensity_comb <- function(AA_df, protein, intensity_label = "PSM",
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank()) +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
+      scale_x_continuous(breaks = pretty_breaks(10))
   } else {
     plot <- ggplot(data = AA_df) +
       geom_line(aes(x = AA_index, y = intensity, color = sample), alpha = alpha) +
@@ -43,7 +46,8 @@ plot_intensity_comb <- function(AA_df, protein, intensity_label = "PSM",
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank(), legend.position = "none") +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
+      scale_x_continuous(breaks = pretty_breaks(10))
   }
   return(plot)
 }
@@ -58,7 +62,8 @@ plot_difference_comb <- function(AA_df, protein, intensity_label = "PSM",
                size = 0, alpha = 0) +
     theme_bw(base_size = font_size) +
     theme(panel.grid = element_blank(), legend.position = "none") +
-    labs(title = protein, x = "Amino Acid Number", y = "Difference in Intensity (S2 - S1)")
+    labs(title = protein, x = "Amino Acid Number", y = "Difference in Intensity (S2 - S1)")+
+    scale_x_continuous(breaks = pretty_breaks(10))
   
   return(plot)
 }
@@ -81,7 +86,8 @@ plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
     theme_bw(base_size = font_size) +
     theme(panel.grid = element_blank(), legend.position = "none") +
     labs(title = protein, x = "Amino Acid Number", y = "Ratio Intensity (S2 / S1)") +
-    scale_alpha_manual(values = c(0.5, 0.75, 1))
+    scale_alpha_manual(values = c(0.5, 0.75, 1))+
+    scale_x_continuous(breaks = pretty_breaks(10))
   
   return(plot)
 }

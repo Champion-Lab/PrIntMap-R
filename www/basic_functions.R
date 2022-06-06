@@ -270,7 +270,8 @@ plot_intensity <- function(AA_df, protein, intensity_label = "PSM",
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank()) +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label) +
+      scale_x_continuous(breaks = pretty_breaks(10))
   } else {
     plot <- ggplot(data = AA_df) +
       geom_line(aes(x = AA_index, y = intensity),
@@ -279,7 +280,8 @@ plot_intensity <- function(AA_df, protein, intensity_label = "PSM",
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank(), legend.position = "none") +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
+      scale_x_continuous(breaks = pretty_breaks(10))
   }
   return(plot)
 }
@@ -353,7 +355,8 @@ plot_origin <- function(AA_df, protein,
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank(), legend.position = "none") +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
+      scale_x_continuous(breaks = pretty_breaks(10))
   } else {
     plot <- ggplot(data = AA_df) +
       geom_line(aes(x = AA_index, y = intensity),
@@ -362,7 +365,8 @@ plot_origin <- function(AA_df, protein,
                  size = 0, alpha = 0) +
       theme_bw(base_size = font_size) +
       theme(panel.grid = element_blank(), legend.position = "none") +
-      labs(title = protein, x = "Amino Acid Number", y = intensity_label)
+      labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
+      scale_x_continuous(breaks = pretty_breaks(10))
   }
   
   show(plot)
