@@ -159,7 +159,7 @@ server <- function(input, output) {
   AA_df_intensity2b <- reactive(bind_cols(AA_df_intensity2(), sample2_df()))
 
   AA_df_origin_comb <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin2b()))
-  AA_df_intensity_comb <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin2b()))
+  AA_df_intensity_comb <- reactive(bind_rows(AA_df_intensity1b(), AA_df_intensity2b()))
   
   AA_df_origin_comb_wide <- reactive({
     cbind(AA_df_origin_comb()[AA_df_origin_comb()$sample == input$sample_name1,],
@@ -537,19 +537,19 @@ server <- function(input, output) {
                       intensity = input$intensity_metric)
   })
   
-  AA_df_unique_intensity <- reactive({
+  AA_df_unique_intensity <- eventReactive(input$run_unique, {
     return_df <- AA_df_intensity1()
     return_df$repeated <- repeat_vector()
     return(return_df)
   })
   
-  AA_df_unique_origin <- reactive({
+  AA_df_unique_origin <- eventReactive(input$run_unique, {
     return_df <- AA_df_origin1()
     return_df$repeated <- repeat_vector()
     return(return_df)
   })
   
-  unique_plot <- reactive({
+  unique_plot <- eventReactive(input$run_unique, {
     if (input$disp_origin) {
       plot <- create_unique_plot_origin(AA_df_unique_origin(),
                                  protein_obj1()[2],
@@ -566,7 +566,9 @@ server <- function(input, output) {
     return(plot)
   })
   
-  output$test <- renderPlotly(create_plotly(unique_plot()))
+  output$unique_peps <- renderPlotly(create_plotly(unique_plot()))
+  
+  output$unique_text <- renderText("WARNING: This search can take up to 10 minutes depending on the length of protein")
   
 }
   

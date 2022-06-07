@@ -100,8 +100,11 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                      ),
                                     ),
                             tabPanel("Unique Peptides",
+                                     textOutput("unique_text"),
+                                     actionButton(inputId = "run_unique",
+                                                  label = "Run/Update"),
                                      withSpinner(
-                                       plotlyOutput("test")
+                                       plotlyOutput("unique_peps")
                                      )),
                             tabPanel("Stacked Peptide Plot",
                                      radioButtons(inputId = "stacked_peptides_yunits",
