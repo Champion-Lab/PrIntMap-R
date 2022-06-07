@@ -123,7 +123,7 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
   names(peptides)[grepl("Intensity", names(peptides))] <- "Intensity"
   names(peptides)[grepl("Spec", names(peptides))] <- "PSM"
   peptides <- peptides[peptides$PSM > 0,]
-  peptides$Area <- peptides$Intensity
+  peptides<- area_fun(peptides)
   if (!is.na(sample)) {
     peptides$sample <- sample
   }

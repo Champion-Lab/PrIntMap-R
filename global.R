@@ -9,6 +9,7 @@ library(tidyr)
 library(shinycssloaders)
 library(scales)
 
+
 #source functions and libraries
 source("www/libraries.R")
 source("www/basic_functions.R")

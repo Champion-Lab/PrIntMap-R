@@ -64,14 +64,17 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                        plotlyOutput("plot_intensity2")
                                      )),
                             tabPanel("Multiple Samples",
-                                     flowLayout(
-                                       numericInput(inputId = "number_sample", label = "Choose number of samples", 
-                                                    value = 3,min =2, step = 1),
-                                       uiOutput("sample_numbers")
+                                     fluidPage(
+                                       fluidRow(numericInput(inputId = "number_sample", label = "Choose number of samples", 
+                                                             value = 3,min =2, step = 1))
+                                       ,
+                                       uiOutput("sample_numbers"),
                                      ),
-                                     withSpinner(
+                                     fluidRow(withSpinner(
                                        plotlyOutput("plot_intensity_mult")
                                      )),
+                                     
+                            ),
                             tabPanel("Annotation",
                                      flowLayout(
                                        selectInput(inputId = "annotation",

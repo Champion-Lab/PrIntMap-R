@@ -13,6 +13,23 @@ last_check <- function(peptides) {
   }
 }
 
+#returns dataframe with differing area columns in MSFragger depending on 
+##whether input file has LFQ
+area_fun <- function(df){
+  store <-grep("LFQ", names(df))
+    if(length(store)>0){
+      names(df)[grep("LFQ", names(df))] <- "Area"
+    print("Using LFQ values as Area")
+    return(df)
+  }
+    else{
+      df$Area <- df$Intensity
+      print("Using Intensity values as Area")
+      return(df)
+    }}
+
+ 
+
 
 #check combined vs individual
 filetype <- function(df, type_file){

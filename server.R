@@ -5,7 +5,7 @@ source("global.R")
 #increase allowed upload size to 100 mb
 options(shiny.maxRequestSize=100*1024^2)
 
-server <- function(input, output) {
+server <- function(input, output, session) {
   
   database <- reactive({
     validate(
@@ -14,6 +14,18 @@ server <- function(input, output) {
     import_db(input$database_file$datapath)
   })
   
+  observeEvent(input$file_type, {
+    if(input$file_type == "MaxQuant"){
+      mychoices <- c("Combined")
+    }
+    else{
+      mychoices <- c("Individual Sample", "Combined")
+    }
+    updateRadioButtons(session,"combinedbool1", choices = mychoices)
+    updateRadioButtons(session,"combinedbool2", choices = mychoices)
+    lapply(2:number(), function(i){updateRadioButtons(session, paste0("combinedbool_mult", i), choices = mychoices)
+    })
+  })
   
   protein_obj1 <- reactive({
     validate(
@@ -47,9 +59,11 @@ server <- function(input, output) {
       read_peptide_tsv_MSFragger_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_MSFragger_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
-    } else if(input$file_type == "MaxQuant" && input$combinedbool1 == "Individual Sample") {
-      read_peptide_tsv_MaxQuant_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
-    } else if (input$file_type == "MaxQuant" && input$combinedbool1 == "Combined") {
+    } 
+    # else if(input$file_type == "MaxQuant" && input$combinedbool1 == "Individual Sample") {
+    #   read_peptide_tsv_MaxQuant_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
+    # } 
+    else if (input$file_type == "MaxQuant" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_MaxQuant_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
     } else if (input$file_type == "Proteome Discover" && input$combinedbool1 == "Individual Sample") {
       #coming soon
@@ -121,9 +135,11 @@ server <- function(input, output) {
       read_peptide_tsv_MSFragger_bysamp(input$peptide_file2$datapath)
     } else if (input$file_type == "MSFragger" && input$combinedbool2 == "Combined") {
       read_peptide_tsv_MSFragger_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
-    } else if(input$file_type == "MaxQuant" && input$combinedbool2 == "Individual Sample") {
-      read_peptide_tsv_MaxQuant_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
-    } else if (input$file_type == "MaxQuant" && input$combinedbool2 == "Combined") {
+    } 
+    # else if(input$file_type == "MaxQuant" && input$combinedbool2 == "Individual Sample") {
+    #   read_peptide_tsv_MaxQuant_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
+    # } 
+    else if (input$file_type == "MaxQuant" && input$combinedbool2 == "Combined") {
       read_peptide_tsv_MaxQuant_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
     } else if (input$file_type == "Proteome Discover" && input$combinedbool2 == "Individual Sample") {
       #coming soon
@@ -255,19 +271,21 @@ server <- function(input, output) {
   output$sample_numbers <- renderUI({
     if(number() >= 2){
       lapply(2:number(), function(i){
-        list(
-        fileInput(inputId = paste0("peptide_file_mult", i), 
+        fluidRow(list(
+        column(3,fileInput(inputId = paste0("peptide_file_mult", i), 
                   label = paste0("Upload .csv peptide output number ",i),
-                  accept = c(".csv", ".tsv", ".txt")),
-        radioButtons(inputId = paste0("combinedbool_mult",i),
+                  accept = c(".csv", ".tsv", ".txt"))),
+        column(3,radioButtons(inputId = paste0("combinedbool_mult",i),
                      label = "Type of input file",
                      choices = c("Individual Sample", "Combined"),
-                     selected = "Individual Sample"),
-        textInput(inputId = paste0("sample_regex_mult",i),
-                  label = "For combined files, input sample name (RegEx)"),
-        textInput(inputId = paste0("sample_name_mult",i),
+                     selected = "Individual Sample")),
+        column(3, textInput(inputId = paste0("sample_regex_mult",i),
+                  label = "For combined files, input sample name (RegEx)")),
+        column(3, textInput(inputId = paste0("sample_name_mult",i),
                   label = "Input sample display name",
-                  value = paste("Sample", i)))}
+                  value = paste("Sample", i))))
+        )
+        }
       )}
     
     else{
@@ -277,34 +295,34 @@ server <- function(input, output) {
   })
   
   
+  
   AA_df_list <- reactive({
     lapply(2:number(), function(i){
       create_AA_df(protein_obj1()[1])
     })
   })
   
-  dflist <- reactive({
+  peptidesmult <- reactive({
     lapply(2:number(), function(i){
       validate(
         need(!is.null(input[[paste0("peptide_file_mult", i)]]), "no peptide file provided")
       )
       if (input$file_type == "PEAKS" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
         read_peptide_csv_PEAKS_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
-        
       } else if (input$file_type == "PEAKS" && input[[paste0("combinedbool_mult",i)]] == "Combined"){
         read_peptide_csv_PEAKS_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
                                     sample_pattern = input[[paste0("sample_regex", i)]])
-        
       } else if (input$file_type == "MSFragger" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample"){
         read_peptide_tsv_MSFragger_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
-        
       } else if (input$file_type == "MSFragger" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
         read_peptide_tsv_MSFragger_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]],
                                         sample_pattern = input[[paste0("sample_regex_mult", i)]])
-      } else if(input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
-        read_peptide_tsv_MaxQuant_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
-                                       sample_pattern = input[[paste0("sample_regex_mult", i)]])
-      } else if (input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
+      } 
+      # else if(input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
+      #   read_peptide_tsv_MaxQuant_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
+      #                                  sample_pattern = input[[paste0("sample_regex_mult", i)]])
+      # } 
+      else if (input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
         read_peptide_tsv_MaxQuant_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
                                        sample_pattern = input[[paste0("sample_regex_mult", i)]])
       } else if (input$file_type == "Proteome Discover" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
@@ -317,10 +335,12 @@ server <- function(input, output) {
     )}
   )
   
+ 
+  
   
   intensity_vec_list <- reactive({
     lapply(2:number(), function(i){
-      create_intensity_vec(dflist()[[i-1]], protein_obj1()[1], intensity = input$intensity_metric)
+      create_intensity_vec(peptidesmult()[[i-1]], protein_obj1()[1], intensity = input$intensity_metric)
     })
   })
   
@@ -332,7 +352,7 @@ server <- function(input, output) {
   
   origin_vec_list <- reactive({
     lapply(2:number(), function(i){
-      create_peptide_origin_vec(dflist()[[i-1]], protein_obj1()[1], intensity = input$intensity_metric)
+      create_peptide_origin_vec(peptidesmult()[[i-1]], protein_obj1()[1], intensity = input$intensity_metric)
     })
   })
   
