@@ -254,7 +254,8 @@ server <- function(input, output) {
   })  
   output$sample_numbers <- renderUI({
     if(number() >= 2){
-      lapply(2:number(), function(i){ list(
+      lapply(2:number(), function(i){
+        list(
         fileInput(inputId = paste0("peptide_file_mult", i), 
                   label = paste0("Upload .csv peptide output number ",i),
                   accept = c(".csv", ".tsv", ".txt")),
@@ -265,7 +266,7 @@ server <- function(input, output) {
         textInput(inputId = paste0("sample_regex_mult",i),
                   label = "For combined files, input sample name (RegEx)"),
         textInput(inputId = paste0("sample_name_mult",i),
-                  label = "Input sample name",
+                  label = "Input sample display name",
                   value = paste("Sample", i)))}
       )}
     
@@ -341,18 +342,12 @@ server <- function(input, output) {
     })
   })
   
-  
-  
-  sample1_df <- reactive(data.frame(sample = rep(input$sample_name1, nrow(AA_df_intensity1()))))
   sample_mult_df <- reactive({
     lapply(2:number(), function(i){
       data.frame(sample = rep(input[[paste0("sample_name_mult",i)]], nrow(AA_df_intensity1())))
     })
   })
   
-  
-  
-  AA_df_origin1b <- reactive(bind_cols(AA_df_origin1(), sample1_df()))
   AA_df_origin_multb <- reactive({
     lapply(2:number(), function(i){
       bind_cols(AA_df_origin_list()[[i-1]], sample_mult_df()[[i-1]])
@@ -360,7 +355,7 @@ server <- function(input, output) {
   })
   
  
-  AA_df_intensity1b <- reactive(bind_cols(AA_df_intensity1(), sample1_df()))
+
   AA_df_intensity_multb <- reactive({
     lapply(2:number(), function(i){
       bind_cols(AA_df_intensity_list()[[i-1]], sample_mult_df()[[i-1]])
@@ -368,17 +363,15 @@ server <- function(input, output) {
   })
   
   
-  AA_df_origin_comb <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin_multb()))
-  AA_df_intensity_comb <- reactive(bind_rows(AA_df_intensity1b(), AA_df_intensity_multb()))
-  
-  
+  AA_df_origin_comb_mult <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin_multb()))
+  AA_df_intensity_comb_mult <- reactive(bind_rows(AA_df_intensity1b(), AA_df_intensity_multb()))
   
   ggplot_intensity_mult <- reactive({
     if (input$disp_origin) {
-      plot_origin_comb(AA_df_origin_comb(), protein_obj1()[2],
+      plot_origin_comb(AA_df_origin_comb_mult(), protein_obj1()[2],
                        intensity_label = input$intensity_metric)
     } else {
-      plot_intensity_comb(AA_df_intensity_comb(), protein_obj1()[2],
+      plot_intensity_comb(AA_df_intensity_comb_mult(), protein_obj1()[2],
                           intensity_label = input$intensity_metric)
       # }
     }

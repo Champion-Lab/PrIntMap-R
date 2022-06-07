@@ -66,7 +66,7 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                             tabPanel("Multiple Samples",
                                      flowLayout(
                                        numericInput(inputId = "number_sample", label = "Choose number of samples", 
-                                                    value = 2,min =2, step = 1),
+                                                    value = 3,min =2, step = 1),
                                        uiOutput("sample_numbers")
                                      ),
                                      withSpinner(
