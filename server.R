@@ -244,6 +244,157 @@ server <- function(input, output) {
       
   })
   
+  number <- reactive({
+    if(is.integer(input$number_sample)){ 
+      as.integer(input$number_sample)}
+    else{
+      stop("Please choose a number of samples.")
+    }
+    
+  })  
+  output$sample_numbers <- renderUI({
+    if(number() >= 2){
+      lapply(2:number(), function(i){ list(
+        fileInput(inputId = paste0("peptide_file_mult", i), 
+                  label = paste0("Upload .csv peptide output number ",i),
+                  accept = c(".csv", ".tsv", ".txt")),
+        radioButtons(inputId = paste0("combinedbool_mult",i),
+                     label = "Type of input file",
+                     choices = c("Individual Sample", "Combined"),
+                     selected = "Individual Sample"),
+        textInput(inputId = paste0("sample_regex_mult",i),
+                  label = "For combined files, input sample name (RegEx)"),
+        textInput(inputId = paste0("sample_name_mult",i),
+                  label = "Input sample name",
+                  value = paste("Sample", i)))}
+      )}
+    
+    else{
+      stop("Please choose a valid number of samples.")
+    }
+    
+  })
+  
+  
+  AA_df_list <- reactive({
+    lapply(2:number(), function(i){
+      create_AA_df(protein_obj1()[1])
+    })
+  })
+  
+  dflist <- reactive({
+    lapply(2:number(), function(i){
+      validate(
+        need(!is.null(input[[paste0("peptide_file_mult", i)]]), "no peptide file provided")
+      )
+      if (input$file_type == "PEAKS" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
+        read_peptide_csv_PEAKS_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
+        
+      } else if (input$file_type == "PEAKS" && input[[paste0("combinedbool_mult",i)]] == "Combined"){
+        read_peptide_csv_PEAKS_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
+                                    sample_pattern = input[[paste0("sample_regex", i)]])
+        
+      } else if (input$file_type == "MSFragger" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample"){
+        read_peptide_tsv_MSFragger_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
+        
+      } else if (input$file_type == "MSFragger" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
+        read_peptide_tsv_MSFragger_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]],
+                                        sample_pattern = input[[paste0("sample_regex_mult", i)]])
+      } else if(input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
+        read_peptide_tsv_MaxQuant_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
+                                       sample_pattern = input[[paste0("sample_regex_mult", i)]])
+      } else if (input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
+        read_peptide_tsv_MaxQuant_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
+                                       sample_pattern = input[[paste0("sample_regex_mult", i)]])
+      } else if (input$file_type == "Proteome Discover" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
+        #coming soon
+      } else if (input$file_type == "Proteome Discover" && input[[paste0("combinedbool_mult",i)]] == "Combined"){
+        #coming soon
+      }
+      
+    }
+    )}
+  )
+  
+  
+  intensity_vec_list <- reactive({
+    lapply(2:number(), function(i){
+      create_intensity_vec(dflist()[[i-1]], protein_obj1()[1], intensity = input$intensity_metric)
+    })
+  })
+  
+  AA_df_intensity_list <- reactive({
+    lapply(2:number(), function(i){
+      combine_AA_intensity(AA_df_list()[[i-1]], intensity_vec_list()[[i-1]])
+    })
+  })
+  
+  origin_vec_list <- reactive({
+    lapply(2:number(), function(i){
+      create_peptide_origin_vec(dflist()[[i-1]], protein_obj1()[1], intensity = input$intensity_metric)
+    })
+  })
+  
+  AA_df_origin_list <- reactive({
+    lapply(2:number(), function(i){
+      add_origin_peptide_vector(AA_df_intensity_list()[[i-1]], origin_vec_list()[[i-1]])
+    })
+  })
+  
+  
+  
+  sample1_df <- reactive(data.frame(sample = rep(input$sample_name1, nrow(AA_df_intensity1()))))
+  sample_mult_df <- reactive({
+    lapply(2:number(), function(i){
+      data.frame(sample = rep(input[[paste0("sample_name_mult",i)]], nrow(AA_df_intensity1())))
+    })
+  })
+  
+  
+  
+  AA_df_origin1b <- reactive(bind_cols(AA_df_origin1(), sample1_df()))
+  AA_df_origin_multb <- reactive({
+    lapply(2:number(), function(i){
+      bind_cols(AA_df_origin_list()[[i-1]], sample_mult_df()[[i-1]])
+    })
+  })
+  
+ 
+  AA_df_intensity1b <- reactive(bind_cols(AA_df_intensity1(), sample1_df()))
+  AA_df_intensity_multb <- reactive({
+    lapply(2:number(), function(i){
+      bind_cols(AA_df_intensity_list()[[i-1]], sample_mult_df()[[i-1]])
+    })
+  })
+  
+  
+  AA_df_origin_comb <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin_multb()))
+  AA_df_intensity_comb <- reactive(bind_rows(AA_df_intensity1b(), AA_df_intensity_multb()))
+  
+  
+  
+  ggplot_intensity_mult <- reactive({
+    if (input$disp_origin) {
+      plot_origin_comb(AA_df_origin_comb(), protein_obj1()[2],
+                       intensity_label = input$intensity_metric)
+    } else {
+      plot_intensity_comb(AA_df_intensity_comb(), protein_obj1()[2],
+                          intensity_label = input$intensity_metric)
+      # }
+    }
+  })
+  
+  output$plot_intensity_mult <- renderPlotly({
+    if(input$y_axis_scale == "log"){
+      return_plot <- ggplot_intensity_mult() + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                                  breaks = base_breaks())
+      create_plotly(return_plot)
+    } else {
+      create_plotly(ggplot_intensity_mult())
+    }
+    
+  }) 
+  
   annotation_regex <- reactive({
     if(input$annotation != "CUSTOM") {
       annotations[[input$annotation]]
