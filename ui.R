@@ -62,10 +62,7 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                                     selected = "Overlay")),
                                      withSpinner(
                                        plotlyOutput("plot_intensity2")
-                                     ),
-                                    textOutput("sample1_label"),
-                                    textOutput("sample2_label"),
-                                    tableOutput("test_table")),
+                                     )),
                             tabPanel("Annotation",
                                      flowLayout(
                                        selectInput(inputId = "annotation",

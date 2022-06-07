@@ -244,11 +244,6 @@ server <- function(input, output) {
       
   })
   
-  
-  output$sample1_label <- renderText(paste0("Sample 1 (orange): ", input$sample_name1))
-  output$sample2_label <- renderText(paste0("Sample 2 (blue): ", input$sample_name2))
-  
-  
   annotation_regex <- reactive({
     if(input$annotation != "CUSTOM") {
       annotations[[input$annotation]]

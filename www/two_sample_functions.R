@@ -79,14 +79,17 @@ plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
                size = 0, alpha = 0) +
     geom_point(data = AA_df[AA_df$fold_change_label == "Zero",], aes(x = AA_index,
                                                                      y = fold_change,
-                                                                     AA = AA),
+                                                                     AA = AA,
+                                                                     fold_change_label = fold_change_label),
                size = 0.5, color = "red") +
     geom_point(data = AA_df[AA_df$fold_change_label == "Infinite",], aes(x = AA_index,
                                                                      y = fold_change,
-                                                                     AA = AA),
+                                                                     AA = AA,
+                                                                     fold_change_label = fold_change_label),
                size = 0.5, color = "green") +
     theme_bw(base_size = font_size) +
-    theme(panel.grid = element_blank(), legend.position = "none") +
+    theme(panel.grid = element_blank(), legend.position = "right",
+          legend.text = element_text(size = 8)) +
     labs(title = protein, x = "Amino Acid Number", y = "Ratio Intensity (S2 / S1)") +
     scale_alpha_manual(values = c(0.5, 0.75, 1))+
     scale_x_continuous(breaks = pretty_breaks(10))
