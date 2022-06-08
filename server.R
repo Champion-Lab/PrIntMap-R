@@ -23,8 +23,7 @@ server <- function(input, output, session) {
     }
     updateRadioButtons(session,"combinedbool1", choices = mychoices)
     updateRadioButtons(session,"combinedbool2", choices = mychoices)
-    lapply(2:number(), function(i){updateRadioButtons(session, paste0("combinedbool_mult", i), choices = mychoices)
-    })
+    
   })
   
   protein_obj1 <- reactive({
@@ -275,26 +274,27 @@ server <- function(input, output, session) {
         column(3,fileInput(inputId = paste0("peptide_file_mult", i), 
                   label = paste0("Upload .csv peptide output number ",i),
                   accept = c(".csv", ".tsv", ".txt"))),
-        column(3,radioButtons(inputId = paste0("combinedbool_mult",i),
-                     label = "Type of input file",
-                     choices = c("Individual Sample", "Combined"),
-                     selected = "Individual Sample")),
+        if(input$file_type =="MaxQuant"){
+          column(3,radioButtons(inputId = paste0("combinedbool_mult",i),
+                                label = "Type of input file",
+                                choices = c("Combined"),
+                                selected = "Combined"))}
+          else {
+            column(3,radioButtons(inputId = paste0("combinedbool_mult",i),
+                                      label = "Type of input file",
+                                      choices = c("Individual Sample", "Combined"),
+                                      selected = "Individual Sample"))},
         column(3, textInput(inputId = paste0("sample_regex_mult",i),
                   label = "For combined files, input sample name (RegEx)")),
         column(3, textInput(inputId = paste0("sample_name_mult",i),
                   label = "Input sample display name",
                   value = paste("Sample", i))))
-        )
-        }
+        )}
       )}
-    
     else{
       stop("Please choose a valid number of samples.")
     }
-    
   })
-  
-  
   
   AA_df_list <- reactive({
     lapply(2:number(), function(i){
