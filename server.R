@@ -453,10 +453,14 @@ server <- function(input, output, session) {
   })
   
   annotation_plot2 <- reactive({
-    if (input$disp_overlay_annot) {
+    if (input$disp_overlay_annot == "Two Samples") {
       return_plot <- add_annotation_layer(plot = ggplot_intensity2(),
                            annotation_df = annotation_df(),
                            color = input$annot_color)
+    }else if(input$disp_overlay_annot == "Multiple Samples"){
+      return_plot <- add_annotation_layer(plot = ggplot_intensity_mult(),
+                                          annotation_df = annotation_df(),
+                                          color = input$annot_color)
     } else {
       return_plot <- add_annotation_layer(plot = annotation_plot(),
                            annotation_df = annotation_df(),
@@ -516,6 +520,8 @@ server <- function(input, output, session) {
   download_peptide_csv <- reactive({
     if (input$download_sample_number == "One sample") {
       covert_to_download_df(AA_df_origin1(), input$intensity_metric)
+    } else if(input$download_sample_number == "Multiple Samples"){
+      covert_to_download_df(AA_df_origin_comb_mult(), input$intensity_metric)
     } else {
       covert_to_download_df(AA_df_origin_comb(), input$intensity_metric)
     }
@@ -525,7 +531,9 @@ server <- function(input, output, session) {
   download_peptide_filename <- reactive({
     if (input$download_sample_number == "One sample") {
       paste0(input$sample_name1, "_", input$intensity_metric, "_", str_replace_all(protein_obj1()[2], "\\|", "_"), "_intensity_by_aminoacid.csv")
-    } else {
+    } else if(input$download_sample_number == "Multiple Samples"){
+      paste0(input$intensity_metric, "_", str_replace_all(protein_obj1()[2], "\\|", "_"), "_intensity_by_aminoacid_multiple_samples.csv")
+    }else {
       paste0(input$intensity_metric, "_", str_replace_all(protein_obj1()[2], "\\|", "_"), "_intensity_by_aminoacid_two_sample.csv")
     }
     
