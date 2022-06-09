@@ -1,5 +1,7 @@
 library(shiny)
-ui <- navbarPage(title = "Protein Intensity Mapper",
+ui <- navbarPage(title = "PrIntMap-R",
+                 tabPanel("Documentation",
+                          includeMarkdown("www/Documentation.md")),
                  tabPanel("Run",
                           flowLayout(
                             fileInput(inputId = "database_file", label = "Upload fasta database file",
@@ -138,9 +140,8 @@ ui <- navbarPage(title = "Protein Intensity Mapper",
                                      )
                           )
                         ),
-                 tabPanel("Documentation", 
-                          "By Simon D. Weaver",
-                          tags$hr(),
-                          "Champion Lab - University of Notre Dame")
+                 tabPanel("Examples", 
+                          "Coming Soon"                        
+                         )
   
 )
