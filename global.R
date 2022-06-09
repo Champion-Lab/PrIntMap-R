@@ -8,6 +8,7 @@ library(dplyr)
 library(tidyr)
 library(shinycssloaders)
 library(scales)
+library(markdown)
 
 #source functions and libraries
 source("www/libraries.R")
