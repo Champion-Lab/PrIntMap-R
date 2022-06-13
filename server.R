@@ -58,16 +58,18 @@ server <- function(input, output, session) {
       read_peptide_tsv_MSFragger_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_MSFragger_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
-    } 
-    # else if(input$file_type == "MaxQuant" && input$combinedbool1 == "Individual Sample") {
-    #   read_peptide_tsv_MaxQuant_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
-    # } 
-    else if (input$file_type == "MaxQuant" && input$combinedbool1 == "Combined") {
+    } else if (input$file_type == "MaxQuant" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_MaxQuant_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
     } else if (input$file_type == "Proteome Discover" && input$combinedbool1 == "Individual Sample") {
       #coming soon
     } else if (input$file_type == "Proteome Discover" && input$combinedbool1 == "Combined"){
       #coming soon
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
+      read_peptide_tsv_Metamorpheus_bysamp(input$peptide_file1$datapath)
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined" && input$intensity_metric != "Area") {
+      read_peptide_tsv_Metamorpheus_intspsm_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined" && input$intensity_metric == "Area") {
+      read_peptide_tsv_Metamorpheus_area_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
     }
   })
   
@@ -134,16 +136,18 @@ server <- function(input, output, session) {
       read_peptide_tsv_MSFragger_bysamp(input$peptide_file2$datapath)
     } else if (input$file_type == "MSFragger" && input$combinedbool2 == "Combined") {
       read_peptide_tsv_MSFragger_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
-    } 
-    # else if(input$file_type == "MaxQuant" && input$combinedbool2 == "Individual Sample") {
-    #   read_peptide_tsv_MaxQuant_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
-    # } 
-    else if (input$file_type == "MaxQuant" && input$combinedbool2 == "Combined") {
+    } else if (input$file_type == "MaxQuant" && input$combinedbool2 == "Combined") {
       read_peptide_tsv_MaxQuant_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
     } else if (input$file_type == "Proteome Discover" && input$combinedbool2 == "Individual Sample") {
       #coming soon
     } else if (input$file_type == "Proteome Discover" && input$combinedbool2 == "Combined"){
       #coming soon
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
+      read_peptide_tsv_Metamorpheus_bysamp(input$peptide_file2$datapath)
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined" && input$intensity_metric != "Area") {
+      read_peptide_tsv_Metamorpheus_intspsm_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined" && input$intensity_metric == "Area") {
+      read_peptide_tsv_Metamorpheus_area_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
     }
   })
 
@@ -273,7 +277,7 @@ server <- function(input, output, session) {
         fluidRow(list(
         column(3,fileInput(inputId = paste0("peptide_file_mult", i), 
                   label = paste0("Upload .csv peptide output number ",i),
-                  accept = c(".csv", ".tsv", ".txt"))),
+                  accept = c(".csv", ".tsv", ".txt", ".psmtsv"))),
         if(input$file_type =="MaxQuant"){
           column(2,radioButtons(inputId = paste0("combinedbool_mult",i),
                                 label = "Type of input file",
@@ -317,18 +321,19 @@ server <- function(input, output, session) {
       } else if (input$file_type == "MSFragger" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
         read_peptide_tsv_MSFragger_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]],
                                         sample_pattern = input[[paste0("sample_regex_mult", i)]])
-      } 
-      # else if(input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
-      #   read_peptide_tsv_MaxQuant_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
-      #                                  sample_pattern = input[[paste0("sample_regex_mult", i)]])
-      # } 
-      else if (input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
+      } else if (input$file_type == "MaxQuant" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
         read_peptide_tsv_MaxQuant_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
                                        sample_pattern = input[[paste0("sample_regex_mult", i)]])
       } else if (input$file_type == "Proteome Discover" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
         #coming soon
       } else if (input$file_type == "Proteome Discover" && input[[paste0("combinedbool_mult",i)]] == "Combined"){
         #coming soon
+      } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample"){
+        read_peptide_tsv_Metamorpheus_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
+      } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Combined" && input$intensity_metric != "Area") {
+        read_peptide_tsv_Metamorpheus_intspsm_comb(input$peptide_file2[[paste0("peptide_file_mult",i)]][["datapath"]], sample_pattern = input[[paste0("sample_regex_mult", i)]])
+      } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Combined" && input$intensity_metric == "Area") {
+        read_peptide_tsv_Metamorpheus_area_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], sample_pattern = input[[paste0("sample_regex_mult", i)]])
       }
       
     }
