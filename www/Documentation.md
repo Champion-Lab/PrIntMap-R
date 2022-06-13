@@ -47,7 +47,7 @@ This is simply whatever you want the sample to be called in plot legends and exp
 * __Individual Sample vs Combined (RegEx sample name):__  
 If the peptide file contains information for only one sample (i.e. only one column for PSMs, Intensity, etc for each peptide) then it is an individual file. If there are multiple samples contained within one file, it is a combined file, and the columns will include the name of the sample. For example `Sample A.Spectral Count`. In this case, to specify which columns to include, use [RegEx](https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html) in the provided text input field to specify sample names. For example, if I had two samples: Sample A and Sample B, and three technical replicates of each (Samp_A_1, Samp_A_2, Samp_A_3, Samp_B_1, etc), I could specify to include only sample A by inputing `Samp_A`. To include both samples in the data, I could either leave the field blank, or input `Samp`. To only include the first replicate of sample A, I could specify `Samp_A_1`. Be sure to look at your data to see how your columns are named. **Important:** When importing data, R will convert spaces in column names to periods: `.` Keep this in mind if your samples have spaces in their names.  
 * __Search Software:__  
-Select the search software used from the dropdown menu. If the file provided does not match the format of the search software output, and error will be shown.  
+Select the search software used from the dropdown menu. If the file provided does not match the format of the search software output, an error will be shown.  
 * __Protein Accession ID:__  
 This is the identifier for the protein of interest. This field uses RegEx, but requires that it matches to only one protein in the database provided. Messages will indicate if the protein cannot be found, or if multiple proteins were found. See the database file format example above for more details.  
 * __Intensity Metric:__  
@@ -108,7 +108,7 @@ Provides the plotable data as a `.csv` file that can be downloaded. Option of do
 ------
 
 <img src="Champion_lab_v1.png" alt="drawing" width="130"/>  
-[Champion Lab]("https://championlab.weebly.com/), University of Notre Dame  
+[Champion Lab](https://championlab.weebly.com/), University of Notre Dame  
   
 <sup>By Simon D. Weaver and Christine M. DeRosa</sup>
 

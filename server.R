@@ -275,12 +275,12 @@ server <- function(input, output, session) {
                   label = paste0("Upload .csv peptide output number ",i),
                   accept = c(".csv", ".tsv", ".txt"))),
         if(input$file_type =="MaxQuant"){
-          column(3,radioButtons(inputId = paste0("combinedbool_mult",i),
+          column(2,radioButtons(inputId = paste0("combinedbool_mult",i),
                                 label = "Type of input file",
                                 choices = c("Combined"),
                                 selected = "Combined"))}
           else {
-            column(3,radioButtons(inputId = paste0("combinedbool_mult",i),
+            column(2,radioButtons(inputId = paste0("combinedbool_mult",i),
                                       label = "Type of input file",
                                       choices = c("Individual Sample", "Combined"),
                                       selected = "Individual Sample"))},
