@@ -65,11 +65,24 @@ check_file <- function(file_name, search_engine){
       stop("Not a MaxQuant File")
     }
   }
+  if(search_engine == "Metamorpheus"){
+    if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){ 
+      stop("For the search software MetaMorpheus, the expected file type is .tsv")}
+    store <- strsplit(readLines(file_name, n = 1)[1], split = "")[[1]]
+    if(!grepl('F', substr(store[1], 1, 1))){
+      stop("Not a MetaMorpheus File")
+    }
+  }
   if(search_engine == "PEAKS")  { 
     if(!"," %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]]){
       stop("For the search software PEAKS, the expected file type is .csv")
     }
-   }
+    store <- strsplit(readLines(file_name, n = 1)[1], split = "")[[1]]
+    if(!grepl('P', substr(store[1], 1, 1))){
+      stop("Not a PEAKS File.")
+    }
+  }
+
   }
   
 #check that fasta file is correct

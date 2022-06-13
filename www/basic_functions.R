@@ -219,9 +219,9 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
 #import peptide file from MetaMorpheus (individual Sample)
 #takes tsv file in Metamorpheus  format and returns dataframe
 read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filter = NA) {
-  #check_file(peptide_file, "PEAKS")
+  check_file(peptide_file, "Metamorpheus")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
-  #filetype(peptides, "Individual")
+  # filetype(peptides, "Individual")
   peptides$sequence <- peptides$Base.Sequence
   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
@@ -239,9 +239,9 @@ read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filt
 #import peptide file from MetaMorpheus (combined Sample - no quant (area))
 #takes tsv file in Metamorpheus  format and returns dataframe
 read_peptide_tsv_Metamorpheus_intspsm_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
-  #check_file(peptide_file, "PEAKS")
+  check_file(peptide_file, "Metamorpheus")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
-  #filetype(peptides, "Individual")
+  # filetype(peptides, "Individual")
   peptides$sequence <- peptides$Base.Sequence
   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
@@ -260,7 +260,7 @@ read_peptide_tsv_Metamorpheus_intspsm_comb <- function(peptide_file, sample_patt
 #import peptide file from MetaMorpheus (combined Sample - quant only (area))
 #takes tsv file in Metamorpheus  format and returns dataframe
 read_peptide_tsv_Metamorpheus_area_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
-  #check_file(peptide_file, "MaxQuant")
+  # check_file(peptide_file, "Metamorpheus")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
   peptides <- peptide_import
   names(peptides)[names(peptides) == "Sequence"] <- "Full.Sequence"
