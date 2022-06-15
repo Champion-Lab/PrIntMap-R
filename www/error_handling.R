@@ -13,77 +13,68 @@ last_check <- function(peptides) {
   }
 }
 
-#returns dataframe with differing area columns in MSFragger depending on 
-##whether input file has LFQ
-area_fun <- function(df){
-  store <-grep("LFQ", names(df))
-    if(length(store)>0){
-      names(df)[grep("LFQ", names(df))] <- "Area"
-    print("Using LFQ values as Area")
-    return(df)
-  }
-    else{
-      df$Area <- df$Intensity
-      print("Using Intensity values as Area")
-      return(df)
-    }}
-
- 
-
-
 #check combined vs individual
-filetype <- function(df, type_file){
-  store <- df[, grepl("Intensity", names(df))]
-  if(type_file == "Individual"){
-    if(length(names(store)) >1){
-      stop("You have uploaded a combined file.")
-  }
-}
-  if(type_file == "Combined"){
-    if(length(names(store))<=1){
-      stop("You have uploaded an individual file.")
+filetype <- function(df, type_file, search_engine){
+  if (search_engine == "MSfragger"){
+    if(!"Protein.Description" %in% names(df)){
+      stop("You have not uploaded an MSFragger File.")
     }
   }
-}
+  if (search_engine == "MaxQuant"){
+    if(!"Last.Amino.Acid" %in% names(df)){
+      stop("You have not uploaded a MaxQuant File.")
+    }
+  }
+  
+  if (search_engine == "Metamorpheus"){
+    if(!"File.Name" %in% names(df)){
+      stop("You have not uploaded a Metamorpheus File.")
+    }
+    store <- list()
+    for (i in df$File.Name){
+      if(!i %in% store){
+        store<- append(store, i)}
+    }
+    if(type_file == "Combined" && length(store)<= 1){
+    stop("You have uploaded an individual File.")
+    }
+    if(type_file == "Individual" && length(store) >1){
+      stop("You have uploaded a combined File.")
+    }}
+  store <- df[, grepl("Intensity", names(df))]
+  if(type_file == "Individual" && search_engine != "Metamorpheus"){
+    if(length(names(store)) >1){
+      stop("You have uploaded a combined file.")
+    }}
+  if(type_file == "Combined" && search_engine != "Metamorpheus"){
+    if(length(names(store))<=1){   
+      stop("You have uploaded an individual file.")
+    }}
+    }
 
 #Function to check whether file type is correct
 check_file <- function(file_name, search_engine){
   if(search_engine == "MSfragger"){
     if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){ 
       stop("For the search software MSFragger, the expected file type is .tsv")}
-    store <- strsplit(readLines(file_name, n = 1)[1], split = "")[[1]]
-    if(!grepl('P', substr(store[1], 1, 1))){
-      stop("Not an MSFragger File")
-    }
+    
   }
   
   if(search_engine == "MaxQuant"){
     if(!"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){
       stop("For the search software MaxQuant, the expected file type is .tsv")}
-    store <-strsplit(readLines(file_name, n = 1)[1],split = "")[[1]]
-    if(!grepl('S', substr(store[1], 1, 1))) {
-      stop("Not a MaxQuant File")
-    }
   }
   if(search_engine == "Metamorpheus"){
     if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){ 
       stop("For the search software MetaMorpheus, the expected file type is .tsv")}
-    store <- strsplit(readLines(file_name, n = 1)[1], split = "")[[1]]
-    if(!grepl('F', substr(store[1], 1, 1))){
-      stop("Not a MetaMorpheus File")
-    }
-  }
-  if(search_engine == "PEAKS")  { 
-    if(!"," %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]]){
-      stop("For the search software PEAKS, the expected file type is .csv")
-    }
-    store <- strsplit(readLines(file_name, n = 1)[1], split = "")[[1]]
-    if(!grepl('P', substr(store[1], 1, 1))){
-      stop("Not a PEAKS File.")
-    }
-  }
 
   }
+  if(search_engine == "PEAKS")  { 
+    store <- strsplit(readLines(file_name, n=1)[1], split = "")[[1]]    
+  if(!"," %in% store[1:15]){
+      stop("For the search software PEAKS, the expected file type is .csv")
+    }
+  }}
   
 #check that fasta file is correct
 fasta_check <- function(db_file){

@@ -55,7 +55,7 @@ create_AA_df <- function(protein) {
 read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA) {
   check_file(peptide_file, "PEAKS")
   peptides <- read.csv(peptide_file)
-  filetype(peptides, "Individual")
+  filetype(peptides, "Individual", "PEAKS")
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
   names(peptides)[grepl("Area", names(peptides))] <- "Area"
   names(peptides)[grepl("Intensity", names(peptides))] <- "Intensity"
@@ -78,7 +78,7 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
 read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
   check_file(peptide_file, "PEAKS")
   peptide_import <- read.csv(peptide_file)
-  filetype(peptide_import, "Combined")
+  filetype(peptide_import, "Combined", "PEAKS")
   names(peptide_import)[names(peptide_import) == "X.Spec"] <- "total_spectra"
   peptides <- peptide_import
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
@@ -118,12 +118,17 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
 read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter = NA) {
   check_file(peptide_file, "MSfragger")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
-  filetype(peptides, "Individual")
-  peptides$sequence <- peptides$Peptide
+  filetype(peptides, "Individual", "MSfragger")
+  names(peptides)[names(peptides) == "Peptide" | names(peptides) == "Peptide.Sequence"] <- "sequence"
   names(peptides)[grepl("Intensity", names(peptides))] <- "Intensity"
   names(peptides)[grepl("Spec", names(peptides))] <- "PSM"
   peptides <- peptides[peptides$PSM > 0,]
-  peptides<- area_fun(peptides)
+  if (length(names(peptides)[grepl("LFQ", names(peptides))]) >0){
+    names(peptides)[grepl("LFQ", names(peptides))] <- "Area"
+  }else{
+    peptides$Area <- peptides$Intensity
+  }
+  # peptides<- area_fun(peptides)
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
@@ -142,11 +147,10 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
 read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
   check_file(peptide_file, "MSfragger")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
-  filetype(peptide_import, "Combined")
-  names(peptide_import) <- str_replace_all(string = names(peptide_import), pattern = "MaxLFQ.Intensity", replacement = "MaxLFQ.Area")
+  filetype(peptide_import, "Combined", "MSfragger")
   peptides <- peptide_import
-  peptides$sequence <- peptides$Peptide.Sequence
-  
+  names(peptides)[names(peptides)== "Sequence" | names(peptides) == "Peptide.Sequence"] <- "sequence"
+
   PSM_pattern <- paste0(".*", sample_pattern, ".*", "Spectral\\.Count")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
@@ -157,14 +161,17 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   Intensity_df[is.na(Intensity_df)] <- 0
   Intensity_vec <- rowSums(as.data.frame(Intensity_df))
   
-  Area_pattern <- paste0(".*", sample_pattern, ".*", "MaxLFQ.Area")
+  Area_pattern <- paste0(".*", sample_pattern, ".*", "MaxLFQ.Intensity")
   Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
-  Area_df[is.na(Area_df)] <- 0
+  if(length(names(Area_df))>0){ Area_df[is.na(Area_df)] <- 0
   Area_vec <- rowSums(as.data.frame(Area_df))
-
+  peptides$Area <- Area_vec
+  }else{
+    peptides$Area <- Intensity_vec
+  }
   peptides$PSM <- PSM_vec
   peptides$Intensity <- Intensity_vec
-  peptides$Area <- Area_vec
+
   peptides <- peptides[peptides$PSM > 0,]
   if (!is.na(sample)) {
     peptides$sample <- sample
@@ -182,6 +189,7 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
 read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
   check_file(peptide_file, "MaxQuant")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
+  filetype(peptide_import, "Combined", "MaxQuant")
   names(peptide_import)[names(peptide_import) == "Intensity"] <- "summed_intensity"
   peptides <- peptide_import
   peptides$sequence <- peptides$Sequence
@@ -221,7 +229,7 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
 read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filter = NA) {
   check_file(peptide_file, "Metamorpheus")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
-  # filetype(peptides, "Individual")
+  filetype(peptides, "Individual", "Metamorpheus")
   peptides$sequence <- peptides$Base.Sequence
   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
@@ -241,7 +249,7 @@ read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filt
 read_peptide_tsv_Metamorpheus_intspsm_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
   check_file(peptide_file, "Metamorpheus")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
-  # filetype(peptides, "Individual")
+  filetype(peptides, "Combined", "Metamorpheus")
   peptides$sequence <- peptides$Base.Sequence
   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
@@ -260,8 +268,9 @@ read_peptide_tsv_Metamorpheus_intspsm_comb <- function(peptide_file, sample_patt
 #import peptide file from MetaMorpheus (combined Sample - quant only (area))
 #takes tsv file in Metamorpheus  format and returns dataframe
 read_peptide_tsv_Metamorpheus_area_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
-  # check_file(peptide_file, "Metamorpheus")
+  check_file(peptide_file, "Metamorpheus")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
+  filetype(peptide_import, "Combined", "Metamorpheus")
   peptides <- peptide_import
   names(peptides)[names(peptides) == "Sequence"] <- "Full.Sequence"
   peptides$sequence <- peptides$Base.Sequence
