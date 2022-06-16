@@ -21,26 +21,33 @@ filetype <- function(df, type_file, search_engine){
     }
   }
   if (search_engine == "MaxQuant"){
-    if(!"Last.Amino.Acid" %in% names(df)){
+    if(!("Last.amino.acid" %in% names(df))){
       stop("You have not uploaded a MaxQuant File.")
     }
   }
   
   if (search_engine == "Metamorpheus"){
-    if(!"File.Name" %in% names(df)){
+    if(!"Base.Sequence" %in% names(df)){
       stop("You have not uploaded a Metamorpheus File.")
     }
-    store <- list()
+    if(length(names(df)[grepl("File.Name", names(df))]) >0){ 
+      store <- list()
     for (i in df$File.Name){
       if(!i %in% store){
         store<- append(store, i)}
     }
     if(type_file == "Combined" && length(store)<= 1){
-    stop("You have uploaded an individual File.")
+      stop("You have uploaded an individual File.")
     }
     if(type_file == "Individual" && length(store) >1){
       stop("You have uploaded a combined File.")
     }}
+    else{
+      if(type_file == "Individual"){
+        stop("You have uploaded a combined file.")
+      }
+    }
+  }
   store <- df[, grepl("Intensity", names(df))]
   if(type_file == "Individual" && search_engine != "Metamorpheus"){
     if(length(names(store)) >1){

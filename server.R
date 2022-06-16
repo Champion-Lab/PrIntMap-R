@@ -66,14 +66,41 @@ server <- function(input, output, session) {
       #coming soon
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
       read_peptide_tsv_Metamorpheus_bysamp(input$peptide_file1$datapath)
-    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined" && input$intensity_metric != "Area") {
-      read_peptide_tsv_Metamorpheus_intspsm_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
-    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined" && input$intensity_metric == "Area") {
-      read_peptide_tsv_Metamorpheus_area_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
-    }
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
+      read_peptide_tsv_Metamorpheus_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
+    } 
   })
-  
-  
+
+output$intensity <- renderUI({
+  choices <- list()
+  options <- c("PSM","Area", "Intensity")
+  for(i in options){
+    if(i %in% names(peptides1())){
+      choices <- append(choices, i)
+    }
+  }
+  radioButtons(inputId = "intensity_metric",
+               label = "Intensity Metric",
+               choices = choices)
+  # if("Area" %in% names(peptides1())&& input$file_type!= "MetaMorpheus"){
+  #   radioButtons(inputId = "intensity_metric",
+  #                label = "Intensity Metric",
+  #                choices = c("PSM","Area", "Intensity"),
+  #                selected = "PSM")
+  # }
+  # if("Area" %in% names(peptides1()) && input$file_type =="MetaMorpheus"){
+  #   radioButtons(inputId = "intensity_metric",
+  #                label = "Intensity Metric",
+  #                choices = c("Area"),
+  #                selected = "Area")
+  # }else{
+  #   radioButtons(inputId = "intensity_metric",
+  #                label = "Intensity Metric",
+  #                choices = c("PSM", "Intensity"),
+  #                selected = "PSM")
+  # }
+  })
+
   intensity_vec1 <- reactive({
     create_intensity_vec(peptides1(), protein_obj1()[1], intensity = input$intensity_metric)
   })
@@ -144,13 +171,12 @@ server <- function(input, output, session) {
       #coming soon
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
       read_peptide_tsv_Metamorpheus_bysamp(input$peptide_file2$datapath)
-    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined" && input$intensity_metric != "Area") {
-      read_peptide_tsv_Metamorpheus_intspsm_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
-    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined" && input$intensity_metric == "Area") {
-      read_peptide_tsv_Metamorpheus_area_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
-    }
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
+      read_peptide_tsv_Metamorpheus_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
+    } 
   })
 
+  
   intensity_vec2 <- reactive({
     create_intensity_vec(peptides2(), protein_obj1()[1], intensity = input$intensity_metric)
   })
@@ -330,18 +356,12 @@ server <- function(input, output, session) {
         #coming soon
       } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample"){
         read_peptide_tsv_Metamorpheus_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
-      } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Combined" && input$intensity_metric != "Area") {
-        read_peptide_tsv_Metamorpheus_intspsm_comb(input$peptide_file2[[paste0("peptide_file_mult",i)]][["datapath"]], sample_pattern = input[[paste0("sample_regex_mult", i)]])
-      } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Combined" && input$intensity_metric == "Area") {
-        read_peptide_tsv_Metamorpheus_area_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], sample_pattern = input[[paste0("sample_regex_mult", i)]])
-      }
-      
+      } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
+        read_peptide_tsv_Metamorpheus_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], sample_pattern = input[[paste0("sample_regex_mult", i)]])
+      } 
     }
     )}
   )
-  
- 
-  
   
   intensity_vec_list <- reactive({
     lapply(2:number(), function(i){

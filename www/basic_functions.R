@@ -125,17 +125,13 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
   peptides <- peptides[peptides$PSM > 0,]
   if (length(names(peptides)[grepl("LFQ", names(peptides))]) >0){
     names(peptides)[grepl("LFQ", names(peptides))] <- "Area"
-  }else{
-    peptides$Area <- peptides$Intensity
   }
-  # peptides<- area_fun(peptides)
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  last_check(peptides)
   return(peptides)
 }
 
@@ -161,13 +157,11 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   Intensity_df[is.na(Intensity_df)] <- 0
   Intensity_vec <- rowSums(as.data.frame(Intensity_df))
   
+  if (length(names(peptides)[grepl("LFQ", names(peptides))]) >0){
   Area_pattern <- paste0(".*", sample_pattern, ".*", "MaxLFQ.Intensity")
   Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
-  if(length(names(Area_df))>0){ Area_df[is.na(Area_df)] <- 0
   Area_vec <- rowSums(as.data.frame(Area_df))
   peptides$Area <- Area_vec
-  }else{
-    peptides$Area <- Intensity_vec
   }
   peptides$PSM <- PSM_vec
   peptides$Intensity <- Intensity_vec
@@ -179,7 +173,6 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  last_check(peptides)
   return(peptides)
 }
 
@@ -233,63 +226,54 @@ read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filt
   peptides$sequence <- peptides$Base.Sequence
   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
-  peptides$Area <- peptides$Intensity
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  #last_check(peptides)
   return(peptides)
 }
 
-#import peptide file from MetaMorpheus (combined Sample - no quant (area))
+#import peptide file from MetaMorpheus (combined Sample)
 #takes tsv file in Metamorpheus  format and returns dataframe
-read_peptide_tsv_Metamorpheus_intspsm_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
   check_file(peptide_file, "Metamorpheus")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
   filetype(peptides, "Combined", "Metamorpheus")
-  peptides$sequence <- peptides$Base.Sequence
-  names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
-  names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
-  peptides$Area <- peptides$Intensity
-  if (!is.na(sample)) {
-    peptides$sample <- sample
+  if(length(names(peptides)[grepl("Total.Ion.Current", names(peptides))]) >0){
+    peptides$sequence <- peptides$Base.Sequence
+    names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
+    names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
+    if (!is.na(sample)) {
+      peptides$sample <- sample
+    }
+    if (!is.na(filter)) {
+      peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+    }
+    peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
+    return(peptides) 
   }
-  if (!is.na(filter)) {
-    peptides <- peptides[grepl(filter, peptides$Accession) == F,]
-  }
-  peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
-  #last_check(peptides)
-  return(peptides)
+ else{
+   names(peptides)[names(peptides) == "Sequence"] <- "Full.Sequence"
+   peptides$sequence <- peptides$Base.Sequence
+   
+   Area_pattern <- paste0("Intensity_", ".*", sample_pattern, ".*")
+   Area_df <- peptides[,grepl(Area_pattern, names(peptides))]
+   Area_df[is.na(Area_df)] <- 0
+   Area_vec <- rowSums(as.data.frame(Area_df))
+   
+   peptides$Area <- Area_vec
+   if (!is.na(sample)) {
+     peptides$sample <- sample
+   }
+   if (!is.na(filter)) {
+     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+   }
+   return(peptides)
+ }
 }
 
-#import peptide file from MetaMorpheus (combined Sample - quant only (area))
-#takes tsv file in Metamorpheus  format and returns dataframe
-read_peptide_tsv_Metamorpheus_area_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
-  check_file(peptide_file, "Metamorpheus")
-  peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
-  filetype(peptide_import, "Combined", "Metamorpheus")
-  peptides <- peptide_import
-  names(peptides)[names(peptides) == "Sequence"] <- "Full.Sequence"
-  peptides$sequence <- peptides$Base.Sequence
-  
-  Area_pattern <- paste0("Intensity_", ".*", sample_pattern, ".*")
-  Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
-  Area_df[is.na(Area_df)] <- 0
-  Area_vec <- rowSums(as.data.frame(Area_df))
-  
-  peptides$Area <- Area_vec
-  if (!is.na(sample)) {
-    peptides$sample <- sample
-  }
-  if (!is.na(filter)) {
-    peptides <- peptides[grepl(filter, peptides$Accession) == F,]
-  }
-  #last_check(peptides)
-  return(peptides)
-}
 
 
 #create intensity dataframe
