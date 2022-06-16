@@ -82,23 +82,6 @@ output$intensity <- renderUI({
   radioButtons(inputId = "intensity_metric",
                label = "Intensity Metric",
                choices = choices)
-  # if("Area" %in% names(peptides1())&& input$file_type!= "MetaMorpheus"){
-  #   radioButtons(inputId = "intensity_metric",
-  #                label = "Intensity Metric",
-  #                choices = c("PSM","Area", "Intensity"),
-  #                selected = "PSM")
-  # }
-  # if("Area" %in% names(peptides1()) && input$file_type =="MetaMorpheus"){
-  #   radioButtons(inputId = "intensity_metric",
-  #                label = "Intensity Metric",
-  #                choices = c("Area"),
-  #                selected = "Area")
-  # }else{
-  #   radioButtons(inputId = "intensity_metric",
-  #                label = "Intensity Metric",
-  #                choices = c("PSM", "Intensity"),
-  #                selected = "PSM")
-  # }
   })
 
   intensity_vec1 <- reactive({
