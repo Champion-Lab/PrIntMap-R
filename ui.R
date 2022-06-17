@@ -58,7 +58,8 @@ ui <- navbarPage(title = "PrIntMap-R",
                                        radioButtons(inputId = "two_sample_comparison",
                                                     label = "Type of Comparison",
                                                     choices = c("Overlay", "Difference", "Fold Change"),
-                                                    selected = "Overlay")),
+                                                    selected = "Overlay")
+                                        ),
                                      withSpinner(
                                        plotlyOutput("plot_intensity2")
                                      )),
@@ -66,8 +67,7 @@ ui <- navbarPage(title = "PrIntMap-R",
                                      fluidPage(
                                        fluidRow(numericInput(inputId = "number_sample", label = "Choose number of samples", 
                                                              value = 3,min =2, step = 1)
-                                                )
-                                       ,
+                                                ),
                                        uiOutput("sample_numbers"),
                                      ),
                                      fluidRow(withSpinner(

@@ -274,6 +274,18 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
  }
 }
 
+#generates appropriate choices for intensity metric based on uploaded datafile
+#returns list of choices
+intensity_metric_choices <- function(df1){
+  choices <- list()
+  options <- c("PSM","Area", "Intensity")
+  for(i in options){
+    if(i %in% names(df1)){
+      choices <- append(choices, i)
+    }
+  }
+  return(choices)
+}
 
 
 #create intensity dataframe
@@ -283,9 +295,10 @@ create_intensity_vec <- function(peptide_df,
                                  protein,
                                  intensity = "PSM") {
   vector_list <- list()
-  for (i in 1:nrow(peptide_df)) {
+  if(intensity %in% names(peptide_df)){for (i in 1:nrow(peptide_df)) {
     peptide <- peptide_df$sequence[i]
     intensity_value <- peptide_df[[intensity]][i]
+    
     if (is.na(intensity_value)){
       intensity_value <- 0
     }
@@ -301,9 +314,13 @@ create_intensity_vec <- function(peptide_df,
     }
     vector_list[[i]] <- intensity_vector
   }
-  intensity_df <- as.data.frame(sapply(vector_list, unlist))
-  intensity_sum <- rowSums(intensity_df)
-  return(intensity_sum)
+    intensity_df <- as.data.frame(sapply(vector_list, unlist))
+    intensity_sum <- rowSums(intensity_df)
+    return(intensity_sum)}
+  else{
+    stop("Intensity metric not found in one or more of your files.")
+  }
+  
 }
 
 #combine intensity vector with amino acid dataframe for plotting

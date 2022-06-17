@@ -71,17 +71,11 @@ server <- function(input, output, session) {
     } 
   })
 
-output$intensity <- renderUI({
-  choices <- list()
-  options <- c("PSM","Area", "Intensity")
-  for(i in options){
-    if(i %in% names(peptides1())){
-      choices <- append(choices, i)
-    }
-  }
-  radioButtons(inputId = "intensity_metric",
-               label = "Intensity Metric",
-               choices = choices)
+  output$intensity <- renderUI({
+    choices <- intensity_metric_choices(peptides1())
+    radioButtons(inputId = "intensity_metric",
+                 label = "Intensity Metric",
+                 choices = choices)
   })
 
   intensity_vec1 <- reactive({
@@ -159,7 +153,7 @@ output$intensity <- renderUI({
     } 
   })
 
-  
+
   intensity_vec2 <- reactive({
     create_intensity_vec(peptides2(), protein_obj1()[1], intensity = input$intensity_metric)
   })
