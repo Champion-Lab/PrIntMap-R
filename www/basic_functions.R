@@ -83,6 +83,10 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   peptides <- peptide_import
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
   
+  if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+    stop("Sample Pattern not found in file.")
+  }
+  else {
   PSM_pattern <- paste0("X\\.Spec", ".*", sample_pattern, ".*")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
@@ -109,7 +113,7 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   }
   last_check(peptides)
   return(peptides)
-}
+}}
 
 #import peptide file from MSFragger (not combined, individual sample)
 #takes tsv file in fragpipe format and returns dataframe
@@ -146,7 +150,10 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   filetype(peptide_import, "Combined", "MSfragger")
   peptides <- peptide_import
   names(peptides)[names(peptides)== "Sequence" | names(peptides) == "Peptide.Sequence"] <- "sequence"
-
+  if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+    stop("Sample Pattern not found in file.")
+  }
+  else{
   PSM_pattern <- paste0(".*", sample_pattern, ".*", "Spectral\\.Count")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
@@ -174,19 +181,24 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
   return(peptides)
-}
+}}
 
 
 #import peptide file from MaxQuant (combined, not individual sample)
 #takes tsv file in MaxQuant peptides.txt format and returns dataframe
 read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+  
   check_file(peptide_file, "MaxQuant")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
   filetype(peptide_import, "Combined", "MaxQuant")
   names(peptide_import)[names(peptide_import) == "Intensity"] <- "summed_intensity"
   peptides <- peptide_import
   peptides$sequence <- peptides$Sequence
-
+  
+  if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+    stop("Sample Pattern not found in file.")
+  }
+  else{
   PSM_pattern <- paste0("Experiment", ".*", sample_pattern, ".*")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
@@ -214,7 +226,7 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
   }
   last_check(peptides)
   return(peptides)
-}
+}}
 
 
 #import peptide file from MetaMorpheus (individual Sample)
@@ -242,6 +254,10 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
   filetype(peptides, "Combined", "Metamorpheus")
   if(length(names(peptides)[grepl("Total.Ion.Current", names(peptides))]) >0){
+    if(!(any(grepl(sample_pattern, peptides$File.Name)))){
+      stop("Sample pattern not found in file.")
+    }
+    else{
     peptides$sequence <- peptides$Base.Sequence
     names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
     names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
@@ -253,8 +269,12 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
     }
     peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
     return(peptides) 
-  }
+  }}
  else{
+   if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+     stop("Sample Pattern not found in file.")
+   }
+   else{
    names(peptides)[names(peptides) == "Sequence"] <- "Full.Sequence"
    peptides$sequence <- peptides$Base.Sequence
    
@@ -271,10 +291,10 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
      peptides <- peptides[grepl(filter, peptides$Accession) == F,]
    }
    return(peptides)
- }
+ }}
 }
 
-#generates appropriate choices for intensity metric based on uploaded datafile
+#generates appropriate choices for intensity metric based on uploaded data file
 #returns list of choices
 intensity_metric_choices <- function(df1){
   choices <- list()

@@ -318,7 +318,7 @@ server <- function(input, output, session) {
         read_peptide_csv_PEAKS_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
       } else if (input$file_type == "PEAKS" && input[[paste0("combinedbool_mult",i)]] == "Combined"){
         read_peptide_csv_PEAKS_comb(input[[paste0("peptide_file_mult",i)]][["datapath"]], 
-                                    sample_pattern = input[[paste0("sample_regex", i)]])
+                                    sample_pattern = input[[paste0("sample_regex_mult", i)]])
       } else if (input$file_type == "MSFragger" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample"){
         read_peptide_tsv_MSFragger_bysamp(input[[paste0("peptide_file_mult",i)]][["datapath"]])
       } else if (input$file_type == "MSFragger" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
