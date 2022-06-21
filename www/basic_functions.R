@@ -14,7 +14,7 @@ import_db <- function(db_file) {
 #returns a protein object
 select_prot <- function(db, Accession) {
   protein_names <- names(db)
-  protein_index <- which(grepl(Accession, protein_names))
+  protein_index <- which(grepl(Accession, protein_names, ignore.case = T))
   if(length(protein_index) > 1) {
     stop("Multiple proteins found. Include additional characters in Accession number")
   } else if (length(protein_index) < 1) {
