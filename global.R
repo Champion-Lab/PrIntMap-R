@@ -10,6 +10,10 @@ library(shinycssloaders)
 library(scales)
 library(markdown)
 
+#reactlog
+# library(reactlog)
+# options(shiny.reactlog = TRUE)
+
 #source functions and libraries
 source("www/libraries.R")
 source("www/basic_functions.R")
@@ -21,3 +25,4 @@ source("www/unique_peptide_functions.R")
 
 #allow user to see error messages
 options(shiny.sanitize.errors = FALSE)
+

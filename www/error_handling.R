@@ -15,21 +15,7 @@ last_check <- function(peptides) {
 
 #check combined vs individual
 filetype <- function(df, type_file, search_engine){
-  if (search_engine == "MSfragger"){
-    if(!"Protein.Description" %in% names(df)){
-      stop("You have not uploaded an MSFragger File.")
-    }
-  }
-  if (search_engine == "MaxQuant"){
-    if(!("Last.amino.acid" %in% names(df))){
-      stop("You have not uploaded a MaxQuant File.")
-    }
-  }
-  
   if (search_engine == "Metamorpheus"){
-    if(!"Base.Sequence" %in% names(df)){
-      stop("You have not uploaded a Metamorpheus File.")
-    }
     if(length(names(df)[grepl("File.Name", names(df))]) >0){ 
       store <- list()
     for (i in df$File.Name){
@@ -64,17 +50,23 @@ check_file <- function(file_name, search_engine){
   if(search_engine == "MSfragger"){
     if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){ 
       stop("For the search software MSFragger, the expected file type is .tsv")}
-    
-  }
+    if( !"Protein Description" %in% strsplit(readLines(file_name, n=1)[1], split="\t")[[1]] ){
+      stop("You have not uploaded an MSFragger file.")}
+    }
   
   if(search_engine == "MaxQuant"){
     if(!"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){
       stop("For the search software MaxQuant, the expected file type is .tsv")}
+    if(!"Last amino acid" %in% strsplit(readLines(file_name, n=1)[1], split="\t")[[1]] ){
+      stop("You have not uploaded a MaxQuant File.")
+    }
   }
   if(search_engine == "Metamorpheus"){
     if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){ 
       stop("For the search software MetaMorpheus, the expected file type is .tsv")}
-
+    if(!"Base Sequence" %in% strsplit(readLines(file_name, n=1)[1], split="\t")[[1]] ){
+      stop("You have not uploaded a Metamorpheus File.")
+    }
   }
   if(search_engine == "PEAKS")  { 
     store <- strsplit(readLines(file_name, n=1)[1], split = "")[[1]]    

@@ -315,7 +315,8 @@ create_intensity_vec <- function(peptide_df,
                                  protein,
                                  intensity = "PSM") {
   vector_list <- list()
-  if(intensity %in% names(peptide_df)){for (i in 1:nrow(peptide_df)) {
+  if(intensity %in% names(peptide_df)){
+    for (i in 1:nrow(peptide_df)) {
     peptide <- peptide_df$sequence[i]
     intensity_value <- peptide_df[[intensity]][i]
     

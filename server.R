@@ -21,7 +21,7 @@ server <- function(input, output, session) {
     else{
       mychoices <- c("Individual Sample", "Combined")
     }
-    updateRadioButtons(session,"combinedbool1", choices = mychoices)
+    updateRadioButtons(session,"combinedbool1", choices = mychoices, selected = NULL)
     updateRadioButtons(session,"combinedbool2", choices = mychoices)
     
   })
@@ -32,7 +32,7 @@ server <- function(input, output, session) {
     )
     
     protein_attributes(select_prot(db = database(),
-                             Accession = toupper(input$AccessionID)))
+                             Accession = input$AccessionID))
   })
   
   display_origin_peps <- reactive(input$disp_origin)
@@ -58,7 +58,7 @@ server <- function(input, output, session) {
       read_peptide_tsv_MSFragger_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_MSFragger_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
-    } else if (input$file_type == "MaxQuant" && input$combinedbool1 == "Combined") {
+    } else if (input$file_type == "MaxQuant" ) {
       read_peptide_tsv_MaxQuant_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
     } else if (input$file_type == "Proteome Discover" && input$combinedbool1 == "Individual Sample") {
       #coming soon
@@ -72,10 +72,10 @@ server <- function(input, output, session) {
   })
 
   output$intensity <- renderUI({
-    choices <- intensity_metric_choices(peptides1())
+    mychoicesint <- intensity_metric_choices(peptides1())
     radioButtons(inputId = "intensity_metric",
                  label = "Intensity Metric",
-                 choices = choices)
+                 choices = mychoicesint)
   })
 
   intensity_vec1 <- reactive({
@@ -88,6 +88,7 @@ server <- function(input, output, session) {
   
 
   origin_vec1 <- reactive({
+    validate(need(input$intensity_metric, message = FALSE))
     create_peptide_origin_vec(peptides1(), protein_obj1()[1], intensity = input$intensity_metric)
   })
   
