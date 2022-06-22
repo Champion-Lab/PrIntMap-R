@@ -21,7 +21,7 @@ server <- function(input, output, session) {
     else{
       mychoices <- c("Individual Sample", "Combined")
     }
-    updateRadioButtons(session,"combinedbool1", choices = mychoices, selected = NULL)
+    updateRadioButtons(session,"combinedbool1", choices = mychoices)
     updateRadioButtons(session,"combinedbool2", choices = mychoices)
     
   })

@@ -9,10 +9,12 @@ library(tidyr)
 library(shinycssloaders)
 library(scales)
 library(markdown)
+library(data.table)
+library(readr)
 
 #reactlog
-# library(reactlog)
-# options(shiny.reactlog = TRUE)
+library(reactlog)
+options(shiny.reactlog = TRUE)
 
 #source functions and libraries
 source("www/libraries.R")

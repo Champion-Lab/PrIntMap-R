@@ -17,17 +17,12 @@ last_check <- function(peptides) {
 filetype <- function(df, type_file, search_engine){
   if (search_engine == "Metamorpheus"){
     if(length(names(df)[grepl("File.Name", names(df))]) >0){ 
-      store <- list()
-    for (i in df$File.Name){
-      if(!i %in% store){
-        store<- append(store, i)}
-    }
-    if(type_file == "Combined" && length(store)<= 1){
-      stop("You have uploaded an individual File.")
-    }
-    if(type_file == "Individual" && length(store) >1){
-      stop("You have uploaded a combined File.")
-    }}
+      if(uniqueN(df, by = "File.Name")>1 && type_file == "Individual"){
+        stop('You have uploaded a combined file.')
+      }
+      if(uniqueN(df, by = "File.Name") <= 1 && type_file == "Combined"){
+        stop('You have uploaded an individual file.')}
+     }
     else{
       if(type_file == "Individual"){
         stop("You have uploaded a combined file.")
@@ -47,30 +42,31 @@ filetype <- function(df, type_file, search_engine){
 
 #Function to check whether file type is correct
 check_file <- function(file_name, search_engine){
+  store1 <- strsplit(readLines(file_name, n=1)[1], split="")[[1]]
+  store2 <- strsplit(readLines(file_name, n=1)[1], split="\t")[[1]]
   if(search_engine == "MSfragger"){
-    if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){ 
+    if(!any(store1 == "\t")) { 
       stop("For the search software MSFragger, the expected file type is .tsv")}
-    if( !"Protein Description" %in% strsplit(readLines(file_name, n=1)[1], split="\t")[[1]] ){
+    if(!any(store2 == "Protein Description")){
       stop("You have not uploaded an MSFragger file.")}
     }
   
   if(search_engine == "MaxQuant"){
-    if(!"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){
+    if(!any(store1 == "\t")){
       stop("For the search software MaxQuant, the expected file type is .tsv")}
-    if(!"Last amino acid" %in% strsplit(readLines(file_name, n=1)[1], split="\t")[[1]] ){
+    if(!any(store2 == "Last amino acid")){
       stop("You have not uploaded a MaxQuant File.")
     }
   }
   if(search_engine == "Metamorpheus"){
-    if( !"\t" %in% strsplit(readLines(file_name, n=1)[1], split="")[[1]] ){ 
+    if(!any(store1 == "\t" )){ 
       stop("For the search software MetaMorpheus, the expected file type is .tsv")}
-    if(!"Base Sequence" %in% strsplit(readLines(file_name, n=1)[1], split="\t")[[1]] ){
+    if(!any(store2 == "Base Sequence")){
       stop("You have not uploaded a Metamorpheus File.")
     }
   }
   if(search_engine == "PEAKS")  { 
-    store <- strsplit(readLines(file_name, n=1)[1], split = "")[[1]]    
-  if(!"," %in% store[1:15]){
+  if(!any(store1[1:15] ==",")){
       stop("For the search software PEAKS, the expected file type is .csv")
     }
   }}
