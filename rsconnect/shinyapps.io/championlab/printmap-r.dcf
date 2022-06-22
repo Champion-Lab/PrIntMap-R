@@ -5,9 +5,9 @@ account: championlab
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6384359
-bundleId: 6017636
+bundleId: 6029247
 url: https://championlab.shinyapps.io/printmap-r/
-when: 1655479466.18303
-lastSyncTime: 1655479466.18303
+when: 1655845776.68085
+lastSyncTime: 1655845776.68085
 asMultiple: FALSE
 asStatic: FALSE

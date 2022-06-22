@@ -106,6 +106,9 @@ Calculates the percent coverage for the protein by simply dividing the number of
 ### Export
 Provides the plotable data as a `.csv` file that can be downloaded. Option of downloading just the initial sample, two samples, or multiple samples.
 
+## Local Version
+Sometimes if your peptide file has many samples or your database is very large, the webapp will time out. If you repeatedly experience this, try running the app locally on your computer. Follow instructions on the `README` file at the [github repo](https://github.com/Champion-Lab/PrIntMap-R/) for this project.  
+
 ------
 
 <img src="Champion_lab_v1.png" alt="drawing" width="200"/>  
