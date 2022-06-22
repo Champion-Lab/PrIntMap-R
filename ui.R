@@ -68,7 +68,7 @@ ui <- navbarPage(title = "PrIntMap-R",
                                        fluidRow(numericInput(inputId = "number_sample", label = "Choose number of samples", 
                                                              value = 3,min =2, step = 1)
                                                 ),
-                                       uiOutput("sample_numbers"),
+                                       uiOutput("sample_numbers")
                                      ),
                                      fluidRow(withSpinner(
                                        plotlyOutput("plot_intensity_mult")

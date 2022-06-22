@@ -300,11 +300,14 @@ server <- function(input, output, session) {
                                       label = "Type of input file",
                                       choices = c("Individual Sample", "Combined"),
                                       selected = "Individual Sample"))},
-        column(3, textInput(inputId = paste0("sample_regex_mult",i),
+        column(2, textInput(inputId = paste0("sample_regex_mult",i),
                   label = "For combined files, input sample name (RegEx)")),
-        column(3, textInput(inputId = paste0("sample_name_mult",i),
+        column(2, textInput(inputId = paste0("sample_name_mult",i),
                   label = "Input sample display name",
-                  value = paste("Sample", i))))
+                  value = paste("Sample", i))),
+        column(3, renderUI(paste0("Samples/Replicates Combined: ", peptidesmult_count()[[i-1]]))  
+          )
+        )
         )}
       )}
     else{
@@ -318,7 +321,7 @@ server <- function(input, output, session) {
     })
   })
   
-  peptidesmult <- reactive({
+  peptidesmult_list <- reactive({
     lapply(2:number(), function(i){
       validate(
         need(!is.null(input[[paste0("peptide_file_mult", i)]]), "no peptide file provided")
@@ -349,6 +352,11 @@ server <- function(input, output, session) {
     )}
   )
   
+  peptidesmult <- reactive({ map(peptidesmult_list(), 1)
+    })
+  peptidesmult_count <- reactive({ map(peptidesmult_list(), 2)
+    })
+
   intensity_vec_list <- reactive({
     lapply(2:number(), function(i){
       create_intensity_vec(peptidesmult()[[i-1]], protein_obj1()[1], intensity = input$intensity_metric)

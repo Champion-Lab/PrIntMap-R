@@ -10,6 +10,7 @@ library(shinycssloaders)
 library(markdown)
 library(data.table)
 library(readr)
+library(purrr)
 
 #reactlog
 library(reactlog)
