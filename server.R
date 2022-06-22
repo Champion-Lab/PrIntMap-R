@@ -17,13 +17,9 @@ server <- function(input, output, session) {
   observeEvent(input$file_type, {
     if(input$file_type == "MaxQuant"){
       mychoices <- c("Combined")
+      updateRadioButtons(session,"combinedbool1", choices = mychoices)
+      updateRadioButtons(session,"combinedbool2", choices = mychoices)
     }
-    else{
-      mychoices <- c("Individual Sample", "Combined")
-    }
-    updateRadioButtons(session,"combinedbool1", choices = mychoices)
-    updateRadioButtons(session,"combinedbool2", choices = mychoices)
-    
   })
   
   protein_obj1 <- reactive({

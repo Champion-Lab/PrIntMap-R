@@ -1,17 +1,17 @@
 #error handling function to check each db has valid sequence, area, intensity, psm
-last_check <- function(peptides) {
-  if (!is.numeric(peptides$Area)) {
-    stop("Insuffient Area Data")
-  }else if (!is.numeric(peptides$Intensity)){
-    stop("Insufficient Intensity Data")
-  }else if(!is.numeric(peptides$PSM)){
-    stop("Insuffiecient PSM Data")
-  }
-  for (i in peptides$sequence){
-    if(grepl("[^A-Z]",i)){
-      stop("Insufficient Sequence Data")}
-  }
-}
+# last_check <- function(peptides) {
+#   if (!is.numeric(peptides$Area)) {
+#     stop("Insuffient Area Data")
+#   }else if (!is.numeric(peptides$Intensity)){
+#     stop("Insufficient Intensity Data")
+#   }else if(!is.numeric(peptides$PSM)){
+#     stop("Insuffiecient PSM Data")
+#   }
+#   for (i in peptides$sequence){
+#     if(grepl("[^A-Z]",i)){
+#       stop("Insufficient Sequence Data")}
+#   }
+# }
 
 #check combined vs individual
 filetype <- function(df, type_file, search_engine){

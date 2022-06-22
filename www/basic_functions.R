@@ -66,7 +66,7 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  last_check(peptides)
+
   return(peptides)
 }
 
@@ -111,7 +111,7 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  last_check(peptides)
+
   return(peptides)
 }}
 
@@ -224,7 +224,6 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  last_check(peptides)
   return(peptides)
 }}
 
