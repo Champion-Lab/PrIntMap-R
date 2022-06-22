@@ -32,11 +32,11 @@ ui <- navbarPage(title = "PrIntMap-R",
                           ),
                           flowLayout(
                             textOutput("AccessionID"),
+                            textOutput("peptides1_sample_count"),
                             checkboxInput(inputId = "disp_origin",
                                           label = "Display Origin Peptides",
                                           value = F)
                           ),
-                          
                           tabsetPanel(
                             tabPanel("Basic",
                                      withSpinner(
@@ -58,8 +58,8 @@ ui <- navbarPage(title = "PrIntMap-R",
                                        radioButtons(inputId = "two_sample_comparison",
                                                     label = "Type of Comparison",
                                                     choices = c("Overlay", "Difference", "Fold Change"),
-                                                    selected = "Overlay")
-                                        ),
+                                                    selected = "Overlay"),
+                                       textOutput("peptides2_sample_count")),
                                      withSpinner(
                                        plotlyOutput("plot_intensity2")
                                      )),

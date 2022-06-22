@@ -17,9 +17,13 @@ server <- function(input, output, session) {
   observeEvent(input$file_type, {
     if(input$file_type == "MaxQuant"){
       mychoices <- c("Combined")
-      updateRadioButtons(session,"combinedbool1", choices = mychoices)
-      updateRadioButtons(session,"combinedbool2", choices = mychoices)
     }
+    else{
+      mychoices <- c("Individual Sample", "Combined")
+    }
+    updateRadioButtons(session,"combinedbool1", choices = mychoices)
+    updateRadioButtons(session,"combinedbool2", choices = mychoices)
+    
   })
   
   protein_obj1 <- reactive({
@@ -42,7 +46,7 @@ server <- function(input, output, session) {
     create_AA_df(protein_obj1()[1])
   })
   
-  peptides1 <- reactive({
+  peptides1_list <- reactive({
     validate(
       need(!is.null(input$peptide_file1), "no peptide file provided")
     )
@@ -66,6 +70,10 @@ server <- function(input, output, session) {
       read_peptide_tsv_Metamorpheus_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1)
     } 
   })
+  
+  peptides1 <- reactive(peptides1_list()[[1]])
+  
+  output$peptides1_sample_count <- renderText(paste0("Samples/Replicates Combined: ", peptides1_list()[[2]]))
 
   output$intensity <- renderUI({
     mychoicesint <- intensity_metric_choices(peptides1())
@@ -125,7 +133,7 @@ server <- function(input, output, session) {
     create_AA_df(protein_obj1()[1])
   })
 
-  peptides2 <- reactive({
+  peptides2_list <- reactive({
     validate(
       need(!is.null(input$peptide_file2), "no peptide file provided")
     )
@@ -149,6 +157,10 @@ server <- function(input, output, session) {
       read_peptide_tsv_Metamorpheus_comb(input$peptide_file2$datapath, sample_pattern = input$sample_regex2)
     } 
   })
+  
+  peptides2 <- reactive(peptides2_list()[[1]])
+  
+  output$peptides2_sample_count <- renderText(paste0("Samples/Replicates Combined: ", peptides2_list()[[2]]))
 
 
   intensity_vec2 <- reactive({

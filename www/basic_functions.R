@@ -66,8 +66,8 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-
-  return(peptides)
+  return_list <- list(peptides, 1)
+  return(return_list)
 }
 
 
@@ -91,6 +91,7 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
   PSM_vec <- rowSums(as.data.frame(PSM_df))
+  sample_count <- ncol(PSM_df)
   
   Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
   Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
@@ -112,7 +113,8 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
 
-  return(peptides)
+  return_list <- list(peptides, sample_count)
+  return(return_list)
 }}
 
 #import peptide file from MSFragger (not combined, individual sample)
@@ -136,7 +138,8 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  return(peptides)
+  return_list <- list(peptides, 1)
+  return(return_list)
 }
 
 
@@ -158,6 +161,7 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
   PSM_vec <- rowSums(as.data.frame(PSM_df))
+  sample_count <- ncol(PSM_df)
   
   Intensity_pattern <- paste0(".*", sample_pattern, ".*", "Intensity")
   Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
@@ -180,7 +184,8 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  return(peptides)
+  return_list <- list(peptides, sample_count)
+  return(return_list)
 }}
 
 
@@ -203,6 +208,7 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
   PSM_vec <- rowSums(as.data.frame(PSM_df))
+  sample_count <- ncol(PSM_df)
   
   Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
   Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
@@ -224,7 +230,8 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  return(peptides)
+  return_list <- list(peptides, sample_count)
+  return(return_list)
 }}
 
 
@@ -243,7 +250,8 @@ read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filt
   if (!is.na(filter)) {
     peptides <- peptides[grepl(filter, peptides$Accession) == F,]
   }
-  return(peptides)
+  return_list <- list(peptides, 1)
+  return(return_list)
 }
 
 #import peptide file from MetaMorpheus (combined Sample)
@@ -267,7 +275,9 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
       peptides <- peptides[grepl(filter, peptides$Accession) == F,]
     }
     peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
-    return(peptides) 
+    sample_count <- length(unique(peptides$File.Name))
+    return_list <- list(peptides, sample_count)
+    return(return_list) 
   }}
  else{
    if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
@@ -281,6 +291,7 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
    Area_df <- peptides[,grepl(Area_pattern, names(peptides))]
    Area_df[is.na(Area_df)] <- 0
    Area_vec <- rowSums(as.data.frame(Area_df))
+   sample_count <- ncol(Area_df)
    
    peptides$Area <- Area_vec
    if (!is.na(sample)) {
@@ -289,7 +300,8 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
    if (!is.na(filter)) {
      peptides <- peptides[grepl(filter, peptides$Accession) == F,]
    }
-   return(peptides)
+   return_list <- list(peptides, sample_count)
+   return(return_list)
  }}
 }
 
