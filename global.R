@@ -13,8 +13,8 @@ library(readr)
 library(purrr)
 
 #reactlog
-library(reactlog)
-options(shiny.reactlog = TRUE)
+# library(reactlog)
+# options(shiny.reactlog = TRUE)
 
 #source functions and libraries
 source("www/libraries.R")
