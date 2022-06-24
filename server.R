@@ -173,7 +173,7 @@ server <- function(input, output, session) {
   peptides2 <- reactive(peptides2_list()[[1]])
   
   output$peptides2_sample_count <- renderText({
-    if (input$combinedbool == "Combined") {
+    if (input$combinedbool2 == "Combined") {
       paste0("Samples/Replicates Combined: ", peptides2_list()[[2]])
     }
   })
@@ -324,8 +324,7 @@ server <- function(input, output, session) {
         column(2, textInput(inputId = paste0("sample_name_mult",i),
                   label = "Input sample display name",
                   value = paste("Sample", i))),
-        column(2, renderUI(paste0("Samples/Replicates Combined: ", peptidesmult_count()[[i-1]]))  
-          )
+        uiOutput(paste0("mult_sample_count", i))
         )
         )}
       )}
@@ -385,7 +384,8 @@ server <- function(input, output, session) {
   
   peptidesmult <- reactive({ map(peptidesmult_list(), 1)
     })
-  peptidesmult_count <- reactive({ map(peptidesmult_list(), 2)
+  peptidesmult_count <- eventReactive(
+    input$mult_go, { map(peptidesmult_list(), 2)
     })
 
   intensity_vec_list <- reactive({
@@ -436,18 +436,20 @@ server <- function(input, output, session) {
   AA_df_origin_comb_mult <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin_multb()))
   AA_df_intensity_comb_mult <- reactive(bind_rows(AA_df_intensity1b(), AA_df_intensity_multb()))
   
-  ggplot_intensity_mult <- reactive({
+  
+  
+  ggplot_intensity_mult <- eventReactive(input$mult_go, {
     if (input$disp_origin) {
       plot_origin_comb(AA_df_origin_comb_mult(), protein_obj1()[2],
                        intensity_label = input$intensity_metric)
     } else {
       plot_intensity_comb(AA_df_intensity_comb_mult(), protein_obj1()[2],
                           intensity_label = input$intensity_metric)
-      # }
     }
   })
   
-  output$plot_intensity_mult <- renderPlotly({
+  observeEvent(input$mult_go, { 
+    output$plot_intensity_mult <- renderPlotly({
     if(input$y_axis_scale == "log"){
       return_plot <- ggplot_intensity_mult() + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                                   breaks = base_breaks())
@@ -455,8 +457,15 @@ server <- function(input, output, session) {
     } else {
       create_plotly(ggplot_intensity_mult())
     }
-    
   }) 
+    lapply(2:number(), function(i){ 
+      output[[paste0("mult_sample_count",i)]] <- renderText({
+        paste0("Samples/Replicates Combined: ", peptidesmult_count()[[i-1]])
+      })
+      })
+
+  })
+ 
   
   annotation_regex <- reactive({
     if(input$annotation != "CUSTOM") {
