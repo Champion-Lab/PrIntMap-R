@@ -73,7 +73,11 @@ server <- function(input, output, session) {
   
   peptides1 <- reactive(peptides1_list()[[1]])
   
-  output$peptides1_sample_count <- renderText(paste0("Samples/Replicates Combined: ", peptides1_list()[[2]]))
+  output$peptides1_sample_count <- renderText({
+    if (input$combinedbool1 == "Combined") {
+      paste0("Samples/Replicates Combined: ", peptides1_list()[[2]])
+    }
+  })
 
   output$intensity <- renderUI({
     mychoicesint <- intensity_metric_choices(peptides1())
@@ -178,7 +182,11 @@ server <- function(input, output, session) {
   
   peptides2 <- reactive(peptides2_list()[[1]])
   
-  output$peptides2_sample_count <- renderText(paste0("Samples/Replicates Combined: ", peptides2_list()[[2]]))
+  output$peptides2_sample_count <- renderText({
+    if (input$combinedbool == "Combined") {
+      paste0("Samples/Replicates Combined: ", peptides2_list()[[2]])
+    }
+  })
 
 
   intensity_vec2 <- reactive({
