@@ -16,14 +16,11 @@ server <- function(input, output, session) {
   
   observeEvent(input$file_type, {
     if(input$file_type == "MaxQuant"){
-      mychoices <- c("Combined")
+      updateRadioButtons(session,"combinedbool1",
+                         selected = "Combined")
+      updateRadioButtons(session,"combinedbool2",
+                         selected = "Combined")
     }
-    else{
-      mychoices <- c("Individual Sample", "Combined")
-    }
-    updateRadioButtons(session,"combinedbool1", choices = mychoices)
-    updateRadioButtons(session,"combinedbool2", choices = mychoices)
-    
   })
   
   protein_obj1 <- reactive({
@@ -147,13 +144,6 @@ server <- function(input, output, session) {
       input$peptide_file2$datapath}
   })
   
-  observeEvent(input$duplicate_file2,{
-    if(input$duplicate_file2){ 
-      myselected <- input$combinedbool1
-      updateRadioButtons(session, "combinedbool2",choices = c("Individual Sample", "Combined"),
-                         selected = myselected)
-    }
-  })
   
   
   peptides2_list <- reactive({
