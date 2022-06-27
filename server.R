@@ -266,9 +266,11 @@ server <- function(input, output, session) {
  
   ggplot_intensity2 <- reactive({
     if (input$two_sample_comparison == "Difference") {
-      plot_difference_comb(wide_data_comb_plot(), protein_obj1()[2])
+      plot_difference_comb(wide_data_comb_plot(), protein_obj1()[2],
+                           intensity_label = input$intensity_metric)
     } else if (input$two_sample_comparison == "Fold Change"){
-      plot_foldchange_comb(wide_data_comb_plot(), protein_obj1()[2])
+      plot_foldchange_comb(wide_data_comb_plot(), protein_obj1()[2],
+                           intensity_label = input$intensity_metric)
     } else if (input$two_sample_comparison == "Overlay"){
       if (input$disp_origin) {
         plot_origin_comb(AA_df_origin_comb(), protein_obj1()[2],
@@ -436,16 +438,69 @@ server <- function(input, output, session) {
   AA_df_origin_comb_mult <- reactive(bind_rows(AA_df_origin1b(), AA_df_origin_multb()))
   AA_df_intensity_comb_mult <- reactive(bind_rows(AA_df_intensity1b(), AA_df_intensity_multb()))
   
+  AA_df_origin_comb_mult_compare <- reactive(cbind(AA_df_origin_comb_mult(),
+                                                   data.frame(intensity_original = rep(AA_df_origin1b()$intensity,
+                                                                                       number()))))
   
+  
+  difference_vec_mult <- reactive({
+    AA_df_origin_comb_mult_compare()$intensity - AA_df_origin_comb_mult_compare()$intensity_original
+  })
+  
+  fold_change_vec_nan_mult <- reactive({
+    vec <- AA_df_origin_comb_mult_compare()$intensity / AA_df_origin_comb_mult_compare()$intensity_original
+    return(vec)
+  })
+  
+  fold_change_label_vec_mult <- reactive({
+    return_vec <- rep("", length(fold_change_vec_nan_mult()))
+    for (i in 1:length(return_vec)) {
+      if(is.infinite(fold_change_vec_nan_mult()[i])) {
+        return_vec[i] <- "Infinite"
+      } else if (is.na(fold_change_vec_nan_mult()[i])) {
+        return_vec[i] <- "Normal"
+      } else if (fold_change_vec_nan_mult()[i] == 0){
+        return_vec[i] <- "Zero"
+      } else {
+        return_vec[i] <- "Normal"
+      }
+    }
+    return(return_vec)
+  })
+  
+  fold_change_vec_mult <- reactive({
+    vec <- fold_change_vec_nan_mult()
+    vec[is.infinite(vec)] <- max(vec[is.finite(vec)], na.rm = T)*1.25
+    vec[is.na(vec)] <- 0
+    return(vec)
+  })
+  
+  AA_df_origin_comb_mult_compare_plot <- reactive(cbind(AA_df_origin_comb_mult_compare(),
+                                        data.frame(difference = difference_vec_mult()),
+                                        data.frame(fold_change = fold_change_vec_mult()),
+                                        data.frame(fold_change_label = fold_change_label_vec_mult())))
+  
+  AA_df_origin_comb_mult_compare_plot_woSamp1 <- reactive({
+    AA_df_origin_comb_mult_compare_plot()[(nrow(AA_df_origin1b())+1):nrow(AA_df_origin_comb_mult_compare_plot()),]
+    })
   
   ggplot_intensity_mult <- eventReactive(input$mult_go, {
-    if (input$disp_origin) {
-      plot_origin_comb(AA_df_origin_comb_mult(), protein_obj1()[2],
-                       intensity_label = input$intensity_metric)
-    } else {
-      plot_intensity_comb(AA_df_intensity_comb_mult(), protein_obj1()[2],
-                          intensity_label = input$intensity_metric)
+    if (input$mult_sample_comparison == "Difference") {
+      plot_difference_comb_mult(AA_df_origin_comb_mult_compare_plot_woSamp1(), protein_obj1()[2],
+                                intensity_label = input$intensity_metric)
+    } else if (input$mult_sample_comparison == "Fold Change"){
+      plot_foldchange_comb_mult(AA_df_origin_comb_mult_compare_plot_woSamp1(), protein_obj1()[2],
+                                intensity_label = input$intensity_metric)
+    } else if (input$mult_sample_comparison == "Overlay"){
+      if (input$disp_origin) {
+        plot_origin_comb(AA_df_origin_comb_mult(), protein_obj1()[2],
+                         intensity_label = input$intensity_metric)
+      } else {
+        plot_intensity_comb(AA_df_intensity_comb_mult(), protein_obj1()[2],
+                            intensity_label = input$intensity_metric)
+      }
     }
+    
   })
   
   observeEvent(input$mult_go, { 

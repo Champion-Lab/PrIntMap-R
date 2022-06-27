@@ -59,12 +59,13 @@ plot_difference_comb <- function(AA_df, protein, intensity_label = "PSM",
                                  font_size = 15,
                                  alpha = 1, plot_type = "line") {
   plot <- ggplot(data = AA_df) +
+    geom_hline(yintercept = 0, color = "red", size = 0.1, linetype = "dashed") +
     geom_line(aes(x = AA_index, y = difference), alpha = alpha) +
     geom_point(aes(x = AA_index, y = difference, AA = AA),
                size = 0, alpha = 0) +
     theme_bw(base_size = font_size) +
     theme(panel.grid = element_blank(), legend.position = "none") +
-    labs(title = protein, x = "Amino Acid Number", y = "Difference in Intensity (S2 - S1)")+
+    labs(title = protein, x = "Amino Acid Number", y = paste0("Difference ", intensity_label, " (S2 - S1)"))+
     scale_x_continuous(breaks = pretty_breaks(10))
   
   return(plot)
@@ -74,6 +75,7 @@ plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
                                  font_size = 15,
                                  alpha = 1, plot_type = "line") {
   plot <- ggplot(data = AA_df) +
+    geom_hline(yintercept = 1, color = "red", size = 0.1, linetype = "dashed") +
     geom_line(aes(x = AA_index, y = fold_change), alpha = alpha) +
     geom_point(aes(x = AA_index, y = fold_change, AA = AA),
                size = 0, alpha = 0) +
@@ -90,7 +92,7 @@ plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
     theme_bw(base_size = font_size) +
     theme(panel.grid = element_blank(), legend.position = "right",
           legend.text = element_text(size = 8)) +
-    labs(title = protein, x = "Amino Acid Number", y = "Ratio Intensity (S2 / S1)") +
+    labs(title = protein, x = "Amino Acid Number", y = paste0("Ratio ", intensity_label, " (S2 / S1)")) +
     scale_alpha_manual(values = c(0.5, 0.75, 1))+
     scale_x_continuous(breaks = pretty_breaks(10))
   

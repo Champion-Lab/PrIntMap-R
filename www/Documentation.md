@@ -79,7 +79,13 @@ Allows for the comparison of two different samples. The second peptide informati
 
 
 ### Multiple Samples
-Plot multiple samples, will be displayed as an overlay plot. The peptide files can be entered the same as the original peptide file.
+Plot multiple samples, will be displayed as an overlay plot. The peptide files can be entered the same as the original peptide file. For the `Difference` and `Fold Change` options, each sample is compared to the first sample that is shown in the basic tab. In the `Overlay` option, all samples are shown including the first sample from the basic tab.  
+
+<img src="multiple_1.png" alt="drawing" width="700" id="borderimage"/>
+<br/><br/>
+<img src="multiple_2.png" alt="drawing" width="700" id="borderimage"/>
+<br/><br/>
+<img src="multiple_3.png" alt="drawing" width="700" id="borderimage"/>
 
 ### Annotation
 Allows for the overlay of specific sequence features on the intensity plots generated in `Basic`, `Two Samples`, and `Multiple Samples`. A preset annotation can be selected from the menu (e.g. potential N-glycosylation sites or trypsin cut sites) or a custom annotation can be typed using RegEx. For the `Two Sample` option, the plot displayed on the `Two Sample` tab will be used, so a fold change or difference plot can be annotated.  

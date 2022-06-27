@@ -74,15 +74,14 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                              label = "Type of Comparison",
                                                              choices = c("Overlay", "Difference", "Fold Change"),
                                                              selected = "Overlay")),
-                                                column(1, actionButton(inputId = "mult_go", label = "Go"))
+                                                column(1, actionButton(inputId = "mult_go", label = "Run/Update"))
                                                 ),
                                        uiOutput("sample_numbers"),
                                      ),
                                      
                                      fluidRow(withSpinner(
                                        plotlyOutput("plot_intensity_mult")
-                                     )),
-                                     
+                                     ))
                             ),
                             tabPanel("Annotation",
                                      flowLayout(
