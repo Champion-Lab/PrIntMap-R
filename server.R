@@ -449,7 +449,15 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$mult_go, { 
-    output$plot_intensity_mult <- renderPlotly({
+    lapply(2:number(), function(i){ 
+      output[[paste0("mult_sample_count",i)]] <- renderText({
+        paste0("Samples/Replicates Combined: ", peptidesmult_count()[[i-1]])
+      })
+      })
+
+  })
+  
+  output$plot_intensity_mult <- renderPlotly({
     if(input$y_axis_scale == "log"){
       return_plot <- ggplot_intensity_mult() + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                                   breaks = base_breaks())
@@ -458,13 +466,6 @@ server <- function(input, output, session) {
       create_plotly(ggplot_intensity_mult())
     }
   }) 
-    lapply(2:number(), function(i){ 
-      output[[paste0("mult_sample_count",i)]] <- renderText({
-        paste0("Samples/Replicates Combined: ", peptidesmult_count()[[i-1]])
-      })
-      })
-
-  })
  
   
   annotation_regex <- reactive({
