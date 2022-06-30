@@ -97,7 +97,7 @@ ui <- navbarPage(title = "PrIntMap-R",
                                        radioButtons(inputId = "disp_overlay_annot",
                                                      label = "Type of Plot",
                                                      choices = c("One Sample", "Two Samples", 
-                                                                 "Multiple Samples"),
+                                                                 "Multiple Samples", "Stacked Peptides"),
                                                     selected = "One Sample"),
                                        selectInput(inputId = "annot_color",
                                                    label = "Color",
@@ -106,7 +106,7 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                                "green",
                                                                "pink",
                                                                "purple"),
-                                                   selected = "green")
+                                                   selected = "red")
                                      ),
                                      withSpinner(
                                        plotlyOutput("annotation_plotly")

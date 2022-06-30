@@ -576,6 +576,10 @@ server <- function(input, output, session) {
       return_plot <- add_annotation_layer(plot = ggplot_intensity_mult(),
                                           annotation_df = annotation_df(),
                                           color = input$annot_color)
+    } else if (input$disp_overlay_annot == "Stacked Peptides") {
+      return_plot <- add_annotation_layer(plot = stacked_plot(),
+                                          annotation_df = annotation_df(),
+                                          color = input$annot_color)
     } else {
       return_plot <- add_annotation_layer(plot = annotation_plot(),
                            annotation_df = annotation_df(),
