@@ -15,6 +15,9 @@ filetype <- function(df, type_file, search_engine){
       }
     }
   }
+  if(type_file == "Combined" && search_engine == "Proteome Discover"){
+    stop("You have uploaded an Individual File.")
+  }
   store <- df[, grepl("Intensity", names(df))]
   if(type_file == "Individual" && search_engine != "Metamorpheus"){
     if(length(names(store)) >1){
@@ -30,6 +33,7 @@ filetype <- function(df, type_file, search_engine){
 check_file <- function(file_name, search_engine){
   store1 <- strsplit(readLines(file_name, n=1)[1], split="")[[1]]
   store2 <- strsplit(readLines(file_name, n=1)[1], split="\t")[[1]]
+  store3 <- strsplit(readLines(file_name, n=1)[1], split="\"\t\"")[[1]]
   if(search_engine == "MSfragger"){
     if(!any(store1 == "\t")) { 
       stop("For the search software MSFragger, the expected file type is .tsv")}
@@ -49,6 +53,13 @@ check_file <- function(file_name, search_engine){
       stop("For the search software MetaMorpheus, the expected file type is .tsv")}
     if(!any(store2 == "Base Sequence")){
       stop("You have not uploaded a Metamorpheus File.")
+    }
+  }
+  if(search_engine == "Proteome Discoverer"){
+    if(!any(store1 == "\t" )){ 
+      stop("For the search software Proteome Discoverer, the expected file type is .tsv")}
+    if(!any(store3 == "Qvality PEP")){
+      stop("You have not uploaded a Proteome Discoverer File.")
     }
   }
   if(search_engine == "PEAKS")  { 

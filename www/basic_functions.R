@@ -309,9 +309,8 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
 #import peptide file from Proteome Discover (individual Sample)
 #takes tsv file in PD  format and returns dataframe
 read_peptide_tsv_ProteomeDiscover_bysamp <- function(peptide_file, sample = NA, filter = NA) {
-  #check_file(peptide_file, "Metamorpheus")
+  check_file(peptide_file, "Proteome Discoverer")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
-  #filetype(peptides, "Individual", "Metamorpheus")
   peptides$sequence <- peptides$Sequence
   names(peptides)[grepl("X..PSMs", names(peptides))] <- "PSM"
   if (!is.na(sample)) {

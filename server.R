@@ -60,7 +60,7 @@ server <- function(input, output, session) {
     } else if (input$file_type == "Proteome Discover" && input$combinedbool1 == "Individual Sample") {
       read_peptide_tsv_ProteomeDiscover_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "Proteome Discover" && input$combinedbool1 == "Combined"){
-      #coming soon
+      read_peptide_tsv_ProteomeDiscover_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
       read_peptide_tsv_Metamorpheus_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
@@ -159,9 +159,9 @@ server <- function(input, output, session) {
       } else if (input$file_type == "MaxQuant" && input$combinedbool2 == "Combined") {
         read_peptide_tsv_MaxQuant_comb(peptide_file2(), sample_pattern = input$sample_regex2)
       } else if (input$file_type == "Proteome Discover" && input$combinedbool2 == "Individual Sample") {
-        read_peptide_tsv_ProteomeDiscover_bysamp(input$peptide_file2$datapath)
+        read_peptide_tsv_ProteomeDiscover_bysamp(peptide_file2())
       } else if (input$file_type == "Proteome Discover" && input$combinedbool2 == "Combined"){
-        #coming soon
+        # read_peptide_tsv_ProteomeDiscover_bysamp(input$peptide_file2$datapath)
       } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
         read_peptide_tsv_Metamorpheus_bysamp(peptide_file2())
       } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
@@ -374,7 +374,7 @@ server <- function(input, output, session) {
       } else if (input$file_type == "Proteome Discover" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample") {
         read_peptide_tsv_ProteomeDiscover_bysamp(peptide_file_mult()[[i-1]])
       } else if (input$file_type == "Proteome Discover" && input[[paste0("combinedbool_mult",i)]] == "Combined"){
-        #coming soon
+        read_peptide_tsv_ProteomeDiscover_bysamp(peptide_file_mult()[[i-1]])
       } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample"){
         read_peptide_tsv_Metamorpheus_bysamp(peptide_file_mult()[[i-1]])
       } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
