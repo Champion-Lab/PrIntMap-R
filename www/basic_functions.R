@@ -305,6 +305,27 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
  }}
 }
 
+
+#import peptide file from Proteome Discover (individual Sample)
+#takes tsv file in PD  format and returns dataframe
+read_peptide_tsv_ProteomeDiscover_bysamp <- function(peptide_file, sample = NA, filter = NA) {
+  #check_file(peptide_file, "Metamorpheus")
+  peptides <- read.csv(peptide_file, sep = "\t", header = T)
+  #filetype(peptides, "Individual", "Metamorpheus")
+  peptides$sequence <- peptides$Sequence
+  names(peptides)[grepl("X..PSMs", names(peptides))] <- "PSM"
+  if (!is.na(sample)) {
+    peptides$sample <- sample
+  }
+  if (!is.na(filter)) {
+    peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+  }
+  return_list <- list(peptides, 1)
+  return(return_list)
+}
+
+
+
 #generates appropriate choices for intensity metric based on uploaded data file
 #returns list of choices
 intensity_metric_choices <- function(df1){
