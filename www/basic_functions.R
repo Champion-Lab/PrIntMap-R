@@ -75,7 +75,7 @@ read_peptide_csv_PEAKS_bysamp <- function(peptide_file, sample = NA, filter = NA
 #takes tsv file in fragpipe format and returns dataframe
 #options to add a sample name, and a filter which removes any proteins that contain
 ###that string in the Accession column
-read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA, comb_method = "Sum") {
   check_file(peptide_file, "PEAKS")
   peptide_import <- read.csv(peptide_file)
   filetype(peptide_import, "Combined", "PEAKS")
@@ -102,6 +102,12 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
   Area_df[is.na(Area_df)] <- 0
   Area_vec <- rowSums(as.data.frame(Area_df))
+  
+  if (comb_method == "Average") {
+    PSM_vec <- PSM_vec / sample_count
+    Intensity_vec <- Intensity_vec / sample_count
+    Area_vec <- Area_vec / sample_count
+  }
   
   peptides$PSM <- PSM_vec
   peptides$Intensity <- Intensity_vec
@@ -147,7 +153,7 @@ read_peptide_tsv_MSFragger_bysamp <- function(peptide_file, sample = NA, filter 
 #takes tsv file in fragpipe format and returns dataframe
 #options to add a sample name, and a filter which removes any proteins that contain
 ###that string in the Accession column
-read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA, comb_method = "Sum") {
   check_file(peptide_file, "MSfragger")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
   filetype(peptide_import, "Combined", "MSfragger")
@@ -157,6 +163,8 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
     stop("Sample Pattern not found in file.")
   }
   else{
+    
+ 
   PSM_pattern <- paste0(".*", sample_pattern, ".*", "Spectral\\.Count")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
@@ -173,11 +181,20 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
   Area_vec <- rowSums(as.data.frame(Area_df))
   peptides$Area <- Area_vec
+  if (comb_method == "Average") {
+    Area_vec <- Area_vec / sample_count
+  }
+  }
+  
+  if (comb_method == "Average") {
+    PSM_vec <- PSM_vec / sample_count
+    Intensity_vec <- Intensity_vec / sample_count
   }
   peptides$PSM <- PSM_vec
   peptides$Intensity <- Intensity_vec
-
   peptides <- peptides[peptides$PSM > 0,]
+
+  
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
@@ -191,7 +208,7 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
 
 #import peptide file from MaxQuant (combined, not individual sample)
 #takes tsv file in MaxQuant peptides.txt format and returns dataframe
-read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA, comb_method = "Sum") {
   
   check_file(peptide_file, "MaxQuant")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
@@ -204,6 +221,8 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
     stop("Sample Pattern not found in file.")
   }
   else{
+    
+
   PSM_pattern <- paste0("Experiment", ".*", sample_pattern, ".*")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
@@ -220,10 +239,17 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
   Area_df[is.na(Area_df)] <- 0
   Area_vec <- rowSums(as.data.frame(Area_df))
   
+  if (comb_method == "Average") {
+    PSM_vec <- PSM_vec / sample_count
+    Intensity_vec <- Intensity_vec / sample_count
+    Area_vec <- Area_vec / sample_count
+  }
+  
   peptides$PSM <- PSM_vec
   peptides$Intensity <- Intensity_vec
   peptides$Area <- Area_vec
   peptides <- peptides[peptides$PSM > 0,]
+  
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
@@ -244,6 +270,7 @@ read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filt
   peptides$sequence <- peptides$Base.Sequence
   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
+  peptides <- peptides[peptides$PSM > 0,]
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
@@ -256,7 +283,7 @@ read_peptide_tsv_Metamorpheus_bysamp <- function(peptide_file, sample = NA, filt
 
 #import peptide file from MetaMorpheus (combined Sample)
 #takes tsv file in Metamorpheus  format and returns dataframe
-read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA) {
+read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA, comb_method = "Sum") {
   check_file(peptide_file, "Metamorpheus")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
   filetype(peptides, "Combined", "Metamorpheus")
@@ -268,6 +295,7 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
     peptides$sequence <- peptides$Base.Sequence
     names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
     names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
+    peptides <- peptides[peptides$PSM > 0,]
     if (!is.na(sample)) {
       peptides$sample <- sample
     }
@@ -275,8 +303,15 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
       peptides <- peptides[grepl(filter, peptides$Accession) == F,]
     }
     peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
+    
+    if (comb_method == "Average") {
+      peptide_summary_2 <- peptides %>% group_by(sequence) %>% summarise_if(is.numeric, mean, na.rm = TRUE)
+    } else {
+      peptide_summary <- peptides %>% group_by(sequence) %>% summarise_if(is.numeric, sum, na.rm = TRUE)
+    }
+    
     sample_count <- length(unique(peptides$File.Name))
-    return_list <- list(peptides, sample_count)
+    return_list <- list(peptide_summary, sample_count)
     return(return_list) 
   }}
  else{
@@ -292,6 +327,10 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
    Area_df[is.na(Area_df)] <- 0
    Area_vec <- rowSums(as.data.frame(Area_df))
    sample_count <- ncol(as.data.frame(Area_df))
+   
+   if (comb_method == "Average") {
+     Area_vec <- Area_vec / sample_count
+   }
    
    peptides$Area <- Area_vec
    if (!is.na(sample)) {
