@@ -38,8 +38,8 @@ For individual sample files, go into the directory for the sample of interest, a
 MaxQuant only has combined files as outputs. To find the peptide file, go into the `/combined/txt/` directory in the search output folder, and select the `peptides.txt` file.  
 * __MetaMorpheus:__  
 For individual files containing intensity (TIC) and PSMs, navigate to the `SearchTask/Individual File Results` directory, and then select the `Peptides.psmtsv` file corresponding to the sample of interest. There are two types of combined files: in the `SearchTask` directory the TIC (intensity) and PSM data is found within the `AllPeptides.psmtsv` file, while the LFQ (Area) data is found in the `AllQuantifiedPeptides.tsv` file. Note that for comparing two or more samples, both must be of the same file type when using Metamorpheus combined files.  
-* __Proteome Discover:__  
-  * *Coming Soon*  
+* __Proteome Discoverer:__   
+Export PeptideGroups as a `.txt` file which will be in tab delineated format.
 
 
 ### Other Options
