@@ -25,7 +25,7 @@ AMINOACIDSEQUENCEPEPTIDE...
 The program will ask for an `Accession ID`. This generally is the `UniqueIdentifier` in the example above, but it will actually match anything in the `UniqueIdentifier` or `EntryName` fields.
 
 ### Peptide Files
-The peptide files are exported from the database search. These are either `.csv`, `.tsv`, or `.txt` files. Currently supported formats are from [PEAKS](https://www.bioinfor.com/peaks-online/), [MSFragger](https://msfragger.nesvilab.org/), [MaxQuant](https://www.maxquant.org/), and [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus) with plans to include Proteome Discover soon.  
+The peptide files are exported from the database search. These are either `.csv`, `.tsv`, or `.txt` files. Currently supported formats are from [PEAKS](https://www.bioinfor.com/peaks-online/), [MSFragger](https://msfragger.nesvilab.org/), [MaxQuant](https://www.maxquant.org/), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus) and [Proteome Discoverer](https://www.thermofisher.com/us/en/home/industrial/mass-spectrometry/liquid-chromatography-mass-spectrometry-lc-ms/lc-ms-software/multi-omics-data-analysis/proteome-discoverer-software.html).
 
 * __PEAKS:__  
 <img src="PEAKS_download_screenshot.png" alt="drawing" width="700"id="borderimage"/>  
