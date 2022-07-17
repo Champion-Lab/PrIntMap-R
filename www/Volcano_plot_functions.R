@@ -1,5 +1,4 @@
-read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, sample = NA,
-                                           filter = NA, comb_method = "Sum", min_valid_sample = 2,
+read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
                                            intensity_metric = "PSM") {
   check_file(peptide_file, "PEAKS")
   peptide_import <- read.csv(peptide_file)
@@ -29,13 +28,11 @@ read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, sample 
     } else if (intensity_metric == "Area") {
       pattern <- paste0("Area", ".*", sample_pattern, ".*")
     }
-    
     dataframe <- peptide_import[,grepl(pattern, names(peptide_import))]
     if (intensity_metric == "PSM") {
       dataframe[dataframe == 0] <- NA
     }
     sample_count <- ncol(as.data.frame(dataframe))
-    
     for (i in 1:sample_count) {
       peptides[[paste0("Volcano_intensity_", i)]] <- NA
     }
@@ -123,7 +120,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
   if (BH_correction == T) {
     #update cuttoff value
   } else {
-    y_cutoff <- -log(0.05, base = 10)
+    y_cutoff <- -log(fdr, base = 10)
   }
   
   if (display_comp_vals == F) {

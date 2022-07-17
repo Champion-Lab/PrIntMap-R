@@ -68,6 +68,8 @@ server <- function(input, output, session) {
     } 
   })
   
+  
+  
   peptides1 <- reactive(peptides1_list()[[1]])
   
   output$peptides1_sample_count <- renderText({
@@ -717,6 +719,99 @@ server <- function(input, output, session) {
   output$unique_peps <- renderPlotly(create_plotly(unique_plot()))
   
   output$unique_text <- renderText("WARNING: This search can take up to 10 minutes depending on the length of protein")
+
+  peptides1_volcano <- reactive({
+    validate(
+      need(!is.null(input$peptide_file1), "no peptide file provided")
+    )
+    if (input$file_type == "PEAKS" && input$combinedbool1 == "Individual Sample") {
+      NULL
+    } else if (input$file_type == "PEAKS" && input$combinedbool1 == "Combined"){
+      read_peptide_csv_PEAKS_volcano(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, min_valid_sample = input$min_valid_sample,
+                                     intensity_metric = input$intensity_metric)
+    } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Individual Sample"){
+      NULL
+    } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
+      NULL
+    } else if (input$file_type == "MaxQuant" ) {
+      NULL
+    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Individual Sample") {
+      NULL
+    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Combined"){
+      NULL
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
+      NULL
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
+      NULL
+    }
+  })
+
+  
+  
+  peptides2_volcano <- reactive({
+    
+    if (input$file_type == "PEAKS" && input$combinedbool1 == "Individual Sample") {
+      NULL
+    } else if (input$file_type == "PEAKS" && input$combinedbool1 == "Combined"){
+      read_peptide_csv_PEAKS_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
+                                     intensity_metric = input$intensity_metric)
+    } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Individual Sample"){
+      NULL
+    } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
+      NULL
+    } else if (input$file_type == "MaxQuant" ) {
+      NULL
+    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Individual Sample") {
+      NULL
+    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Combined"){
+      NULL
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
+      NULL
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
+      NULL
+    } 
+  })
+  
+  combined_volcano <- reactive({
+    df <- combine_two_volcano_dfs(peptides1_volcano(), peptides2_volcano(),
+                                  min_valid_sample = input$min_valid_sample,
+                                  fdr = input$p_cutoff,
+                                  fold_change_cutoff_plot = input$l2fc_cutoff,
+                                  equal_variance_bool = input$equal_var,
+                                  remove_na = input$remove_na,
+                                  set_na = input$set_na_value)
+  })
+  
+  volcano_plot <- reactive({
+    create_volcano_plot(combined_volcano(),
+                        fdr = input$p_cutoff,
+                        fold_change_cutoff_plot = input$l2fc_cutoff,
+                        equal_variance_bool = input$equal_var,
+                        intensity_metric = input$intensity_metric,
+                        sample1 = input$sample_name1,
+                        sample2 = input$sample_name2,
+                        BH_correction = input$BH_correction,
+                        protein_of_interest = protein_obj1()[4],
+                        display_comp_vals = input$display_comp_vals)
+  })
+  
+  output$volcano <- renderPlotly({
+    if (!is.null(volcano_plot())) {
+      create_volcano_plotly(volcano_plot())
+    } else {
+      NULL
+    }
+  })
+  
+  output$volcano_text <- renderText({
+    if (is.null(volcano_plot())) {
+      "Not enough information for volcano plot"
+    } else {
+      NULL
+    }
+  })
+  
+  #output$test_table <- renderTable(peptides2_volcano())
   
 }
   

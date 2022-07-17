@@ -49,8 +49,8 @@ ui <- navbarPage(title = "PrIntMap-R",
                                        fileInput(inputId = "peptide_file2", label = "Upload 2nd .csv peptide output",
                                                  accept = c(".csv", ".tsv", ".txt", ".psmtsv")),
                                        checkboxInput( inputId = "duplicate_file2",
-                                                                label = "Use same peptide output file?", 
-                                                                value = F),
+                                                      label = "Use same peptide output file?", 
+                                                      value = F),
                                        radioButtons(inputId = "combinedbool2",
                                                     label = "Type of input file",
                                                     choices = c("Individual Sample", "Combined"),
@@ -65,9 +65,36 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                     choices = c("Overlay", "Difference", "Fold Change"),
                                                     selected = "Overlay"),
                                        textOutput("peptides2_sample_count")),
-                                     withSpinner(
-                                       plotlyOutput("plot_intensity2")
-                                     )),
+                                     tabsetPanel(
+                                       tabPanel("Traces",
+                                                withSpinner(
+                                                  plotlyOutput("plot_intensity2")
+                                                )),
+                                       tabPanel("Volcano Plot",
+                                                flowLayout(
+                                                  numericInput("p_cutoff", "p-value cutoff",
+                                                               value = 0.05, min = 0, max = 1, step = 0.05),
+                                                  numericInput("l2fc_cutoff", "log2 fold-change cutoff",
+                                                               value = 1, min = 0, max = 100),
+                                                  numericInput("min_valid_sample", "Miniumum number of observations per sample",
+                                                               value = 2, min = 1),
+                                                  checkboxInput("equal_var", "Equal Variance",
+                                                                value = T),
+                                                  checkboxInput("remove_na", "Remove NA values",
+                                                                value = T),
+                                                  numericInput("set_na_value", "Set NA values",
+                                                               value = 0),
+                                                  checkboxInput("BH_correction", "Apply BH correction",
+                                                                value = F),
+                                                  checkboxInput("display_comp_vals", "Display compromised values",
+                                                                value = T)
+                                                ),
+                                                withSpinner(
+                                                  plotlyOutput("volcano")
+                                                ),
+                                                textOutput("volcano_text"),
+                                                tableOutput("test_table"))),
+                                     ),
                             tabPanel("Multiple Samples",
                                      fluidPage(
                                        fluidRow(column(3, numericInput(inputId = "number_sample", label = "Choose number of samples", 

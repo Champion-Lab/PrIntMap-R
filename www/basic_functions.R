@@ -32,7 +32,8 @@ protein_attributes <- function(protein) {
   protein_name <- attr(protein, "name")
   protein_seq <- protein[1]
   protein_annot <- attr(protein, "Annot")
-  protein_attr <- c(protein_seq, protein_name, protein_annot)
+  protein_accession <- str_split(protein_name, "\\|")[[1]][2]
+  protein_attr <- c(protein_seq, protein_name, protein_annot, protein_accession)
   return(protein_attr)
 }
 
