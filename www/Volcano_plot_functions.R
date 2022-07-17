@@ -119,11 +119,16 @@ create_volcano_plot <- function(df, fdr = 0.05,
                                 fold_change_cutoff_plot = 1, fold_change_cutoff_sig = 5,
                                 equal_variance_bool = T, intensity_metric = "PSM",
                                 sample1 = "Sample_1", sample2 = "Sample_2", BH_correction = F,
-                                protein_of_interest = NULL) {
+                                protein_of_interest = NULL, display_comp_vals = T) {
   if (BH_correction == T) {
     #update cuttoff value
   } else {
     y_cutoff <- -log(0.05, base = 10)
+  }
+  
+  if (display_comp_vals == F) {
+    df <- df[df$fold_change_category != "Compromised.x",]
+    df <- df[df$fold_change_category != "Compromised.y",]
   }
   
   df$color <- "Not_Significant"
@@ -149,7 +154,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
   
   infinite_x <- maxx - (0.1*maxx)
   infinite_y <- maxy - (0.2*maxy)
-  neg_infinite_x <- minx + (0.1*minx)
+  neg_infinite_x <- minx + (0.1*abs(minx))
   
   
   
@@ -166,20 +171,23 @@ create_volcano_plot <- function(df, fdr = 0.05,
                               sequence = sequence,
                               protein = protein,
                               colour = color,
-                              p_val = p_val)) +
+                              p_val = p_val,
+                              fold_change_category = fold_change_category)) +
     geom_jitter(data = infinite, 
                 aes(x = infinite_x, y = infinite_y,
                     PEPTIDE = PEPTIDE,
                     sequence = sequence,
                     protein = protein,
-                    colour = color),
+                    colour = color,
+                    fold_change_category = fold_change_category),
                 width = maxx / (0.5*maxx), height = maxy / (0.5*maxy)) +
     geom_jitter(data = neg_infinite, 
                 aes(x = neg_infinite_x, y = infinite_y,
                     PEPTIDE = PEPTIDE,
                     sequence = sequence,
                     protein = protein,
-                    colour = color),
+                    colour = color,
+                    fold_change_category = fold_change_category),
                 width = abs(minx / (0.5*minx)), height = maxy / (0.5*maxy)) +
     theme_bw(base_size = 10) +
     theme(panel.grid = element_blank(), legend.position = "none") +
