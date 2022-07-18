@@ -116,17 +116,38 @@ create_volcano_plot <- function(df, fdr = 0.05,
                                 fold_change_cutoff_plot = 1, fold_change_cutoff_sig = 5,
                                 equal_variance_bool = T, intensity_metric = "PSM",
                                 sample1 = "Sample_1", sample2 = "Sample_2", BH_correction = F,
-                                protein_of_interest = NULL, display_comp_vals = T) {
-  if (BH_correction == T) {
-    #update cuttoff value
-  } else {
-    y_cutoff <- -log(fdr, base = 10)
-  }
+                                protein_of_interest = NULL, display_comp_vals = T, display_infinites = T) {
+  
+  minx <- min(df$l2fc_xy, na.rm = T)
+  maxx <- max(df$l2fc_xy, na.rm = T)
+  maxy <- max(df$neg10logp, na.rm = T)
+  rangex <- maxx - minx
   
   if (display_comp_vals == F) {
     df <- df[df$fold_change_category != "Compromised.x",]
     df <- df[df$fold_change_category != "Compromised.y",]
   }
+  
+  if (BH_correction == T) {
+    df <- df[order(df$p_val),]
+    BH_df <- df[!is.na(df$p_val),]
+    df$critical_val_BH <- NA
+    for (i in 1:nrow(BH_df)) {
+      df$critical_val_BH[i] <- (i / nrow(BH_df)) * fdr
+    }
+    df$BH_cutoff <- df$critical - df$p_val
+    sigdf <- df[df$BH_cutoff > 0,]
+    if (nrow(sigdf) == 0) {
+      y_cutoff <- maxy * 1.1
+    } else {
+      new_p_val <- max(sigdf$p_val, na.rm = T)
+      y_cutoff <- -log(new_p_val, base = 10)
+    }
+  } else {
+    y_cutoff <- -log(fdr, base = 10)
+  }
+  
+ 
   
   df$color <- "Not_Significant"
   df$color[df$l2fc_xy > fold_change_cutoff_plot & df$neg10logp > y_cutoff] <- "Significant"
@@ -149,6 +170,10 @@ create_volcano_plot <- function(df, fdr = 0.05,
   maxy <- max(df$neg10logp, na.rm = T)
   rangex <- maxx - minx
   
+  pos_range <- maxx - fold_change_cutoff_plot
+  neg_range <- minx + fold_change_cutoff_plot
+  y_range <- maxy - y_cutoff
+  
   infinite_x <- maxx - (0.1*maxx)
   infinite_y <- maxy - (0.2*maxy)
   neg_infinite_x <- minx + (0.1*abs(minx))
@@ -158,6 +183,11 @@ create_volcano_plot <- function(df, fdr = 0.05,
   infinite <- df[df$fold_change_category == "Infinite",]
   neg_infinite <- df[df$fold_change_category == "Negative_Infinite",]
   
+  if (is.null(protein_of_interest)) {
+    plot_title <- paste0("Peptide Volcano Plot: ", intensity_metric)
+  } else {
+    plot_title <- paste0("Peptide Volcano Plot: ", intensity_metric, " (", protein_of_interest, ")")
+  }
   
   plot <- ggplot() +
     geom_vline(xintercept = fold_change_cutoff_plot, linetype = 2) +
@@ -170,29 +200,35 @@ create_volcano_plot <- function(df, fdr = 0.05,
                               colour = color,
                               p_val = p_val,
                               fold_change_category = fold_change_category)) +
-    geom_jitter(data = infinite, 
-                aes(x = infinite_x, y = infinite_y,
-                    PEPTIDE = PEPTIDE,
-                    sequence = sequence,
-                    protein = protein,
-                    colour = color,
-                    fold_change_category = fold_change_category),
-                width = maxx / (0.5*maxx), height = maxy / (0.5*maxy)) +
-    geom_jitter(data = neg_infinite, 
-                aes(x = neg_infinite_x, y = infinite_y,
-                    PEPTIDE = PEPTIDE,
-                    sequence = sequence,
-                    protein = protein,
-                    colour = color,
-                    fold_change_category = fold_change_category),
-                width = abs(minx / (0.5*minx)), height = maxy / (0.5*maxy)) +
+    
     theme_bw(base_size = 10) +
     theme(panel.grid = element_blank(), legend.position = "none") +
     labs(x = (paste("Log2 fold-change: (", sample2, "/", sample1, ")",sep="")),
-         y = "-Log10 (p-value)") +
+         y = "-Log10 (p-value)",
+         title = plot_title) +
     scale_x_continuous(breaks = round(min(df$l2fc_xy, na.rm = T)):round(max(df$l2fc_xy, na.rm = T))) +
     scale_y_continuous(breaks = 0:round(max(df$neg10logp, na.rm = T)))+
     scale_color_manual(values = color_list)
+  
+  if (display_infinites) {
+    plot <- plot + geom_jitter(data = infinite, 
+                               aes(x = infinite_x, y = infinite_y,
+                                   PEPTIDE = PEPTIDE,
+                                   sequence = sequence,
+                                   protein = protein,
+                                   colour = color,
+                                   fold_change_category = fold_change_category),
+                               width = pos_range / (0.5*pos_range), height = y_range / (0.5*y_range)) +
+      geom_jitter(data = neg_infinite, 
+                  aes(x = neg_infinite_x, y = infinite_y,
+                      PEPTIDE = PEPTIDE,
+                      sequence = sequence,
+                      protein = protein,
+                      colour = color,
+                      fold_change_category = fold_change_category),
+                  width = abs(neg_range / (0.5*neg_range)), height = y_range / (0.5*y_range))
+  }
+  
   return(plot)
 }
 

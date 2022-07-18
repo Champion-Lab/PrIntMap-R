@@ -32,6 +32,7 @@ server <- function(input, output, session) {
                              Accession = input$AccessionID))
   })
   
+  
   display_origin_peps <- reactive(input$disp_origin)
   
   output$AccessionID <- renderText({
@@ -725,22 +726,22 @@ server <- function(input, output, session) {
       need(!is.null(input$peptide_file1), "no peptide file provided")
     )
     if (input$file_type == "PEAKS" && input$combinedbool1 == "Individual Sample") {
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "PEAKS" && input$combinedbool1 == "Combined"){
       read_peptide_csv_PEAKS_volcano(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, min_valid_sample = input$min_valid_sample,
                                      intensity_metric = input$intensity_metric)
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Individual Sample"){
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
       NULL
     } else if (input$file_type == "MaxQuant" ) {
       NULL
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Individual Sample") {
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Combined"){
       NULL
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
       NULL
     }
@@ -751,22 +752,22 @@ server <- function(input, output, session) {
   peptides2_volcano <- reactive({
     
     if (input$file_type == "PEAKS" && input$combinedbool1 == "Individual Sample") {
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "PEAKS" && input$combinedbool1 == "Combined"){
       read_peptide_csv_PEAKS_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
                                      intensity_metric = input$intensity_metric)
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Individual Sample"){
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
       NULL
     } else if (input$file_type == "MaxQuant" ) {
       NULL
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Individual Sample") {
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Combined"){
       NULL
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
-      NULL
+      stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
       NULL
     } 
@@ -791,8 +792,10 @@ server <- function(input, output, session) {
                         sample1 = input$sample_name1,
                         sample2 = input$sample_name2,
                         BH_correction = input$BH_correction,
-                        protein_of_interest = protein_obj1()[4],
-                        display_comp_vals = input$display_comp_vals)
+                        protein_of_interest = select_prot_volcano(db = database(),
+                                                                  Accession = input$AccessionID),
+                        display_comp_vals = input$display_comp_vals,
+                        display_infinites = input$display_infinite_vals)
   })
   
   output$volcano <- renderPlotly({
@@ -810,9 +813,7 @@ server <- function(input, output, session) {
       NULL
     }
   })
-  
-  #output$test_table <- renderTable(peptides2_volcano())
-  
+
 }
   
  

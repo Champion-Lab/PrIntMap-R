@@ -25,6 +25,24 @@ select_prot <- function(db, Accession) {
   return(protein)
 }
 
+
+#choose a protein from a database based on an accession number
+#returns a protein object for volcano plot
+select_prot_volcano <- function(db, Accession) {
+  protein_names <- names(db)
+  protein_index <- which(grepl(Accession, protein_names, ignore.case = T))
+  if(length(protein_index) > 1) {
+    return(NULL)
+  } else if (length(protein_index) < 1) {
+    return(NULL)
+  } else {
+    protein <- db[[protein_index[1]]]
+    protein_name <- attr(protein, "name")
+    protein_accession <- str_split(protein_name, "\\|")[[1]][2]
+  }
+  return(protein_accession)
+}
+
 #generate protein attributes
 #takes protein object from database
 #returns vector (sequence, name, description)

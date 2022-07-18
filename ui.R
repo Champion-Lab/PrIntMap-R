@@ -87,13 +87,14 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                   checkboxInput("BH_correction", "Apply BH correction",
                                                                 value = F),
                                                   checkboxInput("display_comp_vals", "Display compromised values",
+                                                                value = T),
+                                                  checkboxInput("display_infinite_vals", "Display Infinite Fold Changes",
                                                                 value = T)
                                                 ),
                                                 withSpinner(
-                                                  plotlyOutput("volcano")
+                                                  plotlyOutput("volcano", height = 600)
                                                 ),
-                                                textOutput("volcano_text"),
-                                                tableOutput("test_table"))),
+                                                textOutput("volcano_text"))),
                                      ),
                             tabPanel("Multiple Samples",
                                      fluidPage(
