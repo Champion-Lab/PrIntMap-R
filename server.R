@@ -751,24 +751,24 @@ server <- function(input, output, session) {
   
   peptides2_volcano <- reactive({
     
-    if (input$file_type == "PEAKS" && input$combinedbool1 == "Individual Sample") {
+    if (input$file_type == "PEAKS" && input$combinedbool2 == "Individual Sample") {
       stop("Volcano plots can only be created with combined files for variance calculation")
-    } else if (input$file_type == "PEAKS" && input$combinedbool1 == "Combined"){
+    } else if (input$file_type == "PEAKS" && input$combinedbool2 == "Combined"){
       read_peptide_csv_PEAKS_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
                                      intensity_metric = input$intensity_metric)
-    } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Individual Sample"){
+    } else if (input$file_type == "MSFragger" && input$combinedbool2 == "Individual Sample"){
       stop("Volcano plots can only be created with combined files for variance calculation")
-    } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
+    } else if (input$file_type == "MSFragger" && input$combinedbool2 == "Combined") {
       NULL
     } else if (input$file_type == "MaxQuant" ) {
       NULL
-    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Individual Sample") {
+    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool2 == "Individual Sample") {
       stop("Volcano plots can only be created with combined files for variance calculation")
-    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Combined"){
+    } else if (input$file_type == "Proteome Discoverer" && input$combinedbool2 == "Combined"){
       NULL
-    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
       stop("Volcano plots can only be created with combined files for variance calculation")
-    } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
+    } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
       NULL
     } 
   })
