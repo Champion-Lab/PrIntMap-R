@@ -1,5 +1,64 @@
+read_peptide_tsv_MSfragger_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
+                                           intensity_metric = "PSM") {
+
+  check_file(peptide_file, "MSfragger")
+  peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
+  filetype(peptide_import, "Combined", "MSfragger")
+  peptides <- peptide_import
+  names(peptides)[names(peptides)== "Sequence" | names(peptides) == "Peptide.Sequence"] <- "sequence"
+  
+
+
+  peptides$PEPTIDE <- peptides$sequence
+  peptides$protein <- NA
+
+  for(i in 1:nrow(peptides)) {
+    if (peptides$Mapped.Proteins[i] != "") {
+      protein <- str_split(peptides$Mapped.Proteins[i], ",")[[1]]
+      protein_vec <- rep("", length(protein))
+      for (j in 1:length(protein)) {
+        protein_vec[j] <- str_split(protein[j], "\\|")[[1]][2]
+      }
+      proteins_additional <- paste(protein_vec, sep = ";", collapse = ";")
+      peptides$protein[i] <- paste0(peptides$Protein.ID[i], ";", proteins_additional)
+    } else {
+      peptides$protein[i] <- peptides$Protein.ID[i]
+    }
+    
+  }
+  
+  if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+    stop("Sample Pattern not found in file.")
+  } else {
+    if (intensity_metric == "PSM") {
+      pattern <- paste0(".*", sample_pattern, ".*", "Spectral\\.Count")
+    } else if (intensity_metric == "Intensity") {
+      pattern <- paste0(".*", sample_pattern, ".*", "Intensity")
+    } else if (intensity_metric == "Area") {
+      pattern <- paste0(".*", sample_pattern, ".*", "MaxLFQ.Intensity")
+    }
+    
+    
+    dataframe <- peptide_import[,grepl(pattern, names(peptide_import))]
+    dataframe[dataframe == 0] <- NA
+    sample_count <- ncol(as.data.frame(dataframe))
+    
+    for (i in 1:sample_count) {
+      peptides[[paste0("Volcano_intensity_", i)]] <- NA
+    }
+    for (i in 1:nrow(peptides)) {
+      for (j in 1:sample_count) {
+        peptides[[paste0("Volcano_intensity_", j)]][i] <- dataframe[i,j]
+      }
+    }
+    return(peptides)
+  }
+}
+
 read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
                                            intensity_metric = "PSM") {
+  
+  
   check_file(peptide_file, "PEAKS")
   peptide_import <- read.csv(peptide_file)
   filetype(peptide_import, "Combined", "PEAKS")
