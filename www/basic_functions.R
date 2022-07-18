@@ -324,7 +324,7 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
     peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
     
     if (comb_method == "Average") {
-      peptide_summary_2 <- peptides %>% group_by(sequence) %>% summarise_if(is.numeric, mean, na.rm = TRUE)
+      peptide_summary <- peptides %>% group_by(sequence) %>% summarise_if(is.numeric, mean, na.rm = TRUE)
     } else {
       peptide_summary <- peptides %>% group_by(sequence) %>% summarise_if(is.numeric, sum, na.rm = TRUE)
     }
