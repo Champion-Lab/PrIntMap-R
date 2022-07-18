@@ -1,6 +1,7 @@
 
-
-create_PTM_vec_PEAKS <- function(peptide_df, protein,){
+#function to pull out PTMs from PEAKS files
+#returns vector containing all PTMS the same length as number of amino acids
+create_PTM_vec_PEAKS <- function(peptide_df, protein){
   for(i in 1:nrow(peptide_df)){
     mod_peptide<-peptide_df$Peptide[i]
     peptide <- peptide_df$sequence[i]
@@ -39,9 +40,20 @@ create_PTM_vec_PEAKS <- function(peptide_df, protein,){
   PTM_vec <- apply(PTM_df, 1, paste, collapse="")
   return(PTM_vec)
   }
-          
-#remove unwanted PTMs
-refine_PTM_vec <- function(AA_df, PTM_pattern_vec, PTM_names_vec){
+        
+
+#combine PTM vector with AA_df
+create_PTM_df <- function(AA_df,
+                          PTM_vec) {
+  AA_df$PTMs <- PTM_vec
+  return(AA_df)
+}
+
+
+#function to refine PTM df based on user input
+#acepts AA_df and returns df with count of each PTM per AA and column containing 
+#regex PTM pattern
+refine_PTM_df <- function(AA_df, PTM_pattern_vec, PTM_names_vec){
   for(i in 1:length(PTM_pattern_vec)){
     for(j in 1:nrows(AA_df)){
       store_vec <- vector()
@@ -51,9 +63,9 @@ refine_PTM_vec <- function(AA_df, PTM_pattern_vec, PTM_names_vec){
       matches_count <- nrows(matches_df)
       count_vec <- c(count_vec, matches_count)
       if(matches_count >0){
-        store_vec <- c(store_vec, PTM_pattern_vec[[i]])
+        store_vec <- c(store_vec, TRUE)
       }else{
-        store_vec <- c(store_vec, "")
+        store_vec <- c(store_vec, FALSE)
       }
     }
     AA_df[[paste0(PTM_names_vec[[i]], " Count")]] <- count_vec
@@ -62,21 +74,10 @@ refine_PTM_vec <- function(AA_df, PTM_pattern_vec, PTM_names_vec){
   return(AA_df)
 }
 
-#combine PTM vector with AA_df
-create_PTM_df <- function(AA_df,
-                           PTM_vec) {
-  AA_df$PTMs <- PTM_vec
-  return(AA_df)
-}
 
 #add PTM layer to plots
 add_PTM_layer <- function(plot,
-                          PTM_df, PTM_value,
-                          color = "yellow") {
+                          PTM_df){
   
-  plot <- plot +
-    
-    geom_vline(xintercept = annotation_df$AA_index, color = color,
-               size = 0.5)
   return(plot)
 }
