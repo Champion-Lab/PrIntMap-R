@@ -80,7 +80,7 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
   combine_df$fold_change_category[(combine_df$valid.y == T & combine_df$valid.x == F & combine_df$count.x > 0)] <- "Compromised.y"
   
   for (i in 1:nrow(combine_df)) {
-    if (combine_df$fold_change_category == "Normal" || combine_df$fold_change_category == "Compromixed.x" || combine_df$fold_change_category == "Compromised.y") {
+    if (combine_df$fold_change_category[i] == "Normal" || combine_df$fold_change_category[i] == "Compromixed.x" || combine_df$fold_change_category[i] == "Compromised.y") {
       if (remove_na == T) {
         combine_df$avg.x[i] <- mean(as.numeric(volcano_df1[i,]), na.rm = T)
         combine_df$avg.y[i] <- mean(as.numeric(volcano_df2[i,]), na.rm = T)
@@ -137,6 +137,8 @@ create_volcano_plot <- function(df, fdr = 0.05,
     }
     df$BH_cutoff <- df$critical - df$p_val
     sigdf <- df[df$BH_cutoff > 0,]
+    sigdf <- sigdf[!is.na(sigdf$BH_cutoff),]
+    print(nrow(sigdf))
     if (nrow(sigdf) == 0) {
       y_cutoff <- maxy * 1.1
     } else {
@@ -148,7 +150,6 @@ create_volcano_plot <- function(df, fdr = 0.05,
   }
   
  
-  
   df$color <- "Not_Significant"
   df$color[df$l2fc_xy > fold_change_cutoff_plot & df$neg10logp > y_cutoff] <- "Significant"
   df$color[df$l2fc_xy < -fold_change_cutoff_plot & df$neg10logp > y_cutoff] <- "Significant"
@@ -165,6 +166,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
     color_list <- c("grey65", "green", "black")
   }
   
+  
   minx <- min(df$l2fc_xy, na.rm = T)
   maxx <- max(df$l2fc_xy, na.rm = T)
   maxy <- max(df$neg10logp, na.rm = T)
@@ -179,9 +181,13 @@ create_volcano_plot <- function(df, fdr = 0.05,
   neg_infinite_x <- minx + (0.1*abs(minx))
   
   
-  
   infinite <- df[df$fold_change_category == "Infinite",]
   neg_infinite <- df[df$fold_change_category == "Negative_Infinite",]
+  
+  infinite$x <- runif(nrow(infinite), (fold_change_cutoff_plot + (pos_range/2)*1.2), maxx)
+  infinite$y <- runif(nrow(infinite), (y_cutoff + (y_range/2)*1.4), maxy)
+  neg_infinite$x <- -1 * (runif(nrow(neg_infinite), (fold_change_cutoff_plot + (abs(neg_range)/2)*1.2), abs(minx)))
+  neg_infinite$y <- runif(nrow(neg_infinite), (y_cutoff + (y_range/2)*1.4), maxy)
   
   if (is.null(protein_of_interest)) {
     plot_title <- paste0("Peptide Volcano Plot: ", intensity_metric)
@@ -211,22 +217,20 @@ create_volcano_plot <- function(df, fdr = 0.05,
     scale_color_manual(values = color_list)
   
   if (display_infinites) {
-    plot <- plot + geom_jitter(data = infinite, 
-                               aes(x = infinite_x, y = infinite_y,
+    plot <- plot + geom_point(data = infinite, 
+                               aes(x = x, y = y,
                                    PEPTIDE = PEPTIDE,
                                    sequence = sequence,
                                    protein = protein,
                                    colour = color,
-                                   fold_change_category = fold_change_category),
-                               width = pos_range / (0.5*pos_range), height = y_range / (0.5*y_range)) +
-      geom_jitter(data = neg_infinite, 
-                  aes(x = neg_infinite_x, y = infinite_y,
+                                   fold_change_category = fold_change_category)) +
+      geom_point(data = neg_infinite, 
+                  aes(x = x, y = y,
                       PEPTIDE = PEPTIDE,
                       sequence = sequence,
                       protein = protein,
                       colour = color,
-                      fold_change_category = fold_change_category),
-                  width = abs(neg_range / (0.5*neg_range)), height = y_range / (0.5*y_range))
+                      fold_change_category = fold_change_category))
   }
   
   return(plot)
