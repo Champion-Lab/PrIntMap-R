@@ -26,6 +26,7 @@ source("www/error_handling.R")
 source("www/unique_peptide_functions.R")
 source("www/mult_sample_functions.R")
 source("www/Volcano_plot_functions.R")
+source("www/PTM_functions.R")
 
 #allow user to see error messages
 options(shiny.sanitize.errors = FALSE)
