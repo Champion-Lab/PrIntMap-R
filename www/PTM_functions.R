@@ -1,6 +1,6 @@
 
 
-create_PTM_vec_PEAKS <- function(peptide_df, protein){
+create_PTM_vec_PEAKS <- function(peptide_df, protein,){
   for(i in 1:nrow(peptide_df)){
     mod_peptide<-peptide_df$Peptide[i]
     peptide <- peptide_df$sequence[i]
@@ -40,6 +40,28 @@ create_PTM_vec_PEAKS <- function(peptide_df, protein){
   return(PTM_vec)
   }
           
+#remove unwanted PTMs
+refine_PTM_vec <- function(AA_df, PTM_pattern_vec, PTM_names_vec){
+  for(i in 1:length(PTM_pattern_vec)){
+    for(j in 1:nrows(AA_df)){
+      store_vec <- vector()
+      count_vec <- vector()
+      PTM <- AA_df$PTMs[i]
+      matches_df <- str_locate_all(PTM, PTM_pattern_vec[i])[[1]]
+      matches_count <- nrows(matches_df)
+      count_vec <- c(count_vec, matches_count)
+      if(matches_count >0){
+        store_vec <- c(store_vec, PTM_pattern_vec[[i]])
+      }else{
+        store_vec <- c(store_vec, "")
+      }
+    }
+    AA_df[[paste0(PTM_names_vec[[i]], " Count")]] <- count_vec
+    AA_df$PTM_names_vec[[i]] <- store_vec
+  }
+  return(AA_df)
+}
+
 #combine PTM vector with AA_df
 create_PTM_df <- function(AA_df,
                            PTM_vec) {
@@ -51,7 +73,9 @@ create_PTM_df <- function(AA_df,
 add_PTM_layer <- function(plot,
                           PTM_df, PTM_value,
                           color = "yellow") {
+  
   plot <- plot +
+    
     geom_vline(xintercept = annotation_df$AA_index, color = color,
                size = 0.5)
   return(plot)
