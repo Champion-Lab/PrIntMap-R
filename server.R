@@ -66,7 +66,11 @@ server <- function(input, output, session) {
       read_peptide_tsv_Metamorpheus_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_Metamorpheus_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, comb_method = input$combined_method)
-    } 
+    } else if (input$file_type == "Generic csv" && input$combinedbool1 == "Individual Sample") {
+      read_peptide_csv_generic_bysamp(input$peptide_file1$datapath)
+    } else if (input$file_type == "Generic csv" && input$combinedbool1 == "Combined") {
+      read_peptide_csv_generic_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, comb_method = input$combined_method)
+    }
   })
   
   
@@ -177,6 +181,10 @@ server <- function(input, output, session) {
         read_peptide_tsv_Metamorpheus_bysamp(peptide_file2())
       } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
         read_peptide_tsv_Metamorpheus_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
+      } else if (input$file_type == "Generic csv" && input$combinedbool2 == "Individual Sample"){
+        read_peptide_csv_generic_bysamp(peptide_file2())
+      } else if (input$file_type == "Generic csv" && input$combinedbool2 == "Combined") {
+        read_peptide_csv_generic_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
       } 
    
   })
@@ -390,8 +398,11 @@ server <- function(input, output, session) {
         read_peptide_tsv_Metamorpheus_bysamp(peptide_file_mult()[[i-1]])
       } else if (input$file_type == "MetaMorpheus" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
         read_peptide_tsv_Metamorpheus_comb(peptide_file_mult()[[i-1]], sample_pattern = input[[paste0("sample_regex_mult", i)]], comb_method = input$combined_method)
-      } 
-    }
+      } else if (input$file_type == "Generic csv" && input[[paste0("combinedbool_mult",i)]] == "Individual Sample"){
+        read_peptide_csv_generic_bysamp(peptide_file_mult()[[i-1]])
+      } else if (input$file_type == "Generic csv" && input[[paste0("combinedbool_mult",i)]] == "Combined") {
+        read_peptide_csv_generic_comb(peptide_file_mult()[[i-1]], sample_pattern = input[[paste0("sample_regex_mult", i)]], comb_method = input$combined_method)
+      }}
     )}
   )
   
@@ -794,6 +805,11 @@ server <- function(input, output, session) {
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_Metamorpheus_volcano(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, min_valid_sample = input$min_valid_sample,
                                             intensity_metric = input$intensity_metric)
+    } else if (input$file_type == "Generic csv" && input$combinedbool1 == "Individual Sample"){
+      stop("Volcano plots can only be created with combined files for variance calculation")
+    } else if (input$file_type == "Generic csv" && input$combinedbool1 == "Combined") {
+      read_peptide_csv_generic_volcano(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, min_valid_sample = input$min_valid_sample,
+                                            intensity_metric = input$intensity_metric)
     }
   })
 
@@ -823,7 +839,12 @@ server <- function(input, output, session) {
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
       read_peptide_tsv_Metamorpheus_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
                                             intensity_metric = input$intensity_metric)
-    } 
+    } else if (input$file_type == "Generic csv" && input$combinedbool2 == "Individual Sample"){
+      stop("Volcano plots can only be created with combined files for variance calculation")
+    } else if (input$file_type == "Generic csv" && input$combinedbool2 == "Combined") {
+      read_peptide_csv_generic_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
+                                            intensity_metric = input$intensity_metric)
+    }
   })
   
   combined_volcano <- reactive({

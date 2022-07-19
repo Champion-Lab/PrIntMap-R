@@ -169,7 +169,6 @@ read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_met
     stop("Sample Pattern not found in file.")
   }
   else {
-    
     if (length(names(peptides)[grepl("PSM", names(peptides))]) > 0) {
       PSM_pattern <- paste0(sample_pattern, ".PSM")
       PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
@@ -181,7 +180,6 @@ read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_met
       }
       peptides$PSM <- PSM_vec
     }
-    
     if (length(names(peptides)[grepl("Intensity", names(peptides))]) > 0) {
       Intensity_pattern <- paste0(sample_pattern, ".Intensity")
       Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
@@ -193,7 +191,6 @@ read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_met
       }
       peptides$Intensity <- Intensity_vec
     }
-    
     if (length(names(peptides)[grepl("Area", names(peptides))]) > 0) {
       Area_pattern <- paste0(sample_pattern, ".Area")
       Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
@@ -205,7 +202,6 @@ read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_met
       }
       peptides$Area <- Area_vec
     }
-    
     return_list <- list(peptides, sample_count)
     return(return_list)
   }}
