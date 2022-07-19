@@ -744,7 +744,8 @@ server <- function(input, output, session) {
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
       stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
-      NULL
+      read_peptide_tsv_Metamorpheus_volcano(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, min_valid_sample = input$min_valid_sample,
+                                            intensity_metric = input$intensity_metric)
     }
   })
 
@@ -771,7 +772,8 @@ server <- function(input, output, session) {
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
       stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
-      NULL
+      read_peptide_tsv_Metamorpheus_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
+                                            intensity_metric = input$intensity_metric)
     } 
   })
   

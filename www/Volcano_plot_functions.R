@@ -1,3 +1,68 @@
+read_peptide_tsv_Metamorpheus_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
+                                                  intensity_metric = "PSM") {
+  check_file(peptide_file, "Metamorpheus")
+  peptides <- read.csv(peptide_file, sep = "\t", header = T)
+  filetype(peptides, "Combined", "Metamorpheus")
+  if(length(names(peptides)[grepl("Total.Ion.Current", names(peptides))]) >0){
+    # if(!(any(grepl(sample_pattern, peptides$File.Name)))){
+    #   stop("Sample pattern not found in file.")
+    # }
+    # else{
+    #   peptides$sequence <- peptides$Base.Sequence
+    #   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
+    #   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
+    #   names(peptides)[names(peptides) == "Full.Sequence"] <- "PEPTIDE"
+    #   names(peptides)[names(peptides) == "Protein.Accession"] <- "protein"
+    #   peptides <- peptides[peptides$PSM > 0,]
+    #   peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
+    #   sample_count <- length(unique(peptides$File.Name))
+    #   
+    #   return(peptides)
+    #   
+    #   if (intensity_metric == "PSM") {
+    #     peptides <- peptides %>% pivot_wider(names_from = File.Name, values_from = PSM)
+    #   } else if (intensity_metric == "Intensity") {
+    #     peptides <- peptides %>% pivot_wider(names_from = File.Name, values_from = Intensity)
+    #   }
+    #   
+    #   new_names <- rep(NA, sample_count)
+    #   for (i in 1:sample_count) {
+    #     new_names[i] <- paste0("Volcano_intensity_", i)
+    #   }
+    #   
+    #   colnames(peptides)[(ncol(peptides) - (sample_count-1)):ncol(peptides)] <- new_names
+    #   
+    #   return(peptides)
+    # }}
+    stop("Only quantified peptide results may be used for volcano plot from MetaMorpheus")
+    } else {
+    if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+      stop("Sample Pattern not found in file.")
+    }
+    else{
+      names(peptides)[names(peptides) == "Sequence"] <- "PEPTIDE"
+      peptides$protein <- peptides$Protein.Groups
+      peptides$sequence <- peptides$Base.Sequence
+      
+      pattern <- paste0("Intensity_", ".*", sample_pattern, ".*")
+      dataframe <- peptides[,grepl(pattern, names(peptides))]
+      dataframe[dataframe == 0] <- NA
+ 
+      sample_count <- ncol(as.data.frame(dataframe))
+      
+      for (i in 1:sample_count) {
+        peptides[[paste0("Volcano_intensity_", i)]] <- NA
+      }
+      for (i in 1:nrow(peptides)) {
+        for (j in 1:sample_count) {
+          peptides[[paste0("Volcano_intensity_", j)]][i] <- dataframe[i,j]
+        }
+      }
+      return(peptides)
+    }}
+}
+
+
 read_peptide_tsv_MSfragger_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
                                            intensity_metric = "PSM") {
 
@@ -197,7 +262,6 @@ create_volcano_plot <- function(df, fdr = 0.05,
     df$BH_cutoff <- df$critical - df$p_val
     sigdf <- df[df$BH_cutoff > 0,]
     sigdf <- sigdf[!is.na(sigdf$BH_cutoff),]
-    print(nrow(sigdf))
     if (nrow(sigdf) == 0) {
       y_cutoff <- maxy * 1.1
     } else {
