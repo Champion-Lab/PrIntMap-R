@@ -28,38 +28,38 @@ create_PTM_vec_PEAKS <- function(peptide_df, protein){
   
   return(peptide_df)}
   
-create_PTM_vec <- function(pattern, protein, peptide_df) {
-  PTM_vector <- rep("", nchar(protein))
-  for(i in 1:nrow(peptide_df)){
-    peptide <- peptide_df$sequence[i] 
-    PTM <- peptide_df$PTMs[i]
-    matches_df <- str_locate_all(protein, peptide)[[1]]
-    matches_count <- nrow(matches_df)
-    if(matches_count>0){
-      for(j in 1:nrow(matches_df)){
-        start <- matches_df[[j,1]]
-        end <- matches_df[[j,2]]
-        PTM_vector[start:end] <- PTM
-        
-      }
-    }
-  }
-  
- 
-  split_AA <- str_split(protein, "")
-  AA_df <- data.frame(AA = split_AA[[1]])
-  AA_df$AA_index <- 1:nrow(AA_df)
-    motifs <- str_locate_all(protein, peptide)[[1]]
-    matches_count <- nrow(motifs)
-    motif_vector <- rep(F, nrow(AA_df))
-    if (matches_count > 0) {
-      for (j in 1:matches_count) {
-        start <- motifs[[j,1]]
-        end <- motifs[[j,2]]
-        motif_vector[start:end] <- T
-      }}
-  return(motif_vector) 
-} 
+# create_PTM_vec <- function(pattern, protein, peptide_df) {
+#   PTM_vector <- rep("", nchar(protein))
+#   for(i in 1:nrow(peptide_df)){
+#     peptide <- peptide_df$sequence[i] 
+#     PTM <- peptide_df$PTMs[i]
+#     matches_df <- str_locate_all(protein, peptide)[[1]]
+#     matches_count <- nrow(matches_df)
+#     if(matches_count>0){
+#       for(j in 1:nrow(matches_df)){
+#         start <- matches_df[[j,1]]
+#         end <- matches_df[[j,2]]
+#         PTM_vector[start:end] <- PTM
+#         
+#       }
+#     }
+#   }
+#   
+#  
+#   split_AA <- str_split(protein, "")
+#   AA_df <- data.frame(AA = split_AA[[1]])
+#   AA_df$AA_index <- 1:nrow(AA_df)
+#     motifs <- str_locate_all(protein, peptide)[[1]]
+#     matches_count <- nrow(motifs)
+#     motif_vector <- rep(F, nrow(AA_df))
+#     if (matches_count > 0) {
+#       for (j in 1:matches_count) {
+#         start <- motifs[[j,1]]
+#         end <- motifs[[j,2]]
+#         motif_vector[start:end] <- T
+#       }}
+#   return(motif_vector) 
+# } 
 
 
         

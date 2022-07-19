@@ -606,10 +606,10 @@ server <- function(input, output, session) {
   output$annotation_plotly <- renderPlotly(annotation_plot2())
   
   
-  PTM_regex_vec <- reactive({
-    input$PTM
-  })
-  
+  # PTM_regex_vec <- reactive({
+  #   input$PTM
+  # })
+  # 
   
   # PTMs1_vec <- reactive({
   #   if(input$file_type == "PEAKS"){
@@ -628,22 +628,22 @@ server <- function(input, output, session) {
   #                   PTM_name = "PTM")
   #   })
 
-
-  
-  PTM_plot <-reactive ({
-    if (input$disp_origin) {
-      return_plot <- plot_origin(AA_df_origin1(), protein_obj1()[2],
-                                 intensity_label = input$intensity_metric)
-    } else {
-      return_plot <- plot_intensity(AA_df_intensity1(), protein_obj1()[2],
-                                    intensity_label = input$intensity_metric)
-    }
-    if(input$y_axis_scale == "log"){
-      return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
-                                                      breaks = base_breaks())
-    }
-    return(return_plot)
-  })
+# 
+#   
+#   PTM_plot <-reactive ({
+#     if (input$disp_origin) {
+#       return_plot <- plot_origin(AA_df_origin1(), protein_obj1()[2],
+#                                  intensity_label = input$intensity_metric)
+#     } else {
+#       return_plot <- plot_intensity(AA_df_intensity1(), protein_obj1()[2],
+#                                     intensity_label = input$intensity_metric)
+#     }
+#     if(input$y_axis_scale == "log"){
+#       return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+#                                                       breaks = base_breaks())
+#     }
+#     return(return_plot)
+#   })
 
   # PTM_plot2 <- reactive ({
   #   return_plot <- add_PTM_layer(plot = PTM_plot(),
@@ -651,7 +651,7 @@ server <- function(input, output, session) {
   #   return(return_plot)})
 
 
-  output$PTM_plotly <- renderPlotly(PTM_plot2())
+  # output$PTM_plotly <- renderPlotly(PTM_plot2())
     
   stacked_plot_dataframe <- reactive({
     create_stack_line_df(peptide_df = peptides1(),
