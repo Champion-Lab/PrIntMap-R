@@ -606,6 +606,53 @@ server <- function(input, output, session) {
   output$annotation_plotly <- renderPlotly(annotation_plot2())
   
   
+  PTM_regex_vec <- reactive({
+    input$PTM
+  })
+  
+  
+  # PTMs1_vec <- reactive({
+  #   if(input$file_type == "PEAKS"){
+  #     create_PTM_vec_PEAKS(peptide_df = peptides1(), 
+  #                          protein = protein_obj1()[1])
+  #   }
+  # })
+  # 
+  # PTMs1_df <- reactive({
+  #   create_PTM_df(AA_df = AA_df_origin1(),
+  #                 PTM_vec =PTMs1_vec())
+  # })
+  # 
+  # PTMs_df_list <- reactive({
+  #     refine_PTM_df(AA_df = PTMs1_df(), PTM_pattern = PTM_regex_vec(),
+  #                   PTM_name = "PTM")
+  #   })
+
+
+  
+  PTM_plot <-reactive ({
+    if (input$disp_origin) {
+      return_plot <- plot_origin(AA_df_origin1(), protein_obj1()[2],
+                                 intensity_label = input$intensity_metric)
+    } else {
+      return_plot <- plot_intensity(AA_df_intensity1(), protein_obj1()[2],
+                                    intensity_label = input$intensity_metric)
+    }
+    if(input$y_axis_scale == "log"){
+      return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                      breaks = base_breaks())
+    }
+    return(return_plot)
+  })
+
+  # PTM_plot2 <- reactive ({
+  #   return_plot <- add_PTM_layer(plot = PTM_plot(),
+  #                                       PTM_df = PTMs_df_list())
+  #   return(return_plot)})
+
+
+  output$PTM_plotly <- renderPlotly(PTM_plot2())
+    
   stacked_plot_dataframe <- reactive({
     create_stack_line_df(peptide_df = peptides1(),
                          protein = protein_obj1()[1],
