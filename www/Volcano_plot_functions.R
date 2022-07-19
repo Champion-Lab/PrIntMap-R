@@ -1,3 +1,114 @@
+read_peptide_tsv_MaxQuant_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
+                                           intensity_metric = "PSM") {
+  
+  check_file(peptide_file, "MaxQuant")
+  peptide_import <- read.csv(peptide_file, sep = "\t", header = T, )
+  filetype(peptide_import, "Combined", "MaxQuant")
+  names(peptide_import)[names(peptide_import) == "Intensity"] <- "summed_intensity"
+  peptides <- peptide_import
+  peptides$sequence <- peptides$Sequence
+  ptms <- peptide_import[,grepl(".*site.IDs", names(peptide_import))]
+  ptm_names <- str_replace_all(string = names(ptms), pattern = "\\.", "")
+  ptm_names <- str_replace_all(string = ptm_names, pattern = "siteIDs", "")
+
+  
+  peptides$PEPTIDE <- peptides$sequence
+  for (i in 1:nrow(peptides)) {
+    for (j in 1:ncol(ptms)) {
+      if (!is.na(ptms[i,j]) && ptms[i,j] != "") {
+        peptides$PEPTIDE[i] <- paste0(peptides$PEPTIDE[i], ";", ptm_names[j], ":", ptms[i,j])
+      }
+    }
+  }
+  
+  peptides$protein <- NA
+  for(i in 1:nrow(peptides)) {
+    
+    if (peptides$Proteins[i] != "") {
+      
+      protein <- str_split(peptides$Proteins[i], ";")[[1]]
+      protein_vec <- rep("", length(protein))
+      
+      for (j in 1:length(protein)) {
+        protein_vec[j] <- str_split(protein[j], "\\|")[[1]][2]
+      }
+      peptides$protein[i] <-  paste(protein_vec, sep = ";", collapse = ";")
+    } else {
+      peptides$protein[i] <- "Not Found"
+    }
+    
+  }
+  
+  
+  
+  if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+    stop("Sample Pattern not found in file.")
+  } else{
+    
+    
+    if (intensity_metric == "PSM") {
+      pattern <- paste0("Experiment", ".*", sample_pattern, ".*")
+    } else if (intensity_metric == "Intensity") {
+      pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
+    } else if (intensity_metric == "Area") {
+      pattern <- paste0("LFQ.intensity", ".*", sample_pattern, ".*")
+    }
+    
+    dataframe <- peptides[,grepl(pattern, names(peptides))]
+    dataframe[dataframe == 0] <- NA
+    
+    sample_count <- ncol(dataframe)
+    
+    
+    peptides$count <- NA
+    
+    for (i in 1:sample_count) {
+      peptides[[paste0("Volcano_intensity_", i)]] <- NA
+    }
+    for (i in 1:nrow(peptides)) {
+      for (j in 1:sample_count) {
+        peptides[[paste0("Volcano_intensity_", j)]][i] <- dataframe[i,j]
+      }
+      peptides$count[i] <- sum(!is.na(as.numeric(dataframe[i,])))
+    }
+    
+    peptides <- peptides[peptides$count > 0,]
+    return(peptides)
+    
+    ###
+    PSM_pattern <- paste0("Experiment", ".*", sample_pattern, ".*")
+    PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
+    PSM_df[is.na(PSM_df)] <- 0
+    PSM_vec <- rowSums(as.data.frame(PSM_df))
+    sample_count <- ncol(as.data.frame(PSM_df))
+    
+    Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
+    Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
+    Intensity_df[is.na(Intensity_df)] <- 0
+    Intensity_vec <- rowSums(as.data.frame(Intensity_df))
+    
+    Area_pattern <- paste0("LFQ.intensity", ".*", sample_pattern, ".*")
+    Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
+    Area_df[is.na(Area_df)] <- 0
+    Area_vec <- rowSums(as.data.frame(Area_df))
+
+    
+    peptides$PSM <- PSM_vec
+    peptides$Intensity <- Intensity_vec
+    peptides$Area <- Area_vec
+    
+    peptides <- peptides[peptides$PSM > 0,]
+    
+    if (!is.na(sample)) {
+      peptides$sample <- sample
+    }
+    if (!is.na(filter)) {
+      peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+    }
+    return_list <- list(peptides, sample_count)
+    return(return_list)
+  }}
+
 read_peptide_tsv_Metamorpheus_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
                                                   intensity_metric = "PSM") {
   check_file(peptide_file, "Metamorpheus")

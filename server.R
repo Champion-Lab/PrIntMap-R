@@ -736,11 +736,12 @@ server <- function(input, output, session) {
       read_peptide_tsv_MSfragger_volcano(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, min_valid_sample = input$min_valid_sample,
                                          intensity_metric = input$intensity_metric)
     } else if (input$file_type == "MaxQuant" ) {
-      NULL
+      read_peptide_tsv_MaxQuant_volcano(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, min_valid_sample = input$min_valid_sample,
+                                        intensity_metric = input$intensity_metric)
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Individual Sample") {
       stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Combined"){
-      NULL
+      stop("Proteome Discoverer data currently not supported for volcano plots")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Individual Sample"){
       stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
@@ -764,11 +765,12 @@ server <- function(input, output, session) {
       read_peptide_tsv_MSfragger_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
                                      intensity_metric = input$intensity_metric)
     } else if (input$file_type == "MaxQuant" ) {
-      NULL
+      read_peptide_tsv_MaxQuant_volcano(peptide_file2(), sample_pattern = input$sample_regex2, min_valid_sample = input$min_valid_sample,
+                                        intensity_metric = input$intensity_metric)
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool2 == "Individual Sample") {
       stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool2 == "Combined"){
-      NULL
+      stop("Proteome Discoverer data currently not supported for volcano plots")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
       stop("Volcano plots can only be created with combined files for variance calculation")
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
