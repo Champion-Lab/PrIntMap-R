@@ -140,7 +140,75 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
 
   return_list <- list(peptides, sample_count)
   return(return_list)
-}}
+  }}
+
+#import peptide file from generic
+#takes csv file in generic format and returns dataframe
+read_peptide_csv_generic_bysamp <- function(peptide_file) {
+  #check_file(peptide_file, "PEAKS")
+  peptides <- read.csv(peptide_file)
+  #filetype(peptides, "Individual", "PEAKS")
+  peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
+  names(peptides)[grepl("Area", names(peptides))] <- "Area"
+  names(peptides)[grepl("Intensity", names(peptides))] <- "Intensity"
+  names(peptides)[grepl("Spec", names(peptides))] <- "PSM"
+  return_list <- list(peptides, 1)
+  return(return_list)
+}
+
+#import peptide file from generic, multiple samples
+#takes csv file in generic format and returns dataframe
+read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_method = "Sum") {
+  #check_file(peptide_file, "PEAKS")
+  peptide_import <- read.csv(peptide_file)
+  #filetype(peptide_import, "Combined", "PEAKS")
+  peptides <- peptide_import
+  peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
+  
+  if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+    stop("Sample Pattern not found in file.")
+  }
+  else {
+    
+    if (length(names(peptides)[grepl("PSM", names(peptides))]) > 0) {
+      PSM_pattern <- paste0(sample_pattern, ".PSM")
+      PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
+      PSM_df[is.na(PSM_df)] <- 0
+      PSM_vec <- rowSums(as.data.frame(PSM_df))
+      sample_count <- ncol(as.data.frame(PSM_df))
+      if (comb_method == "Average") {
+        PSM_vec <- PSM_vec / sample_count
+      }
+      peptides$PSM <- PSM_vec
+    }
+    
+    if (length(names(peptides)[grepl("Intensity", names(peptides))]) > 0) {
+      Intensity_pattern <- paste0(sample_pattern, ".Intensity")
+      Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
+      Intensity_df[is.na(Intensity_df)] <- 0
+      Intensity_vec <- rowSums(as.data.frame(Intensity_df))
+      sample_count <- ncol(as.data.frame(Intensity_df))
+      if (comb_method == "Average") {
+        Intensity_vec <- Intensity_vec / sample_count
+      }
+      peptides$Intensity <- Intensity_vec
+    }
+    
+    if (length(names(peptides)[grepl("Area", names(peptides))]) > 0) {
+      Area_pattern <- paste0(sample_pattern, ".Area")
+      Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
+      Area_df[is.na(Area_df)] <- 0
+      Area_vec <- rowSums(as.data.frame(Area_df))
+      sample_count <- ncol(as.data.frame(Area_df))
+      if (comb_method == "Average") {
+        Area_vec <- Area_vec / sample_count
+      }
+      peptides$Area <- Area_vec
+    }
+    
+    return_list <- list(peptides, sample_count)
+    return(return_list)
+  }}
 
 #import peptide file from MSFragger (not combined, individual sample)
 #takes tsv file in fragpipe format and returns dataframe

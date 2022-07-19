@@ -279,6 +279,48 @@ read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, min_val
     return(peptides)
   }}
 
+
+read_peptide_csv_generic_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
+                                           intensity_metric = "PSM") {
+  
+  
+  #check_file(peptide_file, "PEAKS")
+  peptide_import <- read.csv(peptide_file)
+  #filetype(peptide_import, "Combined", "PEAKS")
+  peptides <- peptide_import
+  peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
+  peptides$PEPTIDE <- peptides$Peptide
+  if (length(names(peptides)[grepl("protein", names(peptides))]) > 0) {
+    peptides$protein <- NA
+  }
+  
+  if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+    stop("Sample Pattern not found in file.")
+  }
+  else {
+    if (intensity_metric == "PSM") {
+      pattern <- paste0(sample_pattern, ".PSM")
+    } else if (intensity_metric == "Intensity") {
+      pattern <- paste0(sample_pattern, ".Intensity")
+    } else if (intensity_metric == "Area") {
+      pattern <- paste0(sample_pattern, ".Area")
+    }
+    dataframe <- peptide_import[,grepl(pattern, names(peptide_import))]
+    if (intensity_metric == "PSM") {
+      dataframe[dataframe == 0] <- NA
+    }
+    sample_count <- ncol(as.data.frame(dataframe))
+    for (i in 1:sample_count) {
+      peptides[[paste0("Volcano_intensity_", i)]] <- NA
+    }
+    for (i in 1:nrow(peptides)) {
+      for (j in 1:sample_count) {
+        peptides[[paste0("Volcano_intensity_", j)]][i] <- dataframe[i,j]
+      }
+    }
+    return(peptides)
+  }}
+
 combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05,
                                     fold_change_cutoff_plot = 1, fold_change_cutoff_sig = 5,
                                     equal_variance_bool = T, remove_na = T, set_na = 0) {
