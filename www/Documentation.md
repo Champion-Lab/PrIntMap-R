@@ -25,7 +25,7 @@ AMINOACIDSEQUENCEPEPTIDE...
 The program will ask for an `Accession ID`. This generally is the `UniqueIdentifier` in the example above, but it will actually match anything in the `UniqueIdentifier` or `EntryName` fields.
 
 ### Peptide Files
-The peptide files are exported from the database search. These are either `.csv`, `.tsv`, or `.txt` files. Currently supported formats are from [PEAKS](https://www.bioinfor.com/peaks-online/), [MSFragger](https://msfragger.nesvilab.org/), [MaxQuant](https://www.maxquant.org/), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus) and [Proteome Discoverer](https://www.thermofisher.com/us/en/home/industrial/mass-spectrometry/liquid-chromatography-mass-spectrometry-lc-ms/lc-ms-software/multi-omics-data-analysis/proteome-discoverer-software.html).
+The peptide files are exported from the database search. These are either `.csv`, `.tsv`, or `.txt` files. Currently supported formats are from [PEAKS](https://www.bioinfor.com/peaks-online/), [MSFragger](https://msfragger.nesvilab.org/), [MaxQuant](https://www.maxquant.org/), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus) and [Proteome Discoverer](https://www.thermofisher.com/us/en/home/industrial/mass-spectrometry/liquid-chromatography-mass-spectrometry-lc-ms/lc-ms-software/multi-omics-data-analysis/proteome-discoverer-software.html). Additionally, users can upload peptide data in a generic .csv format (described below) that they compile themselves.
 
 * __PEAKS:__  
 <img src="PEAKS_download_screenshot.png" alt="drawing" width="700"id="borderimage"/>  
@@ -39,7 +39,15 @@ MaxQuant only has combined files as outputs. To find the peptide file, go into t
 * __MetaMorpheus:__  
 For individual files containing intensity (TIC) and PSMs, navigate to the `SearchTask/Individual File Results` directory, and then select the `Peptides.psmtsv` file corresponding to the sample of interest. There are two types of combined files: in the `SearchTask` directory the TIC (intensity) and PSM data is found within the `AllPeptides.psmtsv` file, while the LFQ (Area) data is found in the `AllQuantifiedPeptides.tsv` file. Note that for comparing two or more samples, both must be of the same file type when using Metamorpheus combined files.  
 * __Proteome Discoverer:__   
-Export PeptideGroups as a `.txt` file which will be in tab delineated format.
+Export PeptideGroups as a `.txt` file which will be in tab delineated format.  
+* __Generic csv:__  
+For individual files, create a csv file. Place peptide sequences in a column with the title `Peptide`. Place intensity data in columns called `Area`, `Intensity`, and `PSM`. At least one of these columns is required. An additional optional column called `protein` can be added, with accession information. Matching case for these column titles is required. See example below:
+<img src="individual_generic_example.png" alt="drawing" width="700"id="borderimage"/>  
+<br></br>  
+For combined files, create a csv file. Place peptide sequences in a column with the title `Peptide`. For each peptide sequence, put intensity data in columns titled in the following pattern: `Sample1.Area`, `Sample2.Area`, `Sample1.Intensity`, `Sample2.Intensity`, `Sample1.PSM`, `Sample2.PSM`, etc. The important aspects for these columns are that the sample names are unique, and that they are separated from the `Area`, `PSM`, or `Intensity` label with a `.` Avoid spaces in the sample names for best results (Use periods or underscores instead). These columns can be in any order. At least one type of intensity must be present for each sample. An additional optional column called `protein` can be added, with accession information. Matching case for all column titles is required. See example below:  
+<img src="combined_generic_example.png" alt="drawing" width="700"id="borderimage"/>  
+<br></br>
+
 
 
 ### Other Options
@@ -77,6 +85,9 @@ Allows for the comparison of two different samples. The second peptide informati
 <br/><br/>
 <img src="two_sample_3.png" alt="drawing" width="700" id="borderimage"/>
 
+Additionally, peptide volcano plots can be generated comparing two samples if enough information is supplied. These require combined file types, so that enough replicate values can be used for the statistical calculations. Options include changing the p-value cutoff, the minimum number of non NA values for each sample type, the log2 fold change cutoff for significance, and whether to apply the [Benjamini-Hochburg](https://www.jstor.org/stable/2346101#metadata_info_tab_contents) correction. Values with infinite and negative infinite values can be displayed or hidden. These are values that have intensity values in one sample, and no intensity values in the other. When displayed, they show up as a block in the upper corners of the plot. "compromised values" can also be displayed or hidden. These are values where one of the samples contains sufficient data for a calculation, and the other sample does not contain sufficient data, but is not NA. Peptides mapping to a protein of interest can be highlighted. The p-value is calculated with an unpaired two-tailed t-test either assuming or not assuming equal variance. NA values are ignored, unless the 'remove NA' box is unchecked, in which case NA values are replaced by the supplied value (default zero).  
+
+<img src="volcano_plot_example.png" alt="drawing" width="700" id="borderimage"/>
 
 ### Multiple Samples
 Plot multiple samples, will be displayed as an overlay plot. The peptide files can be entered the same as the original peptide file. For the `Difference` and `Fold Change` options, each sample is compared to the first sample that is shown in the basic tab. In the `Overlay` option, all samples are shown including the first sample from the basic tab.  
