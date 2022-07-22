@@ -620,19 +620,27 @@ PTM_regex <- reactive ({
   input$PTM
 })
   
-  
-  PTM_df <- reactive({
-    create_PTM_df_PEAKS(peptide_df = peptides1(), 
-                        protein = protein_obj1()[1])
+PTM_regex_length <- reactive({
+  length(PTM_regex())
 })
+  
   PTM_df2 <- reactive({
-    add_mod_PEAKS(peptide_df = PTM_df(), regex_pattern = PTM_regex())
-  })
+    lapply(1:PTM_regex_length(), function(i){
+    create_PTM_df_PEAKS(peptide_df = peptides1(), 
+                        protein = protein_obj1()[1], 
+                        regex_pattern = PTM_regex()[[i]],
+                        intensity = input$intensity_metric)
+    })
+})
+
  
   PTM_df_plot <- reactive({
-    create_PTM_plot_df_PEAKS(peptide_df = PTM_df2(), protein = protein_obj1()[1],
-                               regex_pattern = PTM_regex(), 
-                             intensity_vector = intensity_vec1())
+    lapply(1:PTM_regex_length(), function(i){
+    create_PTM_plot_df_PEAKS(peptide_df = PTM_df2()[[i]], protein = protein_obj1()[1],
+                               regex_pattern = PTM_regex()[[i]], 
+                             intensity_vector = intensity_vec1(),
+                             origin_pep_vector = origin_vec1())
+    })
   })
   
   PTM_plot <-reactive ({
@@ -651,10 +659,19 @@ PTM_regex <- reactive ({
   })
 
   PTM_plot2 <- reactive ({
-    return_plot <- add_PTM_layer(plot = PTM_plot(),
-                                        PTM_df = PTM_df_plot())
-
+    if(input$disp_origin){ 
+      return_plot <- add_PTM_layer_origin(plot = PTM_plot(),
+                                                        PTM_df = PTM_df_plot(), length = PTM_regex_length())
+    }else{
+      if(input$disp_overlay_PTM == "Annotation"){
+        return_plot <- add_PTM_layer(plot = annotation_plot2(), 
+                                     PTM_df = PTM_df_plot(), length = PTM_regex_length())
+      }else{
+      return_plot <- add_PTM_layer(plot = PTM_plot(),
+                                   PTM_df = PTM_df_plot(), length = PTM_regex_length())}
+      }
     return(return_plot)})
+
 
 
   output$PTM_plotly <- renderPlotly(PTM_plot2())
