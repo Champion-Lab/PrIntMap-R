@@ -641,6 +641,17 @@ PTM_regex_length <- reactive({
     })
   })
   
+  PTM_df_mult <- reactive({
+    lapply(2:number(), function(i){
+      lapply(1:PTM_regex_length(), function(j){
+        create_PTM_df_PEAKS(peptide_df = peptidesmult()[[i-1]], 
+                            protein = protein_obj1()[1], 
+                            regex_pattern = PTM_regex()[[j]],
+                            intensity = input$intensity_metric)
+      })
+    })
+  }) 
+  
  
   PTM_df_plot <- reactive({
     lapply(1:PTM_regex_length(), function(i){
@@ -661,7 +672,19 @@ PTM_regex_length <- reactive({
   })
   
   
+  PTM_df_plot_mult <- reactive({
+    lapply(2:number(), function(i){
+      lapply(1:PTM_regex_length(), function(j){
+        create_PTM_plot_df_PEAKS(peptide_df = PTM_df_mult()[[i-1]][[j]], protein = protein_obj1()[1],
+                                 regex_pattern = PTM_regex()[[j]], 
+                                 intensity_vector = intensity_vec_list()[[i-1]],
+                                 origin_pep_vector = origin_vec_list()[[i-1]])
+      })
+    })
+  })
+  
   PTM_plot <-reactive ({
+    
     if (input$disp_origin) {
       return_plot <- plot_origin(AA_df_origin1(), protein_obj1()[2],
                                  intensity_label = input$intensity_metric)
@@ -678,15 +701,44 @@ PTM_regex_length <- reactive({
 
   PTM_plot2 <- reactive ({
     if(input$disp_origin){ 
-      return_plot <- add_PTM_layer_origin(plot = PTM_plot(),
-                                                        PTM_df = PTM_df_plot(), length = PTM_regex_length())
+      if(input$disp_overlay_PTM == "Two Samples"){
+        return_plot <- add_PTM_layer_origin(plot = ggplot_intensity2(), 
+                                     PTM_df = PTM_df_plot(), length = PTM_regex_length())
+        return_plot <- add_PTM_layer_origin(plot = return_plot, PTM_df = PTM_df_plot2(),
+                                     length = PTM_regex_length())
+      }
+      else if(input$disp_overlay_PTM == "Multiple Samples"){
+        return_plot <- add_PTM_layer_origin(plot = ggplot_intensity_mult(),
+                                     PTM_df = PTM_df_plot(), length = PTM_regex_length())
+        for(i in 2:number()){
+          return_plot <- add_PTM_layer_origin(plot = return_plot,
+                                       PTM_df = PTM_df_plot_mult()[i-1][[1]],
+                                       length = PTM_regex_length())}
+      }  
+      
+      
+      else{ 
+        return_plot <- add_PTM_layer_origin(plot = PTM_plot(),
+                                                PTM_df = PTM_df_plot(), length = PTM_regex_length())}
+     
     }else{
       if(input$disp_overlay_PTM == "Two Samples"){
         return_plot <- add_PTM_layer(plot = ggplot_intensity2(), 
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
         return_plot <- add_PTM_layer(plot = return_plot, PTM_df = PTM_df_plot2(),
                                      length = PTM_regex_length())
-      }else{
+      }
+      else if(input$disp_overlay_PTM == "Multiple Samples"){
+        return_plot <- add_PTM_layer(plot = ggplot_intensity_mult(),
+                                     PTM_df = PTM_df_plot(), length = PTM_regex_length())
+       for(i in 2:number()){
+          return_plot <- add_PTM_layer(plot = return_plot,
+                                       PTM_df = PTM_df_plot_mult()[i-1][[1]],
+                                       length = PTM_regex_length())}
+        }  
+
+     
+      else{
       return_plot <- add_PTM_layer(plot = PTM_plot(),
                                    PTM_df = PTM_df_plot(), length = PTM_regex_length())}
       }

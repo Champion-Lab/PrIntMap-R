@@ -68,7 +68,6 @@ create_PTM_plot_df_PEAKS <- function(peptide_df, protein, regex_pattern, intensi
     peptide <- peptide_df$peptide_store[i]
     intensity_value <-rep(0, nchar(peptide))
     PTM_strsplit <- strsplit(PTM[[1]], "")
-    print(PTM_strsplit)
     for(k in 1:length(PTM_strsplit)){
       if(PTM_strsplit[k]=="x")
         intensity_value[k]<- peptide_df$intensity_store_mod[i]
@@ -97,7 +96,6 @@ create_PTM_plot_df_PEAKS <- function(peptide_df, protein, regex_pattern, intensi
   AA_df$intensity <- intensity_vector_input
   AA_df$origin_pep <- origin_pep_vector
   PTM_df2 <- subset(AA_df, AA_df[[regex_pattern]] != "")
-  print(PTM_df2)
   return(PTM_df2)
 }
 
