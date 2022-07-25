@@ -624,7 +624,7 @@ PTM_regex_length <- reactive({
   length(PTM_regex())
 })
   
-  PTM_df2 <- reactive({
+  PTM_df <- reactive({
     lapply(1:PTM_regex_length(), function(i){
     create_PTM_df_PEAKS(peptide_df = peptides1(), 
                         protein = protein_obj1()[1], 
@@ -632,16 +632,34 @@ PTM_regex_length <- reactive({
                         intensity = input$intensity_metric)
     })
 })
-
+  PTM_df2 <- reactive({
+    lapply(1:PTM_regex_length(), function(i){
+      create_PTM_df_PEAKS(peptide_df = peptides2(), 
+                          protein = protein_obj1()[1], 
+                          regex_pattern = PTM_regex()[[i]],
+                          intensity = input$intensity_metric)
+    })
+  })
+  
  
   PTM_df_plot <- reactive({
     lapply(1:PTM_regex_length(), function(i){
-    create_PTM_plot_df_PEAKS(peptide_df = PTM_df2()[[i]], protein = protein_obj1()[1],
+    create_PTM_plot_df_PEAKS(peptide_df = PTM_df()[[i]], protein = protein_obj1()[1],
                                regex_pattern = PTM_regex()[[i]], 
                              intensity_vector = intensity_vec1(),
                              origin_pep_vector = origin_vec1())
     })
   })
+  
+  PTM_df_plot2 <- reactive({
+    lapply(1:PTM_regex_length(), function(i){
+      create_PTM_plot_df_PEAKS(peptide_df = PTM_df2()[[i]], protein = protein_obj1()[1],
+                               regex_pattern = PTM_regex()[[i]], 
+                               intensity_vector = intensity_vec2(),
+                               origin_pep_vector = origin_vec2())
+    })
+  })
+  
   
   PTM_plot <-reactive ({
     if (input$disp_origin) {
@@ -663,9 +681,11 @@ PTM_regex_length <- reactive({
       return_plot <- add_PTM_layer_origin(plot = PTM_plot(),
                                                         PTM_df = PTM_df_plot(), length = PTM_regex_length())
     }else{
-      if(input$disp_overlay_PTM == "Annotation"){
-        return_plot <- add_PTM_layer(plot = annotation_plot2(), 
+      if(input$disp_overlay_PTM == "Two Samples"){
+        return_plot <- add_PTM_layer(plot = ggplot_intensity2(), 
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
+        return_plot <- add_PTM_layer(plot = return_plot, PTM_df = PTM_df_plot2(),
+                                     length = PTM_regex_length())
       }else{
       return_plot <- add_PTM_layer(plot = PTM_plot(),
                                    PTM_df = PTM_df_plot(), length = PTM_regex_length())}
