@@ -640,6 +640,14 @@ PTM_regex_length <- reactive({
                           intensity = input$intensity_metric)
     })
   })
+  PTM_stacked <- reactive({
+    lapply(1:PTM_regex_length(), function(i){
+    create_PTM_df_stacked(peptide_df = PTM_df()[[i]], 
+                          protein = protein_obj1()[1],
+                          regex_pattern = PTM_regex()[[i]]
+                          )
+      })
+    })
   
   PTM_df_mult <- reactive({
     lapply(2:number(), function(i){
@@ -714,9 +722,7 @@ PTM_regex_length <- reactive({
           return_plot <- add_PTM_layer_origin(plot = return_plot,
                                        PTM_df = PTM_df_plot_mult()[i-1][[1]],
                                        length = PTM_regex_length())}
-      }  
-      
-      
+      }
       else{ 
         return_plot <- add_PTM_layer_origin(plot = PTM_plot(),
                                                 PTM_df = PTM_df_plot(), length = PTM_regex_length())}
@@ -735,7 +741,10 @@ PTM_regex_length <- reactive({
           return_plot <- add_PTM_layer(plot = return_plot,
                                        PTM_df = PTM_df_plot_mult()[i-1][[1]],
                                        length = PTM_regex_length())}
-        }  
+      }else if(input$disp_overlay_PTM == "Stacked Peptides"){
+        return_plot <- add_PTM_layer_stacked(plot = stacked_plot(),
+                                             PTM_df = PTM_stacked(), 
+                                             length = PTM_regex_length())}  
 
      
       else{
