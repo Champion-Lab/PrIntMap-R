@@ -616,15 +616,14 @@ server <- function(input, output, session) {
   
   output$annotation_plotly <- renderPlotly(annotation_plot2())
   
-PTM_regex <- reactive ({
-  input$PTM
-})
+PTM_regex <- reactive(input$PTM)
   
-PTM_regex_length <- reactive({
-  length(PTM_regex())
-})
+PTM_regex_length <- reactive(length(PTM_regex()))
   
   PTM_df <- reactive({
+    validate(
+      need(!is.null(input$PTM), "no PTM selected")
+    )
     lapply(1:PTM_regex_length(), function(i){
     create_PTM_df_PEAKS(peptide_df = peptides1(), 
                         protein = protein_obj1()[1], 
@@ -720,11 +719,19 @@ PTM_regex_length <- reactive({
                                                    length = PTM_regex_length())}
    }else if(input$disp_origin){ 
       if(input$disp_overlay_PTM == "Two Samples"){
+        if(input$two_sample_comparison == "Difference" | 
+           input$two_sample_comparison == "Fold Change"){
+          stop("PTM only plotted on Overlay Graphs")
+        }
         return_plot <- add_PTM_layer_origin(plot = ggplot_intensity2(), 
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
         return_plot <- add_PTM_layer_origin(plot = return_plot, PTM_df = PTM_df_plot2(),
                                      length = PTM_regex_length())
       }else if(input$disp_overlay_PTM == "Multiple Samples"){
+        if(input$mult_sample_comparison == "Difference" | 
+           input$mult_sample_comparison == "Fold Change"){
+          stop("PTM only plotted on Overlay Graphs")
+        }
         return_plot <- add_PTM_layer_origin(plot = ggplot_intensity_mult(),
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
         for(i in 2:number()){
@@ -764,11 +771,19 @@ PTM_regex_length <- reactive({
                                                 PTM_df = PTM_df_plot(), length = PTM_regex_length())}
     }else{
       if(input$disp_overlay_PTM == "Two Samples"){
+        if(input$two_sample_comparison == "Difference" | 
+           input$two_sample_comparison == "Fold Change"){
+          stop("PTM only plotted on Overlay Graphs")
+        }
         return_plot <- add_PTM_layer(plot = ggplot_intensity2(), 
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
         return_plot <- add_PTM_layer(plot = return_plot, PTM_df = PTM_df_plot2(),
                                      length = PTM_regex_length())
       }else if(input$disp_overlay_PTM == "Multiple Samples"){
+        if(input$mult_sample_comparison == "Difference" | 
+           input$mult_sample_comparison == "Fold Change"){
+          stop("PTM only plotted on Overlay Graphs")
+        }
         return_plot <- add_PTM_layer(plot = ggplot_intensity_mult(),
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
        for(i in 2:number()){

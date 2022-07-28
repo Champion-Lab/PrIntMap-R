@@ -155,6 +155,9 @@ create_PTM_plot_df_PEAKS <- function(peptide_df, protein, regex_pattern, intensi
   AA_df[[regex_pattern]] <- PTM_vec
   AA_df$intensity <- intensity_vector_input
   AA_df$origin_pep <- origin_pep_vector
+  if(all(AA_df[[regex_pattern]]=="")){
+    stop("One or more PTM values not found in your data.")
+  }
   PTM_df2 <- subset(AA_df, AA_df[[regex_pattern]] != "")
   return(PTM_df2)
 }
