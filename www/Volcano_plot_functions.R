@@ -509,7 +509,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
                       fold_change_category = fold_change_category))
   }
   
-  return(plot)
+  return(list(plot, df))
 }
 
 create_volcano_plotly <- function(plot) {

@@ -950,7 +950,7 @@ PTM_regex_length <- reactive({
                                   set_na = input$set_na_value)
   })
   
-  volcano_plot <- reactive({
+  volcano_plot_list <- reactive({
     create_volcano_plot(combined_volcano(),
                         fdr = input$p_cutoff,
                         fold_change_cutoff_plot = input$l2fc_cutoff,
@@ -965,6 +965,9 @@ PTM_regex_length <- reactive({
                         display_infinites = input$display_infinite_vals)
   })
   
+  volcano_plot <- reactive(volcano_plot_list()[[1]])
+  volcano_plot_download_df <- reactive(volcano_plot_list()[[2]])
+  
   output$volcano <- renderPlotly({
     if (!is.null(volcano_plot())) {
       create_volcano_plotly(volcano_plot())
@@ -972,6 +975,16 @@ PTM_regex_length <- reactive({
       NULL
     }
   })
+  
+  
+  output$download_volcano_df <- downloadHandler(
+    filename = function() {
+      "volcano_plot_data.csv"
+    },
+    content = function(file) {
+      write.csv(volcano_plot_download_df(), file, row.names = FALSE)
+    }
+  )
   
   output$volcano_text <- renderText({
     if (is.null(volcano_plot())) {

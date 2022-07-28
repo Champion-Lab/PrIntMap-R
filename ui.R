@@ -94,6 +94,8 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                 withSpinner(
                                                   plotlyOutput("volcano", height = 600)
                                                 ),
+                                                downloadButton("download_volcano_df",
+                                                               "Download Volcano Plot CSV"),
                                                 textOutput("volcano_text"))),
                                      ),
                             tabPanel("Multiple Samples",
@@ -178,8 +180,7 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                   choices = c("AA Position", "Intensity"),
                                                   selected = "AA Position"),
                                       withSpinner(
-                                        plotlyOutput("stacked_plotly") 
-                                      )
+                                        plotlyOutput("stacked_plotly"))
                                      ),
                             tabPanel("Percent Coverage",
                                      textOutput("total_AA"),
@@ -196,11 +197,7 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                     choices = c("One sample", "Both samples", 
                                                                 "Multiple Samples"),
                                                     selected = "One sample")
-                                       )
-                                      
-                                     )
-                          )
-                        ),
+                                       )))),
                  tabPanel("Examples", 
                           "Coming Soon"                        
                          )
