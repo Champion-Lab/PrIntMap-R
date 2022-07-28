@@ -709,56 +709,105 @@ PTM_regex_length <- reactive({
   })
 
   PTM_plot2 <- reactive ({
-    if(input$disp_origin){ 
+   if(input$disp_overlay_PTM == "Stacked Peptides"){
+      if(input$stacked_peptides_yunits == "AA Position"){
+        return_plot <- add_PTM_layer_stacked(plot = stacked_plot(),
+                                             PTM_df = PTM_stacked(), 
+                                             length = PTM_regex_length())
+      }else{ 
+        return_plot <- add_PTM_layer_stacked_inten(plot = stacked_plot(),
+                                                   PTM_df = PTM_stacked(), 
+                                                   length = PTM_regex_length())}
+   }else if(input$disp_origin){ 
       if(input$disp_overlay_PTM == "Two Samples"){
         return_plot <- add_PTM_layer_origin(plot = ggplot_intensity2(), 
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
         return_plot <- add_PTM_layer_origin(plot = return_plot, PTM_df = PTM_df_plot2(),
                                      length = PTM_regex_length())
-      }
-      else if(input$disp_overlay_PTM == "Multiple Samples"){
+      }else if(input$disp_overlay_PTM == "Multiple Samples"){
         return_plot <- add_PTM_layer_origin(plot = ggplot_intensity_mult(),
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
         for(i in 2:number()){
           return_plot <- add_PTM_layer_origin(plot = return_plot,
                                        PTM_df = PTM_df_plot_mult()[i-1][[1]],
                                        length = PTM_regex_length())}
-      }
-      else{ 
+      }else if(input$disp_overlay_PTM == "Annotation"){
+        if(input$disp_overlay_annot == "One Sample"){
+          return_plot  <- add_PTM_layer_origin(plot = annotation_plot2(),
+                                                             PTM_df = PTM_df_plot(), 
+                                                             length = PTM_regex_length())
+        }else if(input$disp_overlay_annot == "Two Samples"){
+          return_plot <- add_PTM_layer_origin(plot = annotation_plot2(), 
+                                              PTM_df = PTM_df_plot(), length = PTM_regex_length())
+          return_plot <- add_PTM_layer_origin(plot = return_plot, PTM_df = PTM_df_plot2(),
+                                              length = PTM_regex_length()) 
+        }else if(input$disp_overlay_annot == "Multiple Samples"){
+          return_plot <- add_PTM_layer_origin(plot = annotation_plot2(),
+                                              PTM_df = PTM_df_plot(), length = PTM_regex_length())
+          for(i in 2:number()){
+            return_plot <- add_PTM_layer_origin(plot = return_plot,
+                                                PTM_df = PTM_df_plot_mult()[i-1][[1]],
+                                                length = PTM_regex_length())}
+        }else{
+          if(input$stacked_peptides_yunits == "AA Position"){
+            return_plot <- add_PTM_layer_stacked(plot = annotation_plot2(),
+                                                 PTM_df = PTM_stacked(), 
+                                                 length = PTM_regex_length())
+          }
+        else{ 
+          return_plot <- add_PTM_layer_stacked_inten(plot = annotation_plot2(),
+                                                     PTM_df = PTM_stacked(), 
+                                                     length = PTM_regex_length())}
+        }
+      }else{ 
         return_plot <- add_PTM_layer_origin(plot = PTM_plot(),
                                                 PTM_df = PTM_df_plot(), length = PTM_regex_length())}
-     
     }else{
       if(input$disp_overlay_PTM == "Two Samples"){
         return_plot <- add_PTM_layer(plot = ggplot_intensity2(), 
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
         return_plot <- add_PTM_layer(plot = return_plot, PTM_df = PTM_df_plot2(),
                                      length = PTM_regex_length())
-      }
-      else if(input$disp_overlay_PTM == "Multiple Samples"){
+      }else if(input$disp_overlay_PTM == "Multiple Samples"){
         return_plot <- add_PTM_layer(plot = ggplot_intensity_mult(),
                                      PTM_df = PTM_df_plot(), length = PTM_regex_length())
        for(i in 2:number()){
           return_plot <- add_PTM_layer(plot = return_plot,
                                        PTM_df = PTM_df_plot_mult()[i-1][[1]],
                                        length = PTM_regex_length())}
-      }else if(input$disp_overlay_PTM == "Stacked Peptides"){
-        if(input$stacked_peptides_yunits == "AA Position"){
-          return_plot <- add_PTM_layer_stacked(plot = stacked_plot(),
-                                               PTM_df = PTM_stacked(), 
+      }else if(input$disp_overlay_PTM == "Annotation"){
+        if(input$disp_overlay_annot == "One Sample"){
+          return_plot  <- add_PTM_layer(plot = annotation_plot2(),
+                                               PTM_df = PTM_df_plot(), 
                                                length = PTM_regex_length())
-        }else{ return_plot <- add_PTM_layer_stacked_inten(plot = stacked_plot(),
-                                                    PTM_df = PTM_stacked(), 
-                                                    length = PTM_regex_length())}
-        
-        }  
-
-     
-      else{
-      return_plot <- add_PTM_layer(plot = PTM_plot(),
+        }else if(input$disp_overlay_annot == "Two Samples"){
+          return_plot <- add_PTM_layer(plot = annotation_plot2(), 
+                                              PTM_df = PTM_df_plot(), length = PTM_regex_length())
+          return_plot <- add_PTM_layer(plot = return_plot, PTM_df = PTM_df_plot2(),
+                                              length = PTM_regex_length()) 
+        }else if(input$disp_overlay_annot == "Multiple Samples"){
+          return_plot <- add_PTM_layer(plot = annotation_plot2(),
+                                              PTM_df = PTM_df_plot(), length = PTM_regex_length())
+          for(i in 2:number()){
+            return_plot <- add_PTM_layer(plot = return_plot,
+                                                PTM_df = PTM_df_plot_mult()[i-1][[1]],
+                                                length = PTM_regex_length())}
+        }else{
+          if(input$stacked_peptides_yunits == "AA Position"){
+            return_plot <- add_PTM_layer_stacked(plot = annotation_plot2(),
+                                                 PTM_df = PTM_stacked(), 
+                                                 length = PTM_regex_length())
+          }
+          else{ 
+            return_plot <- add_PTM_layer_stacked_inten(plot = annotation_plot2(),
+                                                       PTM_df = PTM_stacked(), 
+                                                       length = PTM_regex_length())}}
+      }else{
+          return_plot <- add_PTM_layer(plot = PTM_plot(),
                                    PTM_df = PTM_df_plot(), length = PTM_regex_length())}
       }
-    return(return_plot)})
+    return(return_plot)
+    })
 
 
 

@@ -191,7 +191,7 @@ plot <- plot +
 add_PTM_layer_stacked <- function(plot, PTM_df, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
   for(i in 1:length){
     plot <- plot + 
-      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = y_val, text = peptide, 
+      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = y_val, text = peptide_store, 
                                          intensity_label = intensity_store_mod/intensity_value), 
                  size =1, color = color[[i]]) 
   }
@@ -201,7 +201,7 @@ add_PTM_layer_stacked <- function(plot, PTM_df, color = c("red", "yellow", "gree
 add_PTM_layer_stacked_inten <- function(plot, PTM_df, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
   for(i in 1:length){
     plot <- plot + 
-      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = intensity_value, text = peptide, 
+      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = intensity_value, text = peptide_store, 
                                          intensity_label = intensity_store_mod/intensity_value), 
                  size =1, color = color[[i]]) 
   }
