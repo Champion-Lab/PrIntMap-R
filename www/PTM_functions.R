@@ -56,10 +56,11 @@ create_PTM_df_PEAKS <- function(peptide_df, protein, regex_pattern, intensity = 
 }
 
 ##created df for stacked peptide plot 
-create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern){
+create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern, stacked_df){
   start_position_vec <- vector()
   mod_vector_list <- list()
   y_val_vec <- vector()
+  intensity_vec <- vector()
   for(i in 1:nrow(peptide_df)){
     mod_position_vec <- vector()
     peptide <- peptide_df$peptide_store[i]
@@ -80,9 +81,15 @@ create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern){
         mod_position_vec <- as.character(0)
       }
     }
+    for(l in 1:nrow(stacked_df)){
+      if(peptide == stacked_df$peptide[l]){
+        intensity_vec <-c(intensity_vec, stacked_df$intensity_value[l])
+      }
+    }
     start_position_vec <- c(start_position_vec, start)
     mod_vector_list[[i]] <- mod_position_vec
   }
+  peptide_df$intensity_value <- intensity_vec
   peptide_df$mod_position <- mod_vector_list
   peptide_df$start_position <- start_position_vec
   peptide_df <- peptide_df[order(peptide_df$start_position, peptide_df$peptide_store ),]
@@ -98,11 +105,16 @@ create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern){
     }
   }
   peptide_df$y_val <- y_val_vec
-  peptide_df <- separate_rows(peptide_df, mod_position, sep = " ")
+  print(peptide_df)
+  peptide_df <- as.data.frame(separate_rows(peptide_df, mod_position, sep = "  "))
+  print(peptide_df)
+  peptide_df <- peptide_df %>%
+    group_by(peptide_store, intensity_value, mod_position, y_val) %>%
+    dplyr::summarise(intensity_store_mod = sum(intensity_store_mod)) %>%
+    as.data.frame()
+  print(peptide_df)
   stacked_df <- subset(peptide_df, peptide_df$mod_position != "0")
-  print(class(stacked_df$y_val))
   stacked_df$mod_position <- as.numeric(stacked_df$mod_position)
-  print(class(stacked_df$mod_position))
   return(stacked_df)
 }
 
@@ -183,7 +195,7 @@ add_PTM_layer_stacked <- function(plot, PTM_df, color = c("red", "yellow", "gree
   for(i in 1:length){
     plot <- plot + 
       geom_point(data = PTM_df[[i]], aes(x = mod_position, y = y_val, text = peptide, 
-                                         intensity_label = intensity_store_mod/intensity_store), 
+                                         intensity_label = intensity_store_mod/intensity_value), 
                  size =1, color = color[[i]]) 
   }
   return(plot)

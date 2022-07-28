@@ -644,7 +644,8 @@ PTM_regex_length <- reactive({
     lapply(1:PTM_regex_length(), function(i){
     create_PTM_df_stacked(peptide_df = PTM_df()[[i]], 
                           protein = protein_obj1()[1],
-                          regex_pattern = PTM_regex()[[i]]
+                          regex_pattern = PTM_regex()[[i]],
+                          stacked_df = stacked_plot_dataframe()
                           )
       })
     })
