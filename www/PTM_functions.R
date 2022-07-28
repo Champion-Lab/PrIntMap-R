@@ -105,14 +105,11 @@ create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern, stacked_df
     }
   }
   peptide_df$y_val <- y_val_vec
-  print(peptide_df)
   peptide_df <- as.data.frame(separate_rows(peptide_df, mod_position, sep = "  "))
-  print(peptide_df)
   peptide_df <- peptide_df %>%
     group_by(peptide_store, intensity_value, mod_position, y_val) %>%
     dplyr::summarise(intensity_store_mod = sum(intensity_store_mod)) %>%
     as.data.frame()
-  print(peptide_df)
   stacked_df <- subset(peptide_df, peptide_df$mod_position != "0")
   stacked_df$mod_position <- as.numeric(stacked_df$mod_position)
   return(stacked_df)
@@ -201,4 +198,13 @@ add_PTM_layer_stacked <- function(plot, PTM_df, color = c("red", "yellow", "gree
   return(plot)
 }
 
+add_PTM_layer_stacked_inten <- function(plot, PTM_df, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
+  for(i in 1:length){
+    plot <- plot + 
+      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = intensity_value, text = peptide, 
+                                         intensity_label = intensity_store_mod/intensity_value), 
+                 size =1, color = color[[i]]) 
+  }
+  return(plot)
+}
 

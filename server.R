@@ -743,9 +743,15 @@ PTM_regex_length <- reactive({
                                        PTM_df = PTM_df_plot_mult()[i-1][[1]],
                                        length = PTM_regex_length())}
       }else if(input$disp_overlay_PTM == "Stacked Peptides"){
-        return_plot <- add_PTM_layer_stacked(plot = stacked_plot(),
-                                             PTM_df = PTM_stacked(), 
-                                             length = PTM_regex_length())}  
+        if(input$stacked_peptides_yunits == "AA Position"){
+          return_plot <- add_PTM_layer_stacked(plot = stacked_plot(),
+                                               PTM_df = PTM_stacked(), 
+                                               length = PTM_regex_length())
+        }else{ return_plot <- add_PTM_layer_stacked_inten(plot = stacked_plot(),
+                                                    PTM_df = PTM_stacked(), 
+                                                    length = PTM_regex_length())}
+        
+        }  
 
      
       else{
