@@ -820,6 +820,11 @@ PTM_regex_length <- reactive({
     
   })
   
+  download_volcano_filename <- reactive({
+    paste0("Volcano_plot_data_", input$intensity_metric, "_", select_prot_volcano(db = database(),
+                                                                                  Accession = input$AccessionID), ".csv")
+  })
+  
   
   output$download_intensity_df <- downloadHandler(
     filename = function() {
@@ -979,7 +984,7 @@ PTM_regex_length <- reactive({
   
   output$download_volcano_df <- downloadHandler(
     filename = function() {
-      "volcano_plot_data.csv"
+      download_volcano_filename()
     },
     content = function(file) {
       write.csv(volcano_plot_download_df(), file, row.names = FALSE)
