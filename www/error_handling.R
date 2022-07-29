@@ -51,9 +51,7 @@ check_file <- function(file_name, search_engine){
   store2 <- strsplit(readLines(file_name, n=1)[1], split="\t")[[1]]
   store3 <- strsplit(readLines(file_name, n=1)[1], split="\"\t\"")[[1]]
   store4 <- strsplit(readLines(file_name, n=1)[1], split=",")[[1]]
-  print(store4)
   store5 <- strsplit(readLines(file_name, n =1)[1], split = "\",\"")[[1]]
-  print(store5)
   if(search_engine == "MSfragger"){
     if(!any(store1 == "\t")) { 
       stop("For the search software MSFragger, the expected file type is .tsv")}

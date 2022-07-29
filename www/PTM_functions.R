@@ -23,7 +23,7 @@ create_PTM_df_PEAKS <- function(peptide_df, protein, regex_pattern, intensity = 
     mod_peptide <- peptide_df$modpeptide_store[i]
     mod_peptide_strsplit <- strsplit(mod_peptide, "")[[1]]
     peptide <- peptide_df$peptide_store[i]
-    PTM_df <-str_locate_all(mod_peptide, regex_pattern)[[1]]
+    PTM_df <-str_locate_all(mod_peptide, fixed(regex_pattern))[[1]]
     PTM_count <- nrow(PTM_df)
     if(PTM_count > 0){
       if(is.na(peptide_df$intensity_store[[i]])){
@@ -170,7 +170,8 @@ add_PTM_layer_origin <- function(plot, PTM_df_list, color = c("red", "yellow", "
   for(i in 1:length){
    plot <- plot +
    geom_point(data = PTM_df_list[[i]], aes(x = AA_index, y = intensity, text = paste0("AA: ",AA), 
-                                           pep_label = origin_pep, intensity_label = intensitymod/intensity),
+                                           pep_label = origin_pep, intensity_label = intensitymod/intensity
+                                           ),
               size = 1, color =color[[i]] ) 
   }
   return(plot)
@@ -184,8 +185,10 @@ add_PTM_layer <- function(plot, PTM_df_list, color = c("red", "yellow", "green",
   for(i in 1:length){
 
 plot <- plot +
-  geom_point(data = PTM_df_list[[i]], aes(x = AA_index, y = intensity, text = paste0("AA: ",AA) ,
-                                          intensity_label = intensitymod/intensity),
+  geom_point(data = PTM_df_list[[i]], aes(x = AA_index, y = intensity, 
+                                          text = paste0("AA: ",AA) ,
+                                          intensity_label = intensitymod/intensity
+                                          ),
              size = 1, color =color[[i]] )
   }
   return(plot)}
@@ -194,7 +197,8 @@ plot <- plot +
 add_PTM_layer_stacked <- function(plot, PTM_df, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
   for(i in 1:length){
     plot <- plot + 
-      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = y_val, text = peptide_store, 
+      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = y_val,
+                                         text = peptide_store, 
                                          intensity_label = intensity_store_mod/intensity_value), 
                  size =1, color = color[[i]]) 
   }

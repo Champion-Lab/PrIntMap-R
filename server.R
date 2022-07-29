@@ -616,13 +616,20 @@ server <- function(input, output, session) {
   
   output$annotation_plotly <- renderPlotly(annotation_plot2())
   
-PTM_regex <- reactive(input$PTM)
-  
+PTM_regex <- reactive({
+  if(input$custom_PTM_check){
+    regex_list <- c(input$PTM, input$custom_PTM)
+  }else{
+    regex_list <- input$PTM
+  }
+  return(regex_list)
+  })
+
 PTM_regex_length <- reactive(length(PTM_regex()))
   
   PTM_df <- reactive({
     validate(
-      need(!is.null(input$PTM), "no PTM selected")
+      need(!is.null(PTM_regex()), "no PTM selected")
     )
     lapply(1:PTM_regex_length(), function(i){
     create_PTM_df_PEAKS(peptide_df = peptides1(), 
