@@ -631,12 +631,17 @@ PTM_regex_length <- reactive(length(PTM_regex()))
     validate(
       need(!is.null(PTM_regex()), "no PTM selected")
     )
-    lapply(1:PTM_regex_length(), function(i){
-    create_PTM_df_PEAKS(peptide_df = peptides1(), 
-                        protein = protein_obj1()[1], 
-                        regex_pattern = PTM_regex()[[i]],
-                        intensity = input$intensity_metric)
-    })
+    if(input$file_type == "PEAKS" | input$file_type == "Generic csv"){
+      lapply(1:PTM_regex_length(), function(i){
+        create_PTM_df_PEAKS(peptide_df = peptides1(), 
+                            protein = protein_obj1()[1], 
+                            regex_pattern = PTM_regex()[[i]],
+                            intensity = input$intensity_metric)
+      })
+    }else{
+      stop("PTMs are not supported for this search software.")
+    }
+    
 })
   PTM_df2 <- reactive({
     lapply(1:PTM_regex_length(), function(i){
