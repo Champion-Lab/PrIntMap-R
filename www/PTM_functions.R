@@ -112,6 +112,7 @@ create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern, stacked_df
     as.data.frame()
   stacked_df <- subset(peptide_df, peptide_df$mod_position != "0")
   stacked_df$mod_position <- as.numeric(stacked_df$mod_position)
+  stacked_df$PTM <- regex_pattern
   return(stacked_df)
 }
 
@@ -159,6 +160,8 @@ create_PTM_plot_df_PEAKS <- function(peptide_df, protein, regex_pattern, intensi
     stop("One or more PTM values not found in your data.")
   }
   PTM_df2 <- subset(AA_df, AA_df[[regex_pattern]] != "")
+  PTM_df2 <- PTM_df2[-4]
+  PTM_df2$PTM <- regex_pattern
   return(PTM_df2)
 }
 
@@ -166,52 +169,50 @@ create_PTM_plot_df_PEAKS <- function(peptide_df, protein, regex_pattern, intensi
   
 #add PTM layer to plots 
 ##add a new layer for eachPTM
-add_PTM_layer_origin <- function(plot, PTM_df_list, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
-  for(i in 1:length){
+add_PTM_layer_origin <- function(plot, PTM_df_list){
+  
    plot <- plot +
-   geom_point(data = PTM_df_list[[i]], aes(x = AA_index, y = intensity, text = paste0("AA: ",AA), 
-                                           pep_label = origin_pep, intensity_label = intensitymod/intensity
-                                           ),
-              size = 1, color =color[[i]] ) 
-  }
+   geom_point(data = PTM_df_list, shape = 16, aes(x = AA_index, y = intensity, text = paste0("AA: ",AA), 
+                                           pep_label = origin_pep, intensity_label = intensitymod/intensity,
+                                      fill = PTM),
+              size = 2, stroke = NA) 
   return(plot)
-    }
+}
 
 
 
 
-add_PTM_layer <- function(plot, PTM_df_list, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
- 
-  for(i in 1:length){
+add_PTM_layer <- function(plot, PTM_df_list){
 
 plot <- plot +
-  geom_point(data = PTM_df_list[[i]], aes(x = AA_index, y = intensity, 
+  geom_point(data = PTM_df_list, shape = 16, aes(x = AA_index, y = intensity, 
                                           text = paste0("AA: ",AA) ,
-                                          intensity_label = intensitymod/intensity
-                                          ),
-             size = 1, color =color[[i]] )
-  }
-  return(plot)}
+                                          intensity_label = intensitymod/intensity,
+                                          fill = PTM),
+             size = 2, stroke = NA)
+  return(plot)
+}
 
 #
-add_PTM_layer_stacked <- function(plot, PTM_df, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
-  for(i in 1:length){
+add_PTM_layer_stacked <- function(plot, PTM_df){
+
     plot <- plot + 
-      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = y_val,
+      geom_point(data = PTM_df, shape = 16, aes(x = mod_position, y = y_val,
                                          text = peptide_store, 
-                                         intensity_label = intensity_store_mod/intensity_value), 
-                 size =1, color = color[[i]]) 
-  }
+                                         intensity_label = intensity_store_mod/intensity_value,
+                                         fill = PTM), 
+                 size =2, stroke = NA) 
   return(plot)
 }
 
-add_PTM_layer_stacked_inten <- function(plot, PTM_df, color = c("red", "yellow", "green", "pink", "purple", "blue"), length ){
-  for(i in 1:length){
+add_PTM_layer_stacked_inten <- function(plot, PTM_df){
     plot <- plot + 
-      geom_point(data = PTM_df[[i]], aes(x = mod_position, y = intensity_value, text = peptide_store, 
-                                         intensity_label = intensity_store_mod/intensity_value), 
-                 size =1, color = color[[i]]) 
-  }
+      geom_point(data = PTM_df, shape = 16, aes(x = mod_position, y = intensity_value, text = peptide_store, 
+                                         intensity_label = intensity_store_mod/intensity_value,
+                                         fill = PTM), 
+                 size =2, stroke = NA) 
   return(plot)
 }
+
+
 

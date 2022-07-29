@@ -175,11 +175,13 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                                 "Multiple Samples",
                                                                 "Stacked Peptides", 
                                                                 "Annotation"),
-                                                    selected = "One Sample")),
+                                                    selected = "One Sample"),
+                                       "WARNING: If 'Multiple Samples' is selected, you will need to update the plot on the 'Multiple Samples' tab if other options are changed for the PTM plot to display accurateely."),
                                        withSpinner(
                                          plotlyOutput("PTM_plotly")
                                        
-                                     )),
+                                     ),
+                                     tableOutput("test_df")),
                             tabPanel("Unique Peptides",
                                      textOutput("unique_text"),
                                      actionButton(inputId = "run_unique",
