@@ -109,18 +109,18 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   PSM_pattern <- paste0("X\\.Spec", ".*", sample_pattern, ".*")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
-  PSM_vec <- rowSums(as.data.frame(PSM_df))
+  PSM_vec <- rowSums(as.data.frame(PSM_df), na.rm = T)
   sample_count <- ncol(as.data.frame(PSM_df))
   
   Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
   Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
   Intensity_df[is.na(Intensity_df)] <- 0
-  Intensity_vec <- rowSums(as.data.frame(Intensity_df))
+  Intensity_vec <- rowSums(as.data.frame(Intensity_df), na.rm = T)
   
   Area_pattern <- paste0("Area", ".*", sample_pattern, ".*")
   Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
   Area_df[is.na(Area_df)] <- 0
-  Area_vec <- rowSums(as.data.frame(Area_df))
+  Area_vec <- rowSums(as.data.frame(Area_df), na.rm = T)
   
   if (comb_method == "Average") {
     PSM_vec <- PSM_vec / sample_count
@@ -251,18 +251,18 @@ read_peptide_tsv_MSFragger_comb <- function(peptide_file, sample_pattern, sample
   PSM_pattern <- paste0(".*", sample_pattern, ".*", "Spectral\\.Count")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
-  PSM_vec <- rowSums(as.data.frame(PSM_df))
+  PSM_vec <- rowSums(as.data.frame(PSM_df), na.rm = T)
   sample_count <- ncol(as.data.frame(PSM_df))
   
   Intensity_pattern <- paste0(".*", sample_pattern, ".*", "Intensity")
   Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
   Intensity_df[is.na(Intensity_df)] <- 0
-  Intensity_vec <- rowSums(as.data.frame(Intensity_df))
+  Intensity_vec <- rowSums(as.data.frame(Intensity_df), na.rm = T)
   
   if (length(names(peptides)[grepl("LFQ", names(peptides))]) >0){
   Area_pattern <- paste0(".*", sample_pattern, ".*", "MaxLFQ.Intensity")
   Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
-  Area_vec <- rowSums(as.data.frame(Area_df))
+  Area_vec <- rowSums(as.data.frame(Area_df), na.rm = T)
   peptides$Area <- Area_vec
   if (comb_method == "Average") {
     Area_vec <- Area_vec / sample_count
@@ -309,18 +309,18 @@ read_peptide_tsv_MaxQuant_comb <- function(peptide_file, sample_pattern, sample 
   PSM_pattern <- paste0("Experiment", ".*", sample_pattern, ".*")
   PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
   PSM_df[is.na(PSM_df)] <- 0
-  PSM_vec <- rowSums(as.data.frame(PSM_df))
+  PSM_vec <- rowSums(as.data.frame(PSM_df), na.rm = T)
   sample_count <- ncol(as.data.frame(PSM_df))
   
   Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
   Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
   Intensity_df[is.na(Intensity_df)] <- 0
-  Intensity_vec <- rowSums(as.data.frame(Intensity_df))
+  Intensity_vec <- rowSums(as.data.frame(Intensity_df), na.rm = T)
   
   Area_pattern <- paste0("LFQ.intensity", ".*", sample_pattern, ".*")
   Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
   Area_df[is.na(Area_df)] <- 0
-  Area_vec <- rowSums(as.data.frame(Area_df))
+  Area_vec <- rowSums(as.data.frame(Area_df), na.rm = T)
   
   if (comb_method == "Average") {
     PSM_vec <- PSM_vec / sample_count
@@ -408,7 +408,7 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
    Area_pattern <- paste0("Intensity_", ".*", sample_pattern, ".*")
    Area_df <- peptides[,grepl(Area_pattern, names(peptides))]
    Area_df[is.na(Area_df)] <- 0
-   Area_vec <- rowSums(as.data.frame(Area_df))
+   Area_vec <- rowSums(as.data.frame(Area_df), na.rm = T)
    sample_count <- ncol(as.data.frame(Area_df))
    
    if (comb_method == "Average") {
