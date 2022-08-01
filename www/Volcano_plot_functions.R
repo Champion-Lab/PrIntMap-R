@@ -493,7 +493,20 @@ create_volcano_plot <- function(df, fdr = 0.05,
     scale_color_manual(values = color_list)
   
   if (display_infinites) {
-    plot <- plot + geom_point(data = infinite, 
+    
+    rectangle_pos_min_x <- fold_change_cutoff_plot + (pos_range/2)*1.2
+    rectangle_min_y <- y_cutoff + (y_range/2)*1.4
+    rectangle_neg_min_x <- (fold_change_cutoff_plot + (abs(neg_range)/2)*1.2) * (-1)
+    
+    
+    plot <- plot + 
+      geom_rect(aes(xmin = rectangle_pos_min_x - (rectangle_pos_min_x*0.05), xmax = maxx + (maxx*0.05),
+                    ymin = rectangle_min_y - (rectangle_min_y*0.05), ymax = maxy + (maxy*0.05)), alpha = 1,
+                color = "black", fill = NA, alpha = 0, linetype = 5) +
+      geom_rect(aes(xmin = minx + (minx*0.05), xmax = rectangle_neg_min_x - (rectangle_neg_min_x*0.05),
+                    ymin = rectangle_min_y - (rectangle_min_y*0.05), ymax = maxy + (maxy*0.05)), alpha = 1,
+                color = "black", fill = NA, alpha = 0, linetype = 5) +
+      geom_point(data = infinite, 
                                aes(x = x, y = y,
                                    PEPTIDE = PEPTIDE,
                                    sequence = sequence,
@@ -507,6 +520,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
                       protein = protein,
                       colour = color,
                       fold_change_category = fold_change_category))
+      
   }
   
   return(list(plot, df))
