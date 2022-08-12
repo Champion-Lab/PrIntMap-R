@@ -146,7 +146,7 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
 #takes csv file in generic format and returns dataframe
 read_peptide_csv_generic_bysamp <- function(peptide_file) {
   check_file(peptide_file, "Generic")
-  peptides <- read.csv(peptide_file)
+  peptides <- read.csv(peptide_file, fileEncoding="UTF-8-BOM")
   filetype(peptides, "Individual", "Generic")
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
   names(peptides)[grepl("Area", names(peptides))] <- "Area"
