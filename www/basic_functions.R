@@ -99,6 +99,14 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
   peptide_import <- read.csv(peptide_file)
   filetype(peptide_import, "Combined", "PEAKS")
   names(peptide_import)[names(peptide_import) == "X.Spec"] <- "total_spectra"
+  names(peptide_import)[names(peptide_import) == "Avg..Area"] <- "Average_LFQ_value"
+  if(length(names(peptide_import)[grepl("Group.Profile..Ratio.", names(peptide_import))])>0){
+    start <- which(grepl(pattern = "Sample.Profile", x = names(peptide_import)))
+    end <- which(grepl(pattern = "Group.Profile", x = names(peptide_import)))
+    for (i in (start+1):(end-1)) {
+      names(peptide_import)[i] <- paste0("Average_", i)
+    }
+  } 
   peptides <- peptide_import
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
   
@@ -106,31 +114,73 @@ read_peptide_csv_PEAKS_comb <- function(peptide_file, sample_pattern, sample = N
     stop("Sample Pattern not found in file.")
   }
   else {
-  PSM_pattern <- paste0("X\\.Spec", ".*", sample_pattern, ".*")
-  PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
-  PSM_df[is.na(PSM_df)] <- 0
-  PSM_vec <- rowSums(as.data.frame(PSM_df), na.rm = T)
-  sample_count <- ncol(as.data.frame(PSM_df))
   
-  Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
-  Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
-  Intensity_df[is.na(Intensity_df)] <- 0
-  Intensity_vec <- rowSums(as.data.frame(Intensity_df), na.rm = T)
+  if(length(names(peptides)[grepl("X\\.Spec", names(peptides))])>0){
+    PSM_pattern <- paste0("X\\.Spec", ".*", sample_pattern, ".*")
+    PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
+    PSM_df[is.na(PSM_df)] <- 0
+    PSM_vec <- rowSums(as.data.frame(PSM_df), na.rm = T)
+    sample_count <- ncol(as.data.frame(PSM_df))
+    if (comb_method == "Average") {
+      PSM_vec <- PSM_vec / sample_count
+    }
+    peptides$PSM <- PSM_vec
+  } 
   
-  Area_pattern <- paste0("Area", ".*", sample_pattern, ".*")
-  Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
-  Area_df[is.na(Area_df)] <- 0
-  Area_vec <- rowSums(as.data.frame(Area_df), na.rm = T)
-  
-  if (comb_method == "Average") {
-    PSM_vec <- PSM_vec / sample_count
-    Intensity_vec <- Intensity_vec / sample_count
-    Area_vec <- Area_vec / sample_count
+  if(length(names(peptides)[grepl("Intensity", names(peptides))])>0){
+    Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
+    Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
+    Intensity_df[is.na(Intensity_df)] <- 0
+    Intensity_vec <- rowSums(as.data.frame(Intensity_df), na.rm = T)
+    sample_count <- ncol(as.data.frame(Intensity_df))
+    if (comb_method == "Average") {
+      Intensity_vec <- Intensity_vec / sample_count
+    }
+    peptides$Intensity <- Intensity_vec
+  }    
+    
+  if(length(names(peptides)[grepl("Area", names(peptides))])>0){
+    Area_pattern <- paste0("Area", ".*", sample_pattern, ".*")
+    Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
+    Area_df[is.na(Area_df)] <- 0
+    Area_vec <- rowSums(as.data.frame(Area_df), na.rm = T)
+    sample_count <- ncol(as.data.frame(Area_df))
+    if (comb_method == "Average") {
+      Area_vec <- Area_vec / sample_count
+    }
+    peptides$Area <- Area_vec
   }
   
-  peptides$PSM <- PSM_vec
-  peptides$Intensity <- Intensity_vec
-  peptides$Area <- Area_vec
+      
+    
+    
+  
+  # PSM_pattern <- paste0("X\\.Spec", ".*", sample_pattern, ".*")
+  # PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
+  # PSM_df[is.na(PSM_df)] <- 0
+  # PSM_vec <- rowSums(as.data.frame(PSM_df), na.rm = T)
+  # sample_count <- ncol(as.data.frame(PSM_df))
+  # 
+  # Intensity_pattern <- paste0("Intensity", ".*", sample_pattern, ".*")
+  # Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
+  # Intensity_df[is.na(Intensity_df)] <- 0
+  # Intensity_vec <- rowSums(as.data.frame(Intensity_df), na.rm = T)
+  # 
+  # Area_pattern <- paste0("Area", ".*", sample_pattern, ".*")
+  # Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
+  # Area_df[is.na(Area_df)] <- 0
+  # Area_vec <- rowSums(as.data.frame(Area_df), na.rm = T)
+  
+  # if (comb_method == "Average") {
+  #   PSM_vec <- PSM_vec / sample_count
+  #   Intensity_vec <- Intensity_vec / sample_count
+  #   Area_vec <- Area_vec / sample_count
+  # }
+  
+  # peptides$PSM <- PSM_vec
+  # peptides$Intensity <- Intensity_vec
+  # peptides$Area <- Area_vec
+  
   if (!is.na(sample)) {
     peptides$sample <- sample
   }

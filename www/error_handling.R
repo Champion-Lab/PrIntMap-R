@@ -29,21 +29,39 @@ filetype <- function(df, type_file, search_engine){
         stop("You have uploaded an individual file.")
       }
     }
-    }
+  }
   
   if(type_file == "Combined" && search_engine == "Proteome Discover"){
     stop("You have uploaded an Individual File.")
   }
+  
+  if(search_engine == "PEAKS"){
+    if(type_file == "Individual"){
+      if(length(names(store)) >1 |length(names(store2)) >1 | length(names(store3)) >1){
+        stop("You have uploaded a combined file.")
+      }
+    }
+    if(type_file == "Combined"){
+      if(length(names(store)) ==1 |length(names(store2)) ==1 | length(names(store3)) ==1){
+        stop("You have uploaded an individual file.")
+      }
+    }
+  }
+  
  
   if(type_file == "Individual" && (search_engine != "Metamorpheus" | search_engine != "Generic")){
     if(length(names(store)) >1){
-      stop("You have uploaded a combined file.")
+      if (search_engine != "PEAKS") {
+        stop("You have uploaded a combined file.")
+      }
     }}
-  if(type_file == "Combined" && (search_engine != "Metamorpheus"| search_engine != "Generic")){
+  if(type_file == "Combined" && (search_engine != "Metamorpheus" | search_engine != "Generic")){
     if(length(names(store))<=1){   
-      stop("You have uploaded an individual file.")
+      if (search_engine != "PEAKS") {
+        stop("You have uploaded an individual file.")
+      }
     }}
-    }
+  }
 
 #Function to check whether file type is correct
 check_file <- function(file_name, search_engine){
@@ -52,6 +70,8 @@ check_file <- function(file_name, search_engine){
   store3 <- strsplit(readLines(file_name, n=1)[1], split="\"\t\"")[[1]]
   store4 <- strsplit(readLines(file_name, n=1)[1], split=",")[[1]]
   store5 <- strsplit(readLines(file_name, n =1)[1], split = "\",\"")[[1]]
+  
+  
   if(search_engine == "MSfragger"){
     if(!any(store1 == "\t")) { 
       stop("For the search software MSFragger, the expected file type is .tsv")}
@@ -84,7 +104,7 @@ check_file <- function(file_name, search_engine){
   if(!any(store1[1:15] ==",")){
       stop("For the search software PEAKS, the expected file type is .csv")
   }
-    if(! (any(store4 == "RT") | any(store5 == "RT"))){
+    if(! (any(store4 == "RT") | any(store5 == "RT") | any(store5 == "-10LgP") | any(store4 == "-10LgP"))){
       stop("You have not uploaded a PEAKS file.")
     }
   }
