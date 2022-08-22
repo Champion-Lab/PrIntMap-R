@@ -407,6 +407,9 @@ create_volcano_plot <- function(df, fdr = 0.05,
   
   minx <- min(df$l2fc_xy, na.rm = T)
   maxx <- max(df$l2fc_xy, na.rm = T)
+  maxabs <- max(c(abs(minx), abs(maxx)))
+  minx <- -maxabs
+  maxx <- maxabs
   maxy <- max(df$neg10logp, na.rm = T)
   rangex <- maxx - minx
   
@@ -458,6 +461,8 @@ create_volcano_plot <- function(df, fdr = 0.05,
   minx <- min(df$l2fc_xy, na.rm = T)
   maxx <- max(df$l2fc_xy, na.rm = T)
   maxy <- max(df$neg10logp, na.rm = T)
+  minx <- -maxabs
+  maxx <- maxabs
   rangex <- maxx - minx
   
   pos_range <- maxx - fold_change_cutoff_plot
@@ -486,6 +491,9 @@ create_volcano_plot <- function(df, fdr = 0.05,
 
   print(head(df))
   
+  print(maxx)
+  print(minx)
+  
   plot <- ggplot() +
     geom_vline(xintercept = fold_change_cutoff_plot, linetype = 2) +
     geom_vline(xintercept = -fold_change_cutoff_plot, linetype = 2) +
@@ -503,7 +511,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
     labs(x = (paste("Log2 fold-change: (", sample2, "/", sample1, ")",sep="")),
          y = "-Log10 (p-value)",
          title = plot_title) +
-    scale_x_continuous(breaks = round(min(df$l2fc_xy, na.rm = T)):round(max(df$l2fc_xy, na.rm = T))) +
+    scale_x_continuous(breaks = round(minx):round(maxx), limits = c(minx*1.2, maxx*1.2)) +
     scale_y_continuous(breaks = 0:round(max(df$neg10logp, na.rm = T)))+
     scale_color_manual(values = color_list)
   
