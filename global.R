@@ -11,6 +11,7 @@ library(markdown)
 library(data.table)
 library(readr)
 library(purrr)
+library(shinyBS)
 
 #reactlog
 # library(reactlog)

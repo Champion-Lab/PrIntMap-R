@@ -85,16 +85,16 @@ server <- function(input, output, session) {
 
   output$intensity <- renderUI({
     mychoicesint <- intensity_metric_choices(peptides1())
-    radioButtons(inputId = "intensity_metric",
+    tipify(radioButtons(inputId = "intensity_metric",
                  label = "Intensity Metric",
-                 choices = mychoicesint)
+                 choices = mychoicesint), "Select which metric should be used for the y-axis. This applies to all plots. Different input data may have different otpions.")
   })
   
   output$combined_method_display <- renderUI({
     if (input$combinedbool1 == "Combined") {
-      radioButtons(inputId = "combined_method",
+      tipify(radioButtons(inputId = "combined_method",
                    label = "Combination Method",
-                   choices = c("Sum", "Average"))
+                   choices = c("Sum", "Average")), "This method will be used to combine data for all included columns. Options to sum data or average data.")
     }
   })
 

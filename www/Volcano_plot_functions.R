@@ -239,7 +239,17 @@ read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, min_val
   peptide_import <- read.csv(peptide_file)
   filetype(peptide_import, "Combined", "PEAKS")
   names(peptide_import)[names(peptide_import) == "X.Spec"] <- "total_spectra"
+  names(peptide_import)[names(peptide_import) == "Avg..Area"] <- "Average_LFQ_value"
+  if(length(names(peptide_import)[grepl("Group.Profile..Ratio.", names(peptide_import))])>0){
+    start <- which(grepl(pattern = "Sample.Profile", x = names(peptide_import)))
+    end <- which(grepl(pattern = "Group.Profile", x = names(peptide_import)))
+    for (i in (start+1):(end-1)) {
+      names(peptide_import)[i] <- paste0("Average_", i)
+    }
+  } 
+ 
   peptides <- peptide_import
+  peptides[peptides == 0] <- NA
   peptides$sequence <- str_remove_all(peptides$Peptide, "[a-z1-9()+-:.]")
   peptides$PEPTIDE <- peptides$Peptide
   peptides$protein <- NA
@@ -264,6 +274,7 @@ read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, min_val
       pattern <- paste0("Area", ".*", sample_pattern, ".*")
     }
     dataframe <- peptide_import[,grepl(pattern, names(peptide_import))]
+    dataframe[dataframe == 0] <- NA
     if (intensity_metric == "PSM") {
       dataframe[dataframe == 0] <- NA
     }
@@ -329,6 +340,7 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
   volcano_df1 <- combine_df[,grepl("Volcano_intensity_.*\\.x", names(combine_df))]
   volcano_df2 <- combine_df[,grepl("Volcano_intensity_.*\\.y", names(combine_df))]
   
+  
   combine_df$count.x <- NA
   combine_df$count.y <- NA
   combine_df$valid.x <- F
@@ -347,7 +359,6 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
     combine_df$count.y[i] <- sum(!is.na(as.numeric(volcano_df2[i,])))
   }
   
- 
   combine_df$valid.x[combine_df$count.x >= min_valid_sample] <- T
   combine_df$valid.y[combine_df$count.y >= min_valid_sample] <- T
   combine_df$fold_change_category[combine_df$valid.x == F & combine_df$valid.y == F] <- "Invalid"
@@ -385,7 +396,6 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
     }
   }
   
-  
   return(combine_df)
 }
 
@@ -400,11 +410,13 @@ create_volcano_plot <- function(df, fdr = 0.05,
   maxy <- max(df$neg10logp, na.rm = T)
   rangex <- maxx - minx
   
+  
   if (display_comp_vals == F) {
     df <- df[df$fold_change_category != "Compromised.x",]
     df <- df[df$fold_change_category != "Compromised.y",]
   }
   
+
   if (BH_correction == T) {
     df <- df[order(df$p_val),]
     BH_df <- df[!is.na(df$p_val),]
@@ -425,7 +437,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
     y_cutoff <- -log(fdr, base = 10)
   }
   
- 
+
   df$color <- "Not_Significant"
   df$color[df$l2fc_xy > fold_change_cutoff_plot & df$neg10logp > y_cutoff] <- "Significant"
   df$color[df$l2fc_xy < -fold_change_cutoff_plot & df$neg10logp > y_cutoff] <- "Significant"
@@ -442,7 +454,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
     color_list <- c("grey65", "green", "black")
   }
   
-  
+
   minx <- min(df$l2fc_xy, na.rm = T)
   maxx <- max(df$l2fc_xy, na.rm = T)
   maxy <- max(df$neg10logp, na.rm = T)
@@ -471,6 +483,9 @@ create_volcano_plot <- function(df, fdr = 0.05,
     plot_title <- paste0("Peptide Volcano Plot: ", intensity_metric, " (", protein_of_interest, ")")
   }
   
+
+  print(head(df))
+  
   plot <- ggplot() +
     geom_vline(xintercept = fold_change_cutoff_plot, linetype = 2) +
     geom_vline(xintercept = -fold_change_cutoff_plot, linetype = 2) +
@@ -491,6 +506,8 @@ create_volcano_plot <- function(df, fdr = 0.05,
     scale_x_continuous(breaks = round(min(df$l2fc_xy, na.rm = T)):round(max(df$l2fc_xy, na.rm = T))) +
     scale_y_continuous(breaks = 0:round(max(df$neg10logp, na.rm = T)))+
     scale_color_manual(values = color_list)
+  
+
   
   if (display_infinites) {
     
