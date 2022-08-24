@@ -1085,6 +1085,89 @@ PTM_regex_length <- reactive(length(PTM_regex()))
       NULL
     }
   })
+  
+  
+  output$downloadHSdatabase <- downloadHandler(
+    filename <- function() {
+      "Human_database_Uniprot_downloaded_20220823.fasta"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/Human_database_Uniprot_downloaded_20220823.fasta", file)
+    }
+  )
+  
+  output$downloadPhosphoNoPTM <- downloadHandler(
+    filename <- function() {
+      "MSFragger.PO4ase.NoPTMsearch.combined_modified_peptide.tsv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/MSFragger.PO4ase.NoPTMsearch.combined_modified_peptide.tsv", file)
+    }
+  )
+  
+  output$downloadPhosphoWithPTM <- downloadHandler(
+    filename <- function() {
+      "MSFragger.PO4ase.PhosphoPTMsearch.combined_modified_peptide.tsv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/MSFragger.PO4ase.PhosphoPTMsearch.combined_modified_peptide.tsv", file)
+    }
+  )
+  
+  output$downloadHXMS <- downloadHandler(
+    filename <- function() {
+      "PEAKS.db.peptides.H4.OptimizationHXMS.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/PEAKS.db.peptides.H4.OptimizationHXMS.csv", file)
+    }
+  )
+  
+  output$downloadDeglycoLFQ <- downloadHandler(
+    filename <- function() {
+      "PEAKS.lfq.peptides.HumanSerum.PNGaseF.Deglycosylation.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/PEAKS.lfq.peptides.HumanSerum.PNGaseF.Deglycosylation.csv", file)
+    }
+  )
+  
+  output$downloadDeglycoDB <- downloadHandler(
+    filename <- function() {
+      "PEAKS.db.peptides.HumanSerum.PNGaseF.Deglycosylation.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/PEAKS.db.peptides.HumanSerum.PNGaseF.Deglycosylation.csv", file)
+    }
+  )
+  
+  output$downloadDeglycoCTRL <- downloadHandler(
+    filename <- function() {
+      "PEAKS.db.HumanSerum.PNGaseF_CTRL_1.peptides.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/PEAKS.db.HumanSerum.PNGaseF_CTRL_1.peptides.csv", file)
+    }
+  )
+  
+  output$downloadDeglycoPNGaseF <- downloadHandler(
+    filename <- function() {
+      "PEAKS.db.HumanSerum.PNGaseF_PNG_1.peptides.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/PEAKS.db.HumanSerum.PNGaseF_PNG_1.peptides.csv", file)
+    }
+  )
+  
+  
 
 }
   

@@ -2,7 +2,7 @@ library(shiny)
 ui <- navbarPage(title = "PrIntMap-R",
                  tabPanel("Documentation",
                           includeMarkdown("www/Documentation.md"),
-                          "Version 0.1.0"), #update version here for each push
+                          "Version 0.1.1"), #update version here for each push
                  tabPanel("Run",
                           flowLayout(
                             fileInput(inputId = "database_file", label = "Upload fasta database file",
@@ -213,8 +213,31 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                                 "Multiple Samples"),
                                                     selected = "One sample")
                                        )))),
-                 tabPanel("Examples", 
-                          "Coming Soon"                        
+                 tabPanel("Examples",
+                          tags$h1("Example Database"),
+                          downloadButton("downloadHSdatabase",
+                                         "Download Human Proteome Database"),
+                          tags$h1("Example Combined Files"),
+                          downloadButton("downloadPhosphoNoPTM",
+                                         "Download PO4ase MSFragger Search - No Phospho PTM"),
+                          tags$br(),
+                          downloadButton("downloadPhosphoWithPTM",
+                                         "Download PO4ase MSFragger Search - With Phospho PTM"),
+                          tags$br(),
+                          downloadButton("downloadHXMS",
+                                         "Download HXMS PEAKS Search"),
+                          tags$br(),
+                          downloadButton("downloadDeglycoLFQ",
+                                         "Download PNGaseF PEAKS LFQ Search"),
+                          tags$br(),
+                          downloadButton("downloadDeglycoDB",
+                                         "Download PNGaseF PEAKS DB Search"),
+                          tags$h1("Example Individual Files"),
+                          downloadButton("downloadDeglycoCTRL",
+                                         "Download Control Injection PEAKS"),
+                          tags$br(),
+                          downloadButton("downloadDeglycoPNGaseF",
+                                         "Download PNGaseF Injection PEAKS"),
+                          
                          )
-  
 )

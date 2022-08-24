@@ -33,7 +33,7 @@ The peptide files are exported from the database search. These are either `.csv`
 To download the PEAKS peptide file from a database search, click on the export tab, and then select the `Peptide CSV` option as shown in the image above. If you click `DOWNLOAD BY SAMPLE`, then you will select the `Individual Sample` option in PrIntMap-R. If you select `DOWNLOAD`, then all your samples will be combined into one `.csv` file, and you will select `Combined` in PrIntMap-R. See the `Other Options` section below for more information on `Individual Sample` vs `Combined`. LFQ data from PEAKS can also be analyzed. All downloaded LFQ data will be in a combined file called `lfq.peptides.csv`, unless you have changed the default file name.  
   
 * __MSFragger:__  
-For individual sample files, go into the directory for the sample of interest, and selet the `peptide.tsv` file. For Combined files, select `combined_peptide.tsv`.  
+For individual sample files, go into the directory for the sample of interest, and select the `peptide.tsv` file. For Combined files, select `combined_peptide.tsv` or `combined_modified_peptide.tsv`.  
 * __MaxQuant:__  
 MaxQuant only has combined files as outputs. To find the peptide file, go into the `/combined/txt/` directory in the search output folder, and select the `peptides.txt` file.  
 * __MetaMorpheus:__  
