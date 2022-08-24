@@ -2,7 +2,7 @@ library(shiny)
 ui <- navbarPage(title = "PrIntMap-R",
                  tabPanel("Documentation",
                           includeMarkdown("www/Documentation.md"),
-                          "Version 0.0.0"), #update version here for each push
+                          "Version 0.1.0"), #update version here for each push
                  tabPanel("Run",
                           flowLayout(
                             fileInput(inputId = "database_file", label = "Upload fasta database file",

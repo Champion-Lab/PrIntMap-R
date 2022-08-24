@@ -152,4 +152,3 @@ Please leave all of the above on the [github page](https://github.com/Champion-L
 [Champion Lab](https://championlab.weebly.com/), University of Notre Dame  
   
 <sup>By Simon D. Weaver and Christine M. DeRosa</sup>
-

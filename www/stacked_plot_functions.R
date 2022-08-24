@@ -7,7 +7,10 @@ create_stack_line_df <- function(peptide_df,
     peptide <- peptide_df$sequence[i]
     intensity_value <- peptide_df[[intensity]][i]
     if (is.na(intensity_value)) {
-      intensity_value <- 0
+      next
+    }
+    if (intensity_value == 0) {
+      next
     }
     matches_df <- str_locate_all(protein, peptide)[[1]]
     matches_count <- nrow(matches_df)

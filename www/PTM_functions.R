@@ -61,6 +61,8 @@ create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern, stacked_df
   mod_vector_list <- list()
   y_val_vec <- vector()
   intensity_vec <- vector()
+  peptide_df <- peptide_df[peptide_df$intensity_store > 0,]
+  
   for(i in 1:nrow(peptide_df)){
     mod_position_vec <- vector()
     peptide <- peptide_df$peptide_store[i]
@@ -113,6 +115,7 @@ create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern, stacked_df
   stacked_df <- subset(peptide_df, peptide_df$mod_position != "0")
   stacked_df$mod_position <- as.numeric(stacked_df$mod_position)
   stacked_df$PTM <- regex_pattern
+  stacked_df <- stacked_df[stacked_df$intensity_value > 0,]
   return(stacked_df)
 }
 
