@@ -1166,8 +1166,6 @@ PTM_regex_length <- reactive(length(PTM_regex()))
       file.copy("example_data/PEAKS.db.HumanSerum.PNGaseF_PNG_1.peptides.csv", file)
     }
   )
-  
-  
 
 }
   

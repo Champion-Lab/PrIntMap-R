@@ -6,3 +6,8 @@ Version 0.1.0
 Version 0.1.1
 2022-08-24
  - Added example data for download
+ 
+Version 0.1.2
+2022-08-27
+ - Bug fixed for using generic files uncoded in different styles (UTF-8 vs UTF-8-BOM)
+ - Changed the maximum column character size to 50 for generic files (must be a comma in first 50 characters)

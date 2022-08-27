@@ -66,6 +66,7 @@ filetype <- function(df, type_file, search_engine){
 #Function to check whether file type is correct
 check_file <- function(file_name, search_engine){
   store1 <- strsplit(readLines(file_name, n=1)[1], split="")[[1]]
+  print(store1)
   store2 <- strsplit(readLines(file_name, n=1)[1], split="\t")[[1]]
   store3 <- strsplit(readLines(file_name, n=1)[1], split="\"\t\"")[[1]]
   store4 <- strsplit(readLines(file_name, n=1)[1], split=",")[[1]]
@@ -109,7 +110,7 @@ check_file <- function(file_name, search_engine){
     }
   }
   if(search_engine == "Generic"){
-    if(!any(store1[1:15] ==",")){
+    if(!any(store1[1:50] ==",")){
       stop("For a generic file, the expected file type is .csv")
     }
     if(any(store4 == "Scan") | any(store5 == "Scan")){
