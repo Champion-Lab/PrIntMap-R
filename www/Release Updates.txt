@@ -11,3 +11,8 @@ Version 0.1.2
 2022-08-27
  - Bug fixed for using generic files uncoded in different styles (UTF-8 vs UTF-8-BOM)
  - Changed the maximum column character size to 50 for generic files (must be a comma in first 50 characters)
+ 
+ Version 0.1.3
+ 2022-08-30
+  - Fixed Proteome Discoverer import so it is more flexible, and takes a variety of sample formats
+  -removed print lines that were holdovers from troubleshooting error handling

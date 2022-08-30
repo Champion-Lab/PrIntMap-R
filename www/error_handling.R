@@ -66,7 +66,6 @@ filetype <- function(df, type_file, search_engine){
 #Function to check whether file type is correct
 check_file <- function(file_name, search_engine){
   store1 <- strsplit(readLines(file_name, n=1)[1], split="")[[1]]
-  print(store1)
   store2 <- strsplit(readLines(file_name, n=1)[1], split="\t")[[1]]
   store3 <- strsplit(readLines(file_name, n=1)[1], split="\"\t\"")[[1]]
   store4 <- strsplit(readLines(file_name, n=1)[1], split=",")[[1]]
@@ -97,7 +96,7 @@ check_file <- function(file_name, search_engine){
   if(search_engine == "Proteome Discoverer"){
     if(!any(store1 == "\t" )){ 
       stop("For the search software Proteome Discoverer, the expected file type is .tsv")}
-    if(!any(store3 == "Qvality PEP")){
+    if(!any(store3 == "# PSMs")){
       stop("You have not uploaded a Proteome Discoverer File.")
     }
   }

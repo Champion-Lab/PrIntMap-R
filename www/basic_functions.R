@@ -488,8 +488,24 @@ read_peptide_tsv_Metamorpheus_comb <- function(peptide_file, sample_pattern, sam
 read_peptide_tsv_ProteomeDiscover_bysamp <- function(peptide_file, sample = NA, filter = NA) {
   check_file(peptide_file, "Proteome Discoverer")
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
-  peptides$sequence <- peptides$Sequence
-  names(peptides)[grepl("X..PSMs", names(peptides))] <- "PSM"
+  if (length(names(peptides[grepl("Annotated.Sequence", names(peptides))])) > 0) {
+    peptides$sequence <- peptides$Annotated.Sequence
+    for (i in 1:nrow(peptides)) {
+      peptides$sequence[i] <- str_remove_all(peptides$sequence[i], "\\.\\[[:alpha:]\\]")
+      peptides$sequence[i] <- str_remove_all(peptides$sequence[i], "\\[[:alpha:]\\]\\.") 
+    }
+  } else {
+    peptides$sequence <- peptides$Sequence
+  }
+  
+  if (length(names(peptides[grepl("X..PSMs", names(peptides))])) > 0) { 
+    names(peptides)[grepl("X..PSMs", names(peptides))] <- "PSM"
+  }
+  
+  if (length(names(peptides[grepl("Abundance.*", names(peptides))])) > 0) { 
+    names(peptides)[grepl("Abundance.*", names(peptides))] <- "Area"
+  }
+  
   if (!is.na(sample)) {
     peptides$sample <- sample
   }
