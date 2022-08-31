@@ -1166,6 +1166,26 @@ PTM_regex_length <- reactive(length(PTM_regex()))
       file.copy("example_data/PEAKS.db.HumanSerum.PNGaseF_PNG_1.peptides.csv", file)
     }
   )
+  
+  output$downloadBGalBSAfusion <- downloadHandler(
+    filename <- function() {
+      "PEAKS.lfq.peptides.BGalBSAFusion.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/PEAKS.lfq.peptides.BGalBSAFusion.csv", file)
+    }
+  )
+  
+  output$downloadHSdatabaseBgalBSAfusion <- downloadHandler(
+    filename <- function() {
+      "Human_database_Uniprot_BGAL-BSAfusion_downloaded_20220823.fasta"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/Human_database_Uniprot_BGAL-BSAfusion_downloaded_20220823.fasta", file)
+    }
+  )
 
 }
   

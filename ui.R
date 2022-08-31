@@ -2,7 +2,7 @@ library(shiny)
 ui <- navbarPage(title = "PrIntMap-R",
                  tabPanel("Documentation",
                           includeMarkdown("www/Documentation.md"),
-                          "Version 0.1.3"), #update version here for each push
+                          "Version 0.1.4"), #update version here for each push
                  tabPanel("Run",
                           flowLayout(
                             fileInput(inputId = "database_file", label = "Upload fasta database file",
@@ -217,7 +217,13 @@ ui <- navbarPage(title = "PrIntMap-R",
                           tags$h1("Example Database"),
                           downloadButton("downloadHSdatabase",
                                          "Download Human Proteome Database"),
+                          tags$br(),
+                          downloadButton("downloadHSdatabaseBgalBSAfusion",
+                                         "Download Human Proteome Database with B-Gal/BSA fusion entry"),
                           tags$h1("Example Combined Files"),
+                          downloadButton("downloadBGalBSAfusion",
+                                         "Download BSA/BGal fusion protein PEAKS LFQ Search"),
+                          tags$br(),
                           downloadButton("downloadPhosphoNoPTM",
                                          "Download PO4ase MSFragger Search - No Phospho PTM"),
                           tags$br(),
