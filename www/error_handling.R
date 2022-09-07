@@ -4,6 +4,7 @@ filetype <- function(df, type_file, search_engine){
   store <- df[, grepl("Intensity", names(df))]
   store2 <- df[, grepl("Area", names(df))]
   store3 <- df[, grepl("PSM", names(df))]
+  print(paste0("Search engine is ", search_engine))
   if (search_engine == "Metamorpheus"){
     if(length(names(df)[grepl("File.Name", names(df))]) >0){ 
       if(uniqueN(df, by = "File.Name")>1 && type_file == "Individual"){
@@ -48,14 +49,14 @@ filetype <- function(df, type_file, search_engine){
     }
   }
   
- 
-  if(type_file == "Individual" && (search_engine != "Metamorpheus" | search_engine != "Generic")){
+  
+  if(type_file == "Individual" && (search_engine != "Metamorpheus" && search_engine != "Generic")){
     if(length(names(store)) >1){
       if (search_engine != "PEAKS") {
         stop("You have uploaded a combined file.")
       }
     }}
-  if(type_file == "Combined" && (search_engine != "Metamorpheus" | search_engine != "Generic")){
+  if(type_file == "Combined" && (search_engine != "Metamorpheus" && search_engine != "Generic")){
     if(length(names(store))<=1){   
       if (search_engine != "PEAKS") {
         stop("You have uploaded an individual file.")
