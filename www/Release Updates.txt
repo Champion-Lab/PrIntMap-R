@@ -24,3 +24,7 @@ Version 0.1.4
 Version 0.1.5
 2022-09-07
  - Fixed MetaMorpheus import bug for non LFQ files
+ 
+ Version 0.1.6
+ 2022-09-08
+  - Bug fixed for PTM plot not displaying log scale when two samples is selected.

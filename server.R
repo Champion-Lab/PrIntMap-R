@@ -836,7 +836,11 @@ PTM_regex_length <- reactive(length(PTM_regex()))
       }else{
           return_plot <- add_PTM_layer(plot = PTM_plot(),
                                    PTM_df = PTM_df_plot_bound())}
-      }
+    }
+    if(input$y_axis_scale == "log"){
+      return_plot <-return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                          breaks = base_breaks())
+    }
     return(return_plot)
     })
 
