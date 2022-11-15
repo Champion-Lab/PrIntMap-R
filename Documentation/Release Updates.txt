@@ -25,6 +25,11 @@ Version 0.1.5
 2022-09-07
  - Fixed MetaMorpheus import bug for non LFQ files
  
- Version 0.1.6
- 2022-09-08
-  - Bug fixed for PTM plot not displaying log scale when two samples is selected.
+Version 0.1.6
+2022-09-08
+ - Bug fixed for PTM plot not displaying log scale when two samples is selected.
+  
+Version 0.1.7
+2022-11-15
+  - Reorganized Documentation to be in a separate folder to cleanup code
+  - Updated RegEx for N-glycosylation motif to exclude proline as the middle AA
