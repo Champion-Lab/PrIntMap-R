@@ -7,15 +7,18 @@ By Simon D. Weaver and Christine M. DeRosa
 
 ## Protein Intensity Mapper
 
-Beta version can be found hosted on shiny apps:  
+Online version can be found hosted on shiny apps:  
 
 https://championlab.shinyapps.io/printmap-r/
+
+Latest Release can be found at Zenodo: 
+[![DOI](https://zenodo.org/badge/497019874.svg)](https://zenodo.org/badge/latestdoi/497019874)
 
 
 To run locally in R:  
 
  * Download and install [R](https://www.r-project.org/) and optionally (but encouraged), [RStudio](https://www.rstudio.com/products/rstudio/download/).
- * Either clone this directory, or download a zip file containing its contents by navigating to [https://github.com/Champion-Lab/PrIntMap-R/zipball/master](https://github.com/Champion-Lab/PrIntMap-R/zipball/master). If necessary, unzip this file. The location of this on your local computer is the 'App directory'.
+ * Either clone this directory, use the latest release from Zenodo (above), or download a zip file containing the contents of this repository by navigating to [https://github.com/Champion-Lab/PrIntMap-R/zipball/master](https://github.com/Champion-Lab/PrIntMap-R/zipball/master). If necessary, unzip this file. The location of this on your local computer is the 'App directory'.
  * Open R (or RStudio if installed).
  * Ensure that the shiny package is loaded by running `install.packages("shiny")` and active `library(shiny)` in the R console.
  * Ensure that all of the packages you need are installed on your computer. The required packages can be found in 'global.R'. You can either install them manually, or run this code in the R console:
