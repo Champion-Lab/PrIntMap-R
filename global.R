@@ -12,6 +12,7 @@ library(data.table)
 library(readr)
 library(purrr)
 library(shinyBS)
+library(shinyWidgets)
 
 #reactlog
 # library(reactlog)
