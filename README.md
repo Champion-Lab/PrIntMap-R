@@ -30,3 +30,11 @@ To run locally in R:
  * A 'Run App' button should appear in the top right of the '.R' file that you just opened. Click this to start a local version of the app. 
  * Alternatively, you can launch the app directly from the R console: `runApp("path/to/appDirectory")`. If you already set the working directory to this path, you can simply run: `runApp()`.
  * If there are errors, you may not have all the correct packages installed. Open the 'global.R' file and ensure that all the packages used are in your 'packages' tab.
+
+Alternative Method to run locally: 
+
+ * After following the instructions above to install R and all required packages (including shiny), simply execute this line: `runGitHub("Champion-Lab/PrIntMap-R")` in the R console.
+ * This will re-download the github version of the app each time it is run, so is not an efficient way to use the app repeatedly, but will work for easy testing and quick use.
+
+
+Errors that occur when trying to run the app locally are almost always due to old versons of R, or the installed packages. To troubleshoot, install the most recent version of R, as well as the most recent version of all the packages referenced above.
