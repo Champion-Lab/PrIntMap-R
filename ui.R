@@ -118,6 +118,7 @@ ui <- navbarPage(title = "PrIntMap-R",
                             tabPanel("Annotation",
                                      flowLayout(
                                        tipify(selectInput(inputId = "annotation",
+                                                          selectize = F,
                                                    label = "Annotation",
                                                    choices = c("Trypsin", "LysC",
                                                                "N_glycosylation",
