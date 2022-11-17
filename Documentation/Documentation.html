@@ -688,12 +688,54 @@ may contain NAs, the percent coverage can be lower than for PSM.</p>
 downloaded. Option of downloading just the initial sample, two samples,
 or multiple samples.</p>
 </div>
+<div id="regex-examples" class="section level3">
+<h3>Regex Examples</h3>
+<p>There are several places in the application where the user can use
+regular expressions (regex) to customize their experience, specifically
+with custom annotations, and selecting specific samples/injections from
+combined input files. For a summary of regex in R and how they are used
+in the stringr package, see <a href="https://cran.r-project.org/web/packages/stringr/vignettes/regular-expressions.html">this
+link</a>. Regex is very flexible, and almost any possible subset of
+strings can be matched. Several examples are explained below.</p>
+<ul>
+<li><p><strong>Selecting specific replicates to display:</strong> In
+this example, imagine that you have a combined .csv input file with 6
+different injections (replicates 1-6) of two samples (Sample A and
+Sample B) where the injections are named
+<code>SampleA_Replicate_1, SampleB_Replicate_1, SampleA_Replicate_2, SampleB_Replicate_2, ..., SampleA_Replicate_6, SampleB_Replicate_6</code>.</p>
+<p>To select all of the replicates from Sample A, a possible regex input
+would be <code>SampleA.*</code>. This will match anything that contains
+the text “SampleA” followed by any other characters. The “.” matches any
+character, and the “*” means that there can be any number of the
+previous character. A more specific example that would also select all
+of the Sample A replicates would be
+<code>SampleA_Replicate_[1-6]</code>. In this case, the number range
+within the square brackets mean that any numbers between 1 and 6 will
+match the character after the underscore.</p>
+<p>To select replicates 1-3 of both sample A and B, one option would be
+<code>Sample[AB]_Replicate_[1-3]</code>. The number range works the same
+as the above example, but now only includes replicates 1-3. When two or
+more characters are contained within square brackets without a dash, any
+of those characters by themselves will match (essentially ‘or’ logic).
+Another option would be <code>Sample[:alpha:]_Replicate_[123]</code>.
+The or logic is now applied to the replicate number, and the character
+after ‘Sample’ will match to any alphabetical character.</p></li>
+<li><p><strong>Creating a custom annotation:</strong> In this example,
+imagine that you want to annotate the amino acid sequence E - G or A -
+Any amino acid except for proline - E. This four character sequence can
+be achieved with several possible combinations.
+<code>E[AG][AGILVFWYDERHKSTCMNQ]E</code> will match, because any
+character enclosed within square brackets will match. Another options
+would be <code>E[AG][^P]E</code> is another option. The “^P” means any
+character besides P.</p></li>
+</ul>
+</div>
 <div id="local-version" class="section level2">
 <h2>Local Version</h2>
 <p>Sometimes if your peptide file has many samples or your database is
-very large, the webapp will time out. If you repeatedly experience this,
-try running the app locally on your computer. Follow instructions on the
-<code>README</code> file at the <a href="https://github.com/Champion-Lab/PrIntMap-R/">github repo</a> for
+very large, the web app will time out. If you repeatedly experience
+this, try running the app locally on your computer. Follow instructions
+on the <code>README</code> file at the <a href="https://github.com/Champion-Lab/PrIntMap-R/">github repo</a> for
 this project.</p>
 </div>
 <div id="citation" class="section level2">

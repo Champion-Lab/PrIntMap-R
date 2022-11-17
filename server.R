@@ -1190,6 +1190,26 @@ PTM_regex_length <- reactive(length(PTM_regex()))
       file.copy("example_data/Human_database_Uniprot_BGAL-BSAfusion_downloaded_20220823.fasta", file)
     }
   )
+  
+  output$downloadIndividualGeneric <- downloadHandler(
+    filename <- function() {
+      "individualGenericTemplate.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/individual.csv", file)
+    }
+  )
+  
+  output$downloadCombinedGeneric <- downloadHandler(
+    filename <- function() {
+      "combinedGenericTemplate.csv"
+    },
+    
+    content <- function(file) {
+      file.copy("example_data/combined.csv", file)
+    }
+  )
 
 }
   

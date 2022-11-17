@@ -245,6 +245,12 @@ ui <- navbarPage(title = "PrIntMap-R",
                           tags$br(),
                           downloadButton("downloadDeglycoPNGaseF",
                                          "Download PNGaseF Injection PEAKS"),
-                          
+                          tags$h1("Generic CSV Templates"),
+                          tags$h4("The following can be filled out and used for custom data analysis. Any numbers can go in the intensity column for versitility."),
+                          downloadButton("downloadIndividualGeneric",
+                                         "Download Individual Generic Template"),
+                          tags$br(),
+                          downloadButton("downloadCombinedGeneric",
+                                         "Download Combined Generic Template")
                          )
 )
