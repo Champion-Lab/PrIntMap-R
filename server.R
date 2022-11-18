@@ -120,29 +120,51 @@ server <- function(input, output, session) {
 
   output$plot_intensity1 <- renderPlotly({
     validate(
-      need(nrow(AA_df_origin1()) > 0, "Invalid peptide file. Check format.")
+      need(nrow(peptides1()) > 0, "Invalid peptide file. Check format.")
     )
     if (input$disp_origin) {
-      create_plotly({
         return_plot <- plot_origin(AA_df_origin1(), protein_obj1()[2],
-                    intensity_label = input$intensity_metric)
+                                   intensity_label = input$intensity_metric)
+        if(input$displayAnnotations) {
+          return_plot <- add_annotation_layer(plot = return_plot,
+                                              annotation_df = annotation_df(),
+                                              color = input$annot_color)
+        }
+        
+        if(input$displayPTMs) {
+          return_plot <- add_PTM_layer_origin(plot = return_plot,
+                                              PTM_df = PTM_df_plot_bound())
+        }
+
         if(input$y_axis_scale == "log"){
           return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                           breaks = base_breaks())
         }
-        return(return_plot)
-      })
+        
+        
     } else {
-      create_plotly({
         return_plot <- plot_intensity(AA_df_intensity1(), protein_obj1()[2],
                          intensity_label = input$intensity_metric)
+        
+        if(input$displayAnnotations) {
+          return_plot <- add_annotation_layer(plot = return_plot,
+                                              annotation_df = annotation_df(),
+                                              color = input$annot_color)
+        }
+        
+        if(input$displayPTMs) {
+          return_plot <- add_PTM_layer(plot = return_plot,
+                                              PTM_df = PTM_df_plot_bound())
+        }
+        
         if(input$y_axis_scale == "log"){
           return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                           breaks = base_breaks())
         }
-        return(return_plot)
-      })
+        
+        
     } 
+    create_plotly(return_plot)
   })
 
   AA_df2 <- reactive({
@@ -302,14 +324,42 @@ server <- function(input, output, session) {
   })
   
   output$plot_intensity2 <- renderPlotly({
+    
+    
     if(input$y_axis_scale == "log"){
       return_plot <- ggplot_intensity2() + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                       breaks = base_breaks())
-      create_plotly(return_plot)
-    } else {
-      create_plotly(ggplot_intensity2())
-    }
       
+    } else {
+      return_plot <- ggplot_intensity2()
+      
+    }
+    
+    if(input$displayAnnotations) {
+      return_plot <- add_annotation_layer(plot = return_plot,
+                                          annotation_df = annotation_df(),
+                                          color = input$annot_color)
+    }
+    
+    if(input$displayPTMs) {
+      if(input$two_sample_comparison == "Difference" | 
+         input$two_sample_comparison == "Fold Change"){
+        stop("PTM only plotted on Overlay Graphs")
+      }
+      
+      if(input$disp_origin) {
+        return_plot <- add_PTM_layer_origin(plot = return_plot, 
+                                            PTM_df = PTM_df_plot_bound())
+        return_plot <- add_PTM_layer_origin(plot = return_plot, PTM_df = PTM_df_plot_bound2())
+      } else {
+        return_plot <- add_PTM_layer(plot = return_plot, 
+                                            PTM_df = PTM_df_plot_bound())
+        return_plot <- add_PTM_layer(plot = return_plot, PTM_df = PTM_df_plot_bound2())
+      }
+     
+    }
+    
+    create_plotly(return_plot) 
   })
   
   number <- reactive({
@@ -534,16 +584,38 @@ server <- function(input, output, session) {
 
   })
   
-  output$plot_intensity_mult <- renderPlotly({
+  ggplot_intensity_mult2 <- eventReactive(input$mult_go, {
     if(input$y_axis_scale == "log"){
       return_plot <- ggplot_intensity_mult() + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                                   breaks = base_breaks())
-      create_plotly(return_plot)
+      
     } else {
-      create_plotly(ggplot_intensity_mult())
+      return_plot <- ggplot_intensity_mult()
     }
-  }) 
- 
+    
+    if(input$displayAnnotations) {
+      return_plot <- add_annotation_layer(plot = return_plot,
+                                          annotation_df = annotation_df(),
+                                          color = input$annot_color)
+    }
+    
+    if(input$displayPTMs) {
+      if(input$mult_sample_comparison == "Difference" | 
+         input$mult_sample_comparison == "Fold Change"){
+        stop("PTM only plotted on Overlay Graphs")
+      }
+      return_plot <- add_PTM_layer_origin(plot = return_plot,
+                                          PTM_df = PTM_df_plot_bound())
+      for(i in 2:number()){
+        return_plot <- add_PTM_layer_origin(plot = return_plot,
+                                            PTM_df = PTM_df_plot_bound_mult()[[i-1]])}
+    }
+    return(return_plot)
+  })
+  
+  output$plot_intensity_mult <- renderPlotly({
+    create_plotly(ggplot_intensity_mult2())
+  })
   
   annotation_regex <- reactive({
     if(input$annotation != "CUSTOM") {
@@ -869,6 +941,22 @@ PTM_regex_length <- reactive(length(PTM_regex()))
       if(input$y_axis_scale == "log"){
         return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                         breaks = base_breaks())
+      }
+    }
+    
+    if(input$displayAnnotations) {
+      return_plot <- add_annotation_layer(plot = return_plot,
+                                          annotation_df = annotation_df(),
+                                          color = input$annot_color)
+    }
+    
+    if(input$displayPTMs) {
+      if(input$stacked_peptides_yunits == "AA Position"){
+        return_plot <- add_PTM_layer_stacked(plot = return_plot,
+                                             PTM_df = PTM_stacked_bound())
+      }else{ 
+        return_plot <- add_PTM_layer_stacked_inten(plot = return_plot,
+                                                   PTM_df = PTM_stacked_bound())
       }
     }
     return(return_plot)
