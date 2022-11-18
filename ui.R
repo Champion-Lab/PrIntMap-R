@@ -2,7 +2,7 @@ library(shiny)
 ui <- navbarPage(title = "PrIntMap-R",
                  tabPanel("Documentation",
                           includeMarkdown("Documentation/Documentation.md"),
-                          "Version 0.1.7"), #update version here for each push
+                          "Version 0.1.9"), #update version here for each push
                  tabPanel("Run",
                           flowLayout(
                             fileInput(inputId = "database_file", label = "Upload fasta database file",
@@ -34,62 +34,146 @@ ui <- navbarPage(title = "PrIntMap-R",
                           ),
                           flowLayout(
                             textOutput("AccessionID"),
-                            tipify(textOutput("peptides1_sample_count"), "How many samples were combined based on the RegEx pattern above."),
-                            tipify(checkboxInput(inputId = "disp_origin",
-                                          label = "Display Origin Peptides",
-                                          value = F), "Whether to display the peptides on plots that contributed to the intensity at a particular amino acid position. Mouse over the plots to see this information if selected.")
+                            tipify(textOutput("peptides1_sample_count"), "How many samples were combined based on the RegEx pattern above.")
                           ),
-                          tabsetPanel(
-                            tabPanel("Basic",
-                                     withSpinner(
-                                       plotlyOutput("plot_intensity1")
+                          hr(),
+                          flowLayout(
+                            dropdown(
+                              label = "Annotations",
+                              flowLayout(
+                                checkboxInput(inputId = "displayAnnotations",
+                                              label = "Display Annotation"),
+                                tipify(selectInput(inputId = "annotation",
+                                                   selectize = F,
+                                                   label = "Annotation",
+                                                   choices = c("Trypsin", "LysC",
+                                                               "N_glycosylation",
+                                                               "CUSTOM"),
+                                                   selected = "Trypsin"), "Select a preset annoation option, or select CUSTOM to put in your own"),
+                                tipify(textInput(inputId = "custom_annotation",
+                                                 label = "Custom sequence annotation in RegEx"), "If 'CUSTOM' is selected, all matching values within the protein sequence of interest will be annotated. Uses RegEx."),
+                                tipify(textOutput("annotation_regex"), "This is the pattern that is currently being annotated."),
+                                selectInput(inputId = "annot_color",
+                                            label = "Color",
+                                            choices = c("red",
+                                                        "yellow",
+                                                        "green",
+                                                        "pink",
+                                                        "purple"),
+                                            selected = "red")),
+                            ),
+                            dropdown(
+                              label = "PTMs",
+                              flowLayout(
+                                fluidRow(
+                                  checkboxInput(inputId = "displayPTMs",
+                                                label = "Display PTMs"),
+                                  tipify(checkboxGroupInput(inputId = "PTM",
+                                                            label = "PTMs",
+                                                            choiceNames = c("Carbamidomethylation",
+                                                                            "Deamidation",
+                                                                            "Oxidation" ,
+                                                                            "Pyro_glu_from_E" ,
+                                                                            "Pyro_glu_from_Q",
+                                                                            "Sodium_adduct"
+                                                            ),
+                                                            choiceValues = c("(+57.02)",
+                                                                             "(+0.98)",
+                                                                             "(+15.99)",
+                                                                             "(-18.01)",
+                                                                             "(-17.03)",
+                                                                             "(+21.98)"
+                                                            )), "Select one or more PTMs to annotate"),
+                                  checkboxInput(inputId = "custom_PTM_check",
+                                                label = "CUSTOM", value = F),
+                                  tipify(textInput(inputId = "custom_PTM",
+                                                   label = "Custom PTM"), "Enter a custom PTM (CUSTOM checkbox must be selected. Enter the PTM as a string as it is seen in the peptide column of your sample input."),))
+                            ),
+                            tipify(checkboxInput(inputId = "disp_origin",
+                                                 label = "Display Origin Peptides",
+                                                 value = F), "Whether to display the peptides on plots that contributed to the intensity at a particular amino acid position. Mouse over the plots to see this information if selected.")
+                          ),
+                          hr(),
+                          tabsetPanel(selected = "One Sample",
+                            tabPanel("One Sample",
+                                     navlistPanel(widths = c(3,9),
+                                       tabPanel("Intensity Trace",
+                                                withSpinner(
+                                                  plotlyOutput("plot_intensity1")
+                                                )),
+                                       tabPanel("Stacked Peptides",
+                                                tipify(radioButtons(inputId = "stacked_peptides_yunits",
+                                                                    label = "Units for y-axis",
+                                                                    choices = c("AA Position", "Intensity"),
+                                                                    selected = "AA Position"), "Choose the y-axis for the stacked peptide plot. AA position simply plots peptides by the order they are mapped to the sequence. Intensity plots peptides by their corresponding intensity value."),
+                                                withSpinner(
+                                                  plotlyOutput("stacked_plotly"))),
+                                       tabPanel("Unique Peptides",
+                                                textOutput("unique_text"),
+                                                tipify(actionButton(inputId = "run_unique",
+                                                                    label = "Run/Update"), "Run the unique peptide analysis. This may take several minutes."),
+                                                withSpinner(
+                                                  plotlyOutput("unique_peps")
+                                                )),
+                                       tabPanel("Percent Coverage",
+                                                textOutput("total_AA"),
+                                                textOutput("covered_AA"),
+                                                textOutput("percent_coverage"),
+                                                textOutput("coverage_message"))
                                      )),
                             tabPanel("Two Samples",
-                                     flowLayout(
-                                       fileInput(inputId = "peptide_file2", label = "Upload 2nd .csv peptide output",
-                                                 accept = c(".csv", ".tsv", ".txt", ".psmtsv")),
-                                       tipify(checkboxInput( inputId = "duplicate_file2",
-                                                      label = "Use same peptide output file?", 
-                                                      value = F), "If this box is checked, the same peptide file from above will be used for the second sample. Useful for combined files where different columns will be compared."),
-                                       radioButtons(inputId = "combinedbool2",
-                                                    label = "Type of input file",
-                                                    choices = c("Individual Sample", "Combined"),
-                                                    selected = "Individual Sample"),
-                                       tipify(textInput(inputId = "sample_regex2",
-                                                 label = "For combined files, input sample name (RegEx)"), "Same as above"),
-                                       tipify(textInput(inputId = "sample_name2", 
-                                                 label = "Input sample name",
-                                                 value = "Sample 2"), "For plot labelling only"),
-                                       tipify(radioButtons(inputId = "two_sample_comparison",
-                                                    label = "Type of Comparison",
-                                                    choices = c("Overlay", "Difference", "Fold Change"),
-                                                    selected = "Overlay"), "Comparison types. Difference subtracts the first sample from the second. Fold Change divides the second sample by the first and displays the ratio."),
-                                       tipify(textOutput("peptides2_sample_count"), "How many samples were combined based on the RegEx pattern for sample 2.")),
-                                     tabsetPanel(
-                                       tabPanel("Traces",
+                                     br(),
+                                       bsCollapse(
+                                         bsCollapsePanel("2nd Sample Input (Click Here)", style = "primary",
+                                                         flowLayout(
+                                                         fileInput(inputId = "peptide_file2", label = "Upload 2nd .csv peptide output",
+                                                                   accept = c(".csv", ".tsv", ".txt", ".psmtsv")),
+                                                         tipify(checkboxInput( inputId = "duplicate_file2",
+                                                                               label = "Use same peptide output file?", 
+                                                                               value = F), "If this box is checked, the same peptide file from above will be used for the second sample. Useful for combined files where different columns will be compared."),
+                                                         radioButtons(inputId = "combinedbool2",
+                                                                      label = "Type of input file",
+                                                                      choices = c("Individual Sample", "Combined"),
+                                                                      selected = "Individual Sample"),
+                                                         tipify(textInput(inputId = "sample_regex2",
+                                                                          label = "For combined files, input sample name (RegEx)"), "Same as above"),
+                                                         tipify(textInput(inputId = "sample_name2", 
+                                                                          label = "Input sample name",
+                                                                          value = "Sample 2"), "For plot labelling only"),
+                                                         tipify(radioButtons(inputId = "two_sample_comparison",
+                                                                             label = "Type of Comparison",
+                                                                             choices = c("Overlay", "Difference", "Fold Change"),
+                                                                             selected = "Overlay"), "Comparison types. Difference subtracts the first sample from the second. Fold Change divides the second sample by the first and displays the ratio."),
+                                                         tipify(textOutput("peptides2_sample_count"), "How many samples were combined based on the RegEx pattern for sample 2."))
+                                       )),
+                                     navlistPanel(widths = c(3,9),
+                                       tabPanel("Intensity Traces",
                                                 withSpinner(
                                                   plotlyOutput("plot_intensity2")
                                                 )),
                                        tabPanel("Volcano Plot",
-                                                flowLayout(
-                                                  tipify(numericInput("p_cutoff", "p-value cutoff",
-                                                               value = 0.05, min = 0, max = 1, step = 0.05), "The set value for significance. This draws a horizontal line at the equivalent value on the y-axis"),
-                                                  tipify(numericInput("l2fc_cutoff", "log2 fold-change cutoff",
-                                                               value = 1, min = 0, max = 100), "The set value for log2 fold change cutoff. Draws vertical lines at the positive and negative values."),
-                                                  tipify(numericInput("min_valid_sample", "Miniumum number of observations per sample",
-                                                               value = 2, min = 1), "Sets the minimum number of observations per sample for a peptide to be considered valid. Peptides with less than this number of non-NA values in both samples will be discarded."),
-                                                  tipify(checkboxInput("equal_var", "Equal Variance",
-                                                                value = T), "Whether or not to assume equal variance in the t-test calculation."),
-                                                  tipify(checkboxInput("remove_na", "Remove NA values",
-                                                                value = T), "If this box is checked, the average intensity value for each peptide will not include the NA values. If it is unchecked, the NA values will be replaced by whatever value is in the next field."),
-                                                  tipify(numericInput("set_na_value", "Set NA values",
-                                                               value = 0), "If the previous box is unchecked, NA (i.e. not detected) values in the data will be replaced by this number for average and significance calculation purposes."),
-                                                  tipify(checkboxInput("BH_correction", "Apply Benjamini-Hochburg correction",
-                                                                value = F), "If this box is checked, a Benjamini-Hochburg correction will be applied to the significance data. This is a correction commonly used in proteomics to reduce false discovery rate."),
-                                                  tipify(checkboxInput("display_comp_vals", "Display compromised values",
-                                                                value = T), "Compromised values are peptides that contain more than the minimum required observations in one condition, but less than the minimum required observations in the other (but more than 0 observations). These values can either be included in the calucluations (and displayed) or not."),
-                                                  tipify(checkboxInput("display_infinite_vals", "Display Infinite Fold Changes",
-                                                                value = T), "Infinite values are peptides that contain more than the minimum required observations in one conditions, but 0 observations in the other. Signifincance cannot be caluclated in this case, but they may be of interest. These values are displayed in the top corners of the plot within dotted rectangles, but can be hidden if desired.")
+                                                bsCollapse(
+                                                  bsCollapsePanel("Volcano Plot Settings (Click Here)", style = "primary",
+                                                                  flowLayout(
+                                                                    tipify(numericInput("p_cutoff", "p-value cutoff",
+                                                                                        value = 0.05, min = 0, max = 1, step = 0.05), "The set value for significance. This draws a horizontal line at the equivalent value on the y-axis"),
+                                                                    tipify(numericInput("l2fc_cutoff", "log2 fold-change cutoff",
+                                                                                        value = 1, min = 0, max = 100), "The set value for log2 fold change cutoff. Draws vertical lines at the positive and negative values."),
+                                                                    tipify(numericInput("min_valid_sample", "Miniumum number of observations per sample",
+                                                                                        value = 2, min = 1), "Sets the minimum number of observations per sample for a peptide to be considered valid. Peptides with less than this number of non-NA values in both samples will be discarded."),
+                                                                    tipify(checkboxInput("equal_var", "Equal Variance",
+                                                                                         value = T), "Whether or not to assume equal variance in the t-test calculation."),
+                                                                    tipify(checkboxInput("remove_na", "Remove NA values",
+                                                                                         value = T), "If this box is checked, the average intensity value for each peptide will not include the NA values. If it is unchecked, the NA values will be replaced by whatever value is in the next field."),
+                                                                    tipify(numericInput("set_na_value", "Set NA values",
+                                                                                        value = 0), "If the previous box is unchecked, NA (i.e. not detected) values in the data will be replaced by this number for average and significance calculation purposes."),
+                                                                    tipify(checkboxInput("BH_correction", "Apply Benjamini-Hochburg correction",
+                                                                                         value = F), "If this box is checked, a Benjamini-Hochburg correction will be applied to the significance data. This is a correction commonly used in proteomics to reduce false discovery rate."),
+                                                                    tipify(checkboxInput("display_comp_vals", "Display compromised values",
+                                                                                         value = T), "Compromised values are peptides that contain more than the minimum required observations in one condition, but less than the minimum required observations in the other (but more than 0 observations). These values can either be included in the calucluations (and displayed) or not."),
+                                                                    tipify(checkboxInput("display_infinite_vals", "Display Infinite Fold Changes",
+                                                                                         value = T), "Infinite values are peptides that contain more than the minimum required observations in one conditions, but 0 observations in the other. Signifincance cannot be caluclated in this case, but they may be of interest. These values are displayed in the top corners of the plot within dotted rectangles, but can be hidden if desired.")
+                                                                  ))
                                                 ),
                                                 withSpinner(
                                                   plotlyOutput("volcano", height = 600)
@@ -108,101 +192,16 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                              selected = "Overlay")),
                                                 column(1, tipify(actionButton(inputId = "mult_go", label = "Run/Update"), "You must click this button to update the plot."))
                                                 ),
-                                       uiOutput("sample_numbers"),
+                                       bsCollapse(
+                                         bsCollapsePanel("Multiple Sample Input (Click Here)", style = "primary",
+                                                         uiOutput("sample_numbers"))
+                                       ) 
                                      ),
                                      
                                      fluidRow(withSpinner(
                                        plotlyOutput("plot_intensity_mult")
                                      ))
                             ),
-                            tabPanel("Annotation",
-                                     flowLayout(
-                                       tipify(selectInput(inputId = "annotation",
-                                                          selectize = F,
-                                                   label = "Annotation",
-                                                   choices = c("Trypsin", "LysC",
-                                                               "N_glycosylation",
-                                                               "CUSTOM"),
-                                                   selected = "Trypsin"), "Select a preset annoation option, or select CUSTOM to put in your own"),
-                                       tipify(textInput(inputId = "custom_annotation",
-                                                 label = "Custom sequence annotation in RegEx"), "If 'CUSTOM' is selected, all matching values within the protein sequence of interest will be annotated. Uses RegEx."),
-                                       tipify(textOutput("annotation_regex"), "This is the pattern that is currently being annotated."),
-                                       tipify(radioButtons(inputId = "disp_overlay_annot",
-                                                     label = "Type of Plot",
-                                                     choices = c("One Sample", "Two Samples", 
-                                                                 "Multiple Samples", "Stacked Peptides"),
-                                                    selected = "One Sample"), "Select which type of plot should be annotated. This pulls the plot that currently is shown on the corresponding tab. To make changes to the plot, go to that tab."),
-                                       selectInput(inputId = "annot_color",
-                                                   label = "Color",
-                                                   choices = c("red",
-                                                               "yellow",
-                                                               "green",
-                                                               "pink",
-                                                               "purple"),
-                                                   selected = "red")
-                                     ),
-                                     withSpinner(
-                                       plotlyOutput("annotation_plotly")
-                                     ),
-                                    ),
-                            tabPanel("PTMs",
-                                     flowLayout(
-                                       fluidRow(
-                                       tipify(checkboxGroupInput(inputId = "PTM",
-                                                          label = "PTMs",
-                                                          choiceNames = c("Carbamidomethylation",
-                                                                      "Deamidation",
-                                                                      "Oxidation" ,
-                                                                      "Pyro_glu_from_E" , 
-                                                                      "Pyro_glu_from_Q",
-                                                                      "Sodium_adduct"
-                                                                      ),
-                                                          choiceValues = c("(+57.02)",
-                                                                           "(+0.98)",
-                                                                           "(+15.99)",
-                                                                           "(-18.01)", 
-                                                                           "(-17.03)",
-                                                                           "(+21.98)"
-                                                                           )), "Select one or more PTMs to annotate"),
-                                       checkboxInput(inputId = "custom_PTM_check",
-                                                     label = "CUSTOM", value = F
-                                         
-                                       )),
-                                       tipify(textInput(inputId = "custom_PTM",
-                                                 label = "Custom PTM"), "Enter a custom PTM (CUSTOM checkbox must be selected. Enter the PTM as a string as it is seen in the peptide column of your sample input."),
-                                       tipify(radioButtons(inputId = "disp_overlay_PTM",
-                                                    label = "Type of Plot",
-                                                    choices = c("One Sample", "Two Samples", 
-                                                                "Multiple Samples",
-                                                                "Stacked Peptides", 
-                                                                "Annotation"),
-                                                    selected = "One Sample"), "Select which type of plot should be annotated. This pulls the plot that currently is shown on the corresponding tab. To make changes to the plot, go to that tab."),
-                                       "WARNING: If 'Multiple Samples' is selected, you will need to update the plot on the 'Multiple Samples' tab if other options are changed for the PTM plot to display accurateely."),
-                                       withSpinner(
-                                         plotlyOutput("PTM_plotly")
-                                       
-                                     ),
-                                     tableOutput("test_df")),
-                            tabPanel("Unique Peptides",
-                                     textOutput("unique_text"),
-                                     tipify(actionButton(inputId = "run_unique",
-                                                  label = "Run/Update"), "Run the unique peptide analysis. This may take several minutes."),
-                                     withSpinner(
-                                       plotlyOutput("unique_peps")
-                                     )),
-                            tabPanel("Stacked Peptide Plot",
-                                     tipify(radioButtons(inputId = "stacked_peptides_yunits",
-                                                  label = "Units for y-axis",
-                                                  choices = c("AA Position", "Intensity"),
-                                                  selected = "AA Position"), "Choose the y-axis for the stacked peptide plot. AA position simply plots peptides by the order they are mapped to the sequence. Intensity plots peptides by their corresponding intensity value."),
-                                      withSpinner(
-                                        plotlyOutput("stacked_plotly"))
-                                     ),
-                            tabPanel("Percent Coverage",
-                                     textOutput("total_AA"),
-                                     textOutput("covered_AA"),
-                                     textOutput("percent_coverage"),
-                                     textOutput("coverage_message")),
                             tabPanel("Export",
                                      flowLayout(
                                        

@@ -610,8 +610,7 @@ plot_intensity <- function(AA_df, protein, intensity_label = "PSM",
 #create interactive plot object
 create_plotly <- function(plot) {
   plotly <- ggplotly(plot, tooltip = c("AA", "x", "y", "sample", "origin_pep", "repeated",
-                                       "fold_change_label"))
-  show(plotly)
+                                       "fold_change_label", "intensity_label"))
   return(plotly)
 }
 
@@ -689,8 +688,6 @@ plot_origin <- function(AA_df, protein,
       labs(title = protein, x = "Amino Acid Number", y = intensity_label)+
       scale_x_continuous(breaks = pretty_breaks(10))
   }
-  
-  show(plot)
   return(plot)
 }
 

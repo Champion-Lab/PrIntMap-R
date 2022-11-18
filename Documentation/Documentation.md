@@ -70,27 +70,47 @@ When checked, the plot will show the peptides that contributed to the y-axis int
 -------
 
 # Outputs
-The outputs are generally [ggplot objects](https://ggplot2.tidyverse.org/index.html) displayed using the [plotly package](https://plotly.com/graphing-libraries/), which allows for interaction. By mousing over the plot, you are able to see options in the top right corner such as 'save as png'. Clicking and dragging on the plot will allow zooming. Double clicking anywhere resets the original axes. Mousing over the data will show information such as amino acid 1-letter code, amino acid position, peptides of origin, and intensity value.  
+The outputs are generally [ggplot objects](https://ggplot2.tidyverse.org/index.html) displayed using the [plotly package](https://plotly.com/graphing-libraries/), which allows for interaction. By mousing over the plot, you are able to see options in the top right corner such as 'save as png'. Clicking and dragging on the plot will allow zooming. Double clicking anywhere resets the original axes. Mousing over the data will show information such as amino acid 1-letter code, amino acid position, peptides of origin, and intensity value. The plots are grouped into tabs depending on the number of samples you want to analyze: One, Two, or Multiple.  
 <img src="plotly_options.png" alt="drawing" width="400" id="borderimage"/>
 
-### Basic
-The basic plot. This will show intensity on the y-axis (either PSMs, Area, or Intensity), and amino acid position on the x-axis. Hovering over the data will display additional information.  
-<img src="basic_1.png" alt="drawing" width="700" id="borderimage"/>
+## One Sample  
 
-### Two Samples
-Allows for the comparison of two different samples. The second peptide information can be uploaded in the same way as the first. Options include overlaying the two samples, subtracting sample 2 from sample 1 (difference), and dividing sample 2 by sample 1 (fold change). In this setup, if sample 2 is greater than sample 1, the value will be above 1, and if sample 1 is greater than sample 2 the value will be below 1. If sample 2 contains a value, and sample 1 does not, the value will be displayed at 1.25x the highest value, and highlighted with a green dot. If sample 1 contains a value and sample 2 does not, the value will be displayed at 0, and highlighted with a red dot.  
+### Intensity Trace
+The basic plot. This will show intensity on the y-axis (either PSMs, Area, or Intensity), and amino acid position on the x-axis. Hovering over the data will display additional information.  
+<img src="basic_1.png" alt="drawing" width="700" id="borderimage"/>  
+
+### Stacked Peptide Plot  
+Displays all identified peptides stacked where they are found on the amino acid sequence. Mousing over the plot shows additional peptide information. The y-axis by default is simply an increaseing series so that peptides don't overlap in the y direction. However, the option exists to plot intensity (PSM, area, or intensity) on the y axis. Log and linear options are available. Peptides are colored by intensity, with black for intensity of NA.  
+<img src="stacked_plot_1.png" alt="drawing" width="700" id="borderimage"/>
+<br/><br/>
+<img src="stacked_plot_2.png" alt="drawing" width="700" id="borderimage"/>  
+
+### Unique Peptides
+This option searches through the entire provided proteome, and determines whether peptides are unique to the protein of interest or not. Also determines whether there are any repeated peptides within the protein. Displays output as a color coded plot. This option can take significant time depending on number of peptides and length of protein.  
+<br/><br/>
+<img src="unique_1.png" alt="drawing" width="700" id="borderimage"/>
+
+
+### Percent Coverage
+Calculates the percent coverage for the protein by simply dividing the number of amino acids observed by the number of total amino acids. Note that NA values are not included, so for area and intensity which may contain NAs, the percent coverage can be lower than for PSM.
+
+## Two Samples
+
+### Intensity Traces
+Allows for the comparison of two different samples. The second peptide information can be uploaded in the same way as the first, by clicking on the '2nd Peptide Input' button. Options include overlaying the two samples, subtracting sample 2 from sample 1 (difference), and dividing sample 2 by sample 1 (fold change). In this setup, if sample 2 is greater than sample 1, the value will be above 1, and if sample 1 is greater than sample 2 the value will be below 1. If sample 2 contains a value, and sample 1 does not, the value will be displayed at 1.25x the highest value, and highlighted with a green dot. If sample 1 contains a value and sample 2 does not, the value will be displayed at 0, and highlighted with a red dot.  
 <img src="two_sample_1.png" alt="drawing" width="700" id="borderimage"/>
 <br/><br/>
 <img src="two_sample_2.png" alt="drawing" width="700" id="borderimage"/>
 <br/><br/>
 <img src="two_sample_3.png" alt="drawing" width="700" id="borderimage"/>
 
-Additionally, peptide volcano plots can be generated comparing two samples if enough information is supplied. These require combined file types, so that enough replicate values can be used for the statistical calculations. Options include changing the p-value cutoff, the minimum number of non NA values for each sample type, the log2 fold change cutoff for significance, and whether to apply the [Benjamini-Hochburg](https://www.jstor.org/stable/2346101#metadata_info_tab_contents) correction. Values with infinite and negative infinite values can be displayed or hidden. These are values that have intensity values in one sample, and no intensity values in the other. When displayed, they show up as a block in the upper corners of the plot. "compromised values" can also be displayed or hidden. These are values where one of the samples contains sufficient data for a calculation, and the other sample does not contain sufficient data, but is not NA. Peptides mapping to a protein of interest can be highlighted. The p-value is calculated with an unpaired two-tailed t-test either assuming or not assuming equal variance. NA values are ignored, unless the 'remove NA' box is unchecked, in which case NA values are replaced by the supplied value (default zero).  
+### Volcano Plots
+Peptide volcano plots can be generated comparing two samples if enough information is supplied. These require combined file types, so that enough replicate values can be used for the statistical calculations. Options include changing the p-value cutoff, the minimum number of non NA values for each sample type, the log2 fold change cutoff for significance, and whether to apply the [Benjamini-Hochburg](https://www.jstor.org/stable/2346101#metadata_info_tab_contents) correction. Values with infinite and negative infinite values can be displayed or hidden. These are values that have intensity values in one sample, and no intensity values in the other. When displayed, they show up as a block in the upper corners of the plot. "compromised values" can also be displayed or hidden. These are values where one of the samples contains sufficient data for a calculation, and the other sample does not contain sufficient data, but is not NA. Peptides mapping to a protein of interest can be highlighted. The p-value is calculated with an unpaired two-tailed t-test either assuming or not assuming equal variance. NA values are ignored, unless the 'remove NA' box is unchecked, in which case NA values are replaced by the supplied value (default zero).  
 
 <img src="volcano_plot_example.png" alt="drawing" width="700" id="borderimage"/>
 
-### Multiple Samples
-Plot multiple samples, will be displayed as an overlay plot. The peptide files can be entered the same as the original peptide file. For the `Difference` and `Fold Change` options, each sample is compared to the first sample that is shown in the basic tab. In the `Overlay` option, all samples are shown including the first sample from the basic tab.  
+## Multiple Samples
+Multiple Samples will be displayed as an overlaid intensity plot. The peptide files can be entered the same as the original peptide file. For the `Difference` and `Fold Change` options, each sample is compared to the first sample that is shown in the basic tab. In the `Overlay` option, all samples are shown including the first sample from the basic tab.  
 
 <img src="multiple_1.png" alt="drawing" width="700" id="borderimage"/>
 <br/><br/>
@@ -98,15 +118,18 @@ Plot multiple samples, will be displayed as an overlay plot. The peptide files c
 <br/><br/>
 <img src="multiple_3.png" alt="drawing" width="700" id="borderimage"/>
 
-### Annotation
-Allows for the overlay of specific sequence features on the intensity plots generated in `Basic`, `Two Samples`, and `Multiple Samples`. A preset annotation can be selected from the menu (e.g. potential N-glycosylation sites or trypsin cut sites) or a custom annotation can be typed using RegEx. For the `Two Sample` option, the plot displayed on the `Two Sample` tab will be used, so a fold change or difference plot can be annotated.  
+# Customizing the plots  
+The following customizations can be added to overlaid intensity traces or the stacked peptide plot in either one, two, or multiple samples. These customizations can be accessed in the dropdown menus above the plots. Different combinations of Annotations and PTMs can be used.  
+
+## Annotation
+Allows for the overlay of specific sequence features on the intensity plots generated in `One Sample`, `Two Samples`, and `Multiple Samples`. A preset annotation can be selected from the menu (e.g. potential N-glycosylation sites or trypsin cut sites) or a custom annotation can be typed using RegEx.  
 <img src="annotation_1.png" alt="drawing" width="700" id="borderimage"/>
 <br/><br/>
 <img src="annotation_2.png" alt="drawing" width="700" id="borderimage"/>
 <br/><br/>
 <img src="annotation_3.png" alt="drawing" width="700" id="borderimage"/>   
 
-### Post Translational Modifications (PTMs)
+## Post Translational Modifications (PTMs)
 Allows for the annotation of identified PTMs from a database search. Currently PEAKS and generic csv formats are supported, with plans to implement additional formats in the future. The annotation style for PEAKS and generic csv is the same, with the PTM being places in parenthesis behind the amino acid that it affects. The parenthesis contain the mass shift (to 2 decimal places) caused by the PTM. For example, a deamidation of asparagine would look like this: `GLLAPN(+0.98)ETSR`. The annotated plot can be the plot generated by any of the other tabs (except for unique peptides). Note that whatever is currently present in each tab will be annotated, so for example to change the annotated enzyme from the annotation tab, you must go to the annotation tab, select the enzyme of interest, and return to the PTM tab and select "Annotation". This is important for "Multiple samples" because the plot doesn't update on that tab until the update button is clicked. Mousing over the PTM gives additional information, including a ratio that shows what percent of the total intensity (y-axis) comes from peptides that contained that PTM. For example, if one asparagine residue appeared in 2 different versions of a peptide and the version with a deamidated asparagine had an area of 1,000,000 and the version of the peptide without the deamidation had an area of 9,000,000, this ratio would be 0.10. Multiple PTMs can be selected at once, and custom PTMs can be entered using regex. See examples below.    
 
 <img src="PTMs_1.png" alt="drawing" width="700" id="borderimage"/>
@@ -117,21 +140,7 @@ Allows for the annotation of identified PTMs from a database search. Currently P
 <br/><br/>
 <img src="PTMs_4.png" alt="drawing" width="700" id="borderimage"/>  
 
-### Unique Peptides
-This option searches through the entire provided proteome, and determines whether peptides are unique to the protein of interest or not. Also determines whether there are any repeated peptides within the protein. Displays output as a color coded plot. This option can take significant time depending on number of peptides and length of protein.  
-<br/><br/>
-<img src="unique_1.png" alt="drawing" width="700" id="borderimage"/>
-
-### Stacked Peptide Plot  
-Displays all identified peptides stacked where they are found on the amino acid sequence. Mousing over the plot shows additional peptide information. The y-axis by default is simply an increaseing series so that peptides don't overlap in the y direction. However, the option exists to plot intensity (PSM, area, or intensity) on the y axis. Log and linear options are available. Peptides are colored by intensity, with black for intensity of NA.  
-<img src="stacked_plot_1.png" alt="drawing" width="700" id="borderimage"/>
-<br/><br/>
-<img src="stacked_plot_2.png" alt="drawing" width="700" id="borderimage"/>
-
-### Percent Coverage
-Calculates the percent coverage for the protein by simply dividing the number of amino acids observed by the number of total amino acids. Note that NA values are not included, so for area and intensity which may contain NAs, the percent coverage can be lower than for PSM.
-
-### Export
+# Export Tab
 Provides the plotable data as a `.csv` file that can be downloaded. Option of downloading just the initial sample, two samples, or multiple samples.
 
 ### Regex Examples  

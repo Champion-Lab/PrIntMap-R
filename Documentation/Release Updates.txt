@@ -38,3 +38,9 @@ Version 0.1.8
 2022-11-15
  - Removed flickering bug over annotation dropdown select
  - Added package for creating collapsable dropdown widgets. Will be used in future for collapsable options.
+ 
+Version 0.1.9
+2022-11-18
+ - Refactored tabs for streamlined use. Only one sample, two sample, and multiple sample are options now.
+  - Other options are still available in drop down menus or in the sidebar
+ - Rewrote documentation to reflect changes
