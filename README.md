@@ -23,7 +23,7 @@ To run locally in R:
  * Ensure that the shiny package is loaded by running `install.packages("shiny")` and active `library(shiny)` in the R console.
  * Ensure that all of the packages you need are installed on your computer. The required packages can be found in 'global.R'. You can either install them manually, or run this code in the R console:
  ```
- install.packages(c("stringr", "ggplot2", "seqinr", "plotly", "scales", "dplyr", "tidyr", "shinycssloaders", "markdown", "data.table", "readr", "purrr", "shinyBS", "shinyWidgets"))
+ install.packages(c("stringr", "ggplot2", "seqinr", "plotly", "scales", "dplyr", "tidyr", "shinycssloaders", "markdown", "data.table", "readr", "purrr", "shinyBS", "shinyWidgets", "shinyjs"))
  ```  
  * Change your working directory to the path of the cloned or downloaded app directory `setwd('path/to/directory')`
  * In Rstudio, open either 'ui.R' or 'Server.R'.
