@@ -506,7 +506,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
                               p_val = p_val,
                               fold_change_category = fold_change_category)) +
     
-    theme_bw(base_size = 10) +
+    theme_bw(base_size = 15) +
     theme(panel.grid = element_blank(), legend.position = "none") +
     labs(x = (paste("Log2 fold-change: (", sample2, "/", sample1, ")",sep="")),
          y = "-Log10 (p-value)",

@@ -27,7 +27,7 @@ plot_origin_comb <- function(AA_df, protein,
 }
 
 plot_intensity_comb <- function(AA_df, protein, intensity_label = "PSM",
-                                font_size = 15,
+                                font_size = 18,
                                 alpha = 1, plot_type = "line") {
   if (plot_type == "bar") {
     plot <- ggplot(data = AA_df) +
@@ -56,7 +56,7 @@ plot_intensity_comb <- function(AA_df, protein, intensity_label = "PSM",
 
 
 plot_difference_comb <- function(AA_df, protein, intensity_label = "PSM",
-                                 font_size = 15,
+                                 font_size = 18,
                                  alpha = 1, plot_type = "line") {
   plot <- ggplot(data = AA_df) +
     geom_hline(yintercept = 0, color = "red", size = 0.1, linetype = "dashed") +
@@ -72,7 +72,7 @@ plot_difference_comb <- function(AA_df, protein, intensity_label = "PSM",
 }
 
 plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
-                                 font_size = 15,
+                                 font_size = 18,
                                  alpha = 1, plot_type = "line") {
   plot <- ggplot(data = AA_df) +
     geom_hline(yintercept = 1, color = "red", size = 0.1, linetype = "dashed") +
