@@ -36,3 +36,16 @@ add_annotation_layer <- function(plot,
                size = 0.5)
   return(plot)
 }
+
+
+
+add_amino_acids_layer <- function(plot, proteinSeq) {
+  
+  AA_df <- create_AA_df(proteinSeq)
+
+  return_plot <- plot +
+    geom_text(data = AA_df,
+              aes(x = AA_index, y = 0, label = AA))
+  
+  return(return_plot)
+}

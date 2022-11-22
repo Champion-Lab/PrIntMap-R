@@ -122,7 +122,7 @@ Multiple Samples will be displayed as an overlaid intensity plot. The peptide fi
 The following customizations can be added to overlaid intensity traces or the stacked peptide plot in either one, two, or multiple samples. These customizations can be accessed in the dropdown menus above the plots. Different combinations of Annotations and PTMs can be used.  
 
 ## Annotation
-Allows for the overlay of specific sequence features on the intensity plots generated in `One Sample`, `Two Samples`, and `Multiple Samples`. A preset annotation can be selected from the menu (e.g. potential N-glycosylation sites or trypsin cut sites) or a custom annotation can be typed using RegEx.  
+Allows for the overlay of specific sequence features on the intensity plots generated in `One Sample`, `Two Samples`, and `Multiple Samples`. A preset annotation can be selected from the menu (e.g. potential N-glycosylation sites or trypsin cut sites) or a custom annotation can be typed using RegEx. Additionally, the amino acid sequence can be displayed along the x-axis by toggling a checkbox within the annotation dropdown menu. This is not very useful when observing the full protein sequence but can be helpful when the plot is zoomed in.    
 <img src="annotation_1.png" alt="drawing" width="700" id="borderimage"/>
 <br/><br/>
 <img src="annotation_2.png" alt="drawing" width="700" id="borderimage"/>
