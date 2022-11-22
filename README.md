@@ -38,3 +38,9 @@ Alternative Method to run locally:
 
 
 Errors that occur when trying to run the app locally are almost always due to old versons of R, or the installed packages. To troubleshoot, install the most recent version of R, as well as the most recent version of all the packages referenced above.
+
+PrIntMap-R has been tested and optimized on Windows and MacOS. The app also runs on linux, although it has not been optimized. Some versions of linux may open a new tab every time a plot is updated, making use impractical. If you experience this, try one of the following solutions:  
+
+  * Run PrIntMap-R on the online version
+  * Run PrIntMap-R on Windows or MacOS
+  * Run PrIntMap-R using Ubuntu locally on a virtual machine

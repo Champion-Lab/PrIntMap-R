@@ -60,7 +60,7 @@ create_repeat_vec <- function(peptide_df,
 
 create_unique_plot_origin <- function(AA_df, protein,
                                intensity_label = "PSM",
-                               font_size = 15) {
+                               font_size = 18) {
   plot <- ggplot(data = AA_df) +
     geom_line(aes(x = AA_index, y = intensity)) +
     geom_bar(aes(x = AA_index, y = intensity, fill = repeated, AA = AA),
@@ -79,7 +79,7 @@ create_unique_plot_origin <- function(AA_df, protein,
 
 create_unique_plot_intensity <- function(AA_df, protein,
                                       intensity_label = "PSM",
-                                      font_size = 15) {
+                                      font_size = 18) {
   plot <- ggplot(data = AA_df) +
     geom_line(aes(x = AA_index, y = intensity)) +
     geom_bar(aes(x = AA_index, y = intensity, fill = repeated, AA = AA),

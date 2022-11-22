@@ -54,7 +54,7 @@ create_stacked_line_plot_yval <- function(peptide_dataframe, protein_name, prote
     geom_segment(aes(y = y_val, x = start, xend = end, yend = y_val,
                      color = intensity_value, length = length, peptide = peptide),
                  size = 1, lineend = "round") +
-    theme_bw(base_size = 15) +
+    theme_bw(base_size = 18) +
     theme(panel.grid = element_blank(),
           legend.position = "right",
           axis.text.y = element_blank(),
@@ -73,7 +73,7 @@ create_stacked_line_plot_intensity <- function(peptide_dataframe, protein_name, 
     geom_segment(aes(y = intensity_value, x = start, xend = end, yend = intensity_value,
                      color = intensity_value, length = length, peptide = peptide),
                  size = 1, lineend = "round") +
-    theme_bw(base_size = 15) +
+    theme_bw(base_size = 18) +
     theme(panel.grid = element_blank(),
           legend.position = "right") +
     labs(x = "Amino Acid Position", y = intensity_label,

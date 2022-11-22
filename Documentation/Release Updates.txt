@@ -44,3 +44,8 @@ Version 0.1.9
  - Refactored tabs for streamlined use. Only one sample, two sample, and multiple sample are options now.
   - Other options are still available in drop down menus or in the sidebar
  - Rewrote documentation to reflect changes
+ 
+Version 0.1.10
+2022-11-22
+ - Increased all font sizes in plots
+ - updated required packages

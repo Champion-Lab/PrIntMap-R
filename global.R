@@ -17,9 +17,9 @@ library(shinyjs)
 
 
 #reactlog
- library(reactlog)
- reactlog_enable()
- options(shiny.reactlog = TRUE)
+ #library(reactlog)
+ #reactlog_enable()
+ #options(shiny.reactlog = TRUE)
 
 #source functions and libraries
 source("www/libraries.R")

@@ -579,7 +579,7 @@ combine_AA_intensity <- function(AA_df, intensity_vec) {
 #create simple plot
 #returns plot object
 plot_intensity <- function(AA_df, protein, intensity_label = "PSM",
-                           font_size = 15,color = "grey18",
+                           font_size = 18,color = "grey18",
                            alpha = 1, plot_type = "line") {
   if (plot_type == "bar") {
     plot <- ggplot(data = AA_df) +
@@ -664,7 +664,7 @@ add_origin_peptide_vector <- function(AA_df,
 #plot origin plot
 plot_origin <- function(AA_df, protein,
                         intensity_label = "PSM",
-                        font_size = 15, 
+                        font_size = 18, 
                         color = "grey18", alpha = 1, plot_type = "line") {
   if (plot_type == "bar") {
     plot <- ggplot(data = AA_df) +
