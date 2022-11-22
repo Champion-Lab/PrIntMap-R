@@ -140,6 +140,10 @@ server <- function(input, output, session) {
           return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                           breaks = base_breaks())
         }
+        if (input$diplayAAs) {
+          return_plot <- add_amino_acids_layer(plot = return_plot,
+                                               proteinSeq = protein_obj1()[1])
+        }
         
         
     } else {
@@ -160,6 +164,11 @@ server <- function(input, output, session) {
         if(input$y_axis_scale == "log"){
           return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
                                                           breaks = base_breaks())
+        }
+        
+        if (input$diplayAAs) {
+          return_plot <- add_amino_acids_layer(plot = return_plot,
+                                               proteinSeq = protein_obj1()[1])
         }
         
         
@@ -339,6 +348,11 @@ server <- function(input, output, session) {
       return_plot <- add_annotation_layer(plot = return_plot,
                                           annotation_df = annotation_df(),
                                           color = input$annot_color)
+    }
+    
+    if (input$diplayAAs) {
+      return_plot <- add_amino_acids_layer(plot = return_plot,
+                                           proteinSeq = protein_obj1()[1])
     }
     
     if(input$displayPTMs) {
@@ -597,6 +611,11 @@ server <- function(input, output, session) {
       return_plot <- add_annotation_layer(plot = return_plot,
                                           annotation_df = annotation_df(),
                                           color = input$annot_color)
+    }
+    
+    if (input$diplayAAs) {
+      return_plot <- add_amino_acids_layer(plot = return_plot,
+                                           proteinSeq = protein_obj1()[1])
     }
     
     if(input$displayPTMs) {
@@ -948,6 +967,11 @@ PTM_regex_length <- reactive(length(PTM_regex()))
       return_plot <- add_annotation_layer(plot = return_plot,
                                           annotation_df = annotation_df(),
                                           color = input$annot_color)
+    }
+    
+    if (input$diplayAAs) {
+      return_plot <- add_amino_acids_layer(plot = return_plot,
+                                           proteinSeq = protein_obj1()[1])
     }
     
     if(input$displayPTMs) {

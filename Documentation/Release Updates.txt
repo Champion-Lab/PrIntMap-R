@@ -49,3 +49,7 @@ Version 0.1.10
 2022-11-22
  - Increased all font sizes in plots
  - updated required packages
+ 
+Version 0.1.11
+2022-11-22
+ - Added annotation option to display amino acid sequence along the x-axis.
