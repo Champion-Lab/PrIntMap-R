@@ -158,9 +158,9 @@ There are several places in the application where the user can use regular expre
 Sometimes if your peptide file has many samples or your database is very large, the web app will time out. If you repeatedly experience this, try running the app locally on your computer. Follow instructions on the `README` file at the [github repo](https://github.com/Champion-Lab/PrIntMap-R/) for this project.  
 
 ## Citation  
-If you use PrIntMap-R, please cite:
+If you use PrIntMap-R, please cite [this article](https://pubs.acs.org/doi/10.1021/acs.jproteome.2c00606?ref=pdf):  
 
-Weaver SD, DeRosa CM, Champion MM. *PrIntMap-R*. 2022. Accessed *date*. Version *X.X.X*. https://championlab.shinyapps.io/printmap-r/
+Weaver, SD, DeRosa, CM, Schultz, SR, Champion, MM. **(2023)**. "PrIntMap-R: an Online Application for Intraprotein Intensity and Peptide Visualization in Bottom-Up Proteomics" *Journal of Proteome Research.* DOI: 10.1021/acs.jproteome.2c00606
 
 
 ## Questions, Comments, Suggestions, Bugs
