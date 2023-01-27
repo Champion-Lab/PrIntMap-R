@@ -44,3 +44,8 @@ PrIntMap-R has been tested and optimized on Windows and MacOS. The app also runs
   * Run PrIntMap-R on the online version
   * Run PrIntMap-R on Windows or MacOS
   * Run PrIntMap-R using Ubuntu locally on a virtual machine
+  
+  
+  
+If you use PrIntMap-R, please cite:  
+  Weaver, SD., DeRosa, CM., Schultz, SR., Champion, MM. **(2023)**. “PrIntMap-R: an online application for intra-protein intensity and peptide visualization in bottom-up proteomics” *Journal of Proteome Research.* DOI: 10.1021/acs.jproteome.2c00606
