@@ -294,7 +294,7 @@ read_peptide_csv_PEAKS_volcano <- function(peptide_file, sample_pattern, min_val
 read_peptide_csv_generic_volcano <- function(peptide_file, sample_pattern, min_valid_sample = 2,
                                            intensity_metric = "PSM") {
   
-  
+
   #check_file(peptide_file, "PEAKS")
   peptide_import <- read.csv(peptide_file)
   #filetype(peptide_import, "Combined", "PEAKS")
@@ -304,22 +304,22 @@ read_peptide_csv_generic_volcano <- function(peptide_file, sample_pattern, min_v
   if (length(names(peptides)[grepl("protein", names(peptides))]) > 0) {
     peptides$protein <- NA
   }
-  
   if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
     stop("Sample Pattern not found in file.")
   }
   else {
     if (intensity_metric == "PSM") {
-      pattern <- paste0(sample_pattern, ".PSM")
+      pattern <- paste0(".*", sample_pattern, ".*", ".PSM")
     } else if (intensity_metric == "Intensity") {
-      pattern <- paste0(sample_pattern, ".Intensity")
+      pattern <- paste0(".*",sample_pattern, ".*", ".Intensity")
     } else if (intensity_metric == "Area") {
-      pattern <- paste0(sample_pattern, ".Area")
+      pattern <- paste0(".*", sample_pattern, ".*", ".Area")
     }
     dataframe <- peptide_import[,grepl(pattern, names(peptide_import))]
     if (intensity_metric == "PSM") {
       dataframe[dataframe == 0] <- NA
     }
+    dataframe[dataframe == 0] <- NA
     sample_count <- ncol(as.data.frame(dataframe))
     for (i in 1:sample_count) {
       peptides[[paste0("Volcano_intensity_", i)]] <- NA
@@ -335,11 +335,12 @@ read_peptide_csv_generic_volcano <- function(peptide_file, sample_pattern, min_v
 combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05,
                                     fold_change_cutoff_plot = 1, fold_change_cutoff_sig = 5,
                                     equal_variance_bool = T, remove_na = T, set_na = 0) {
+
   combine_df <- full_join(df_1, df_2, by = c("PEPTIDE", "sequence", "protein"))
-  
+
   volcano_df1 <- combine_df[,grepl("Volcano_intensity_.*\\.x", names(combine_df))]
   volcano_df2 <- combine_df[,grepl("Volcano_intensity_.*\\.y", names(combine_df))]
-  
+
   
   combine_df$count.x <- NA
   combine_df$count.y <- NA
@@ -358,7 +359,7 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
     combine_df$count.x[i] <- sum(!is.na(as.numeric(volcano_df1[i,])))
     combine_df$count.y[i] <- sum(!is.na(as.numeric(volcano_df2[i,])))
   }
-  
+
   combine_df$valid.x[combine_df$count.x >= min_valid_sample] <- T
   combine_df$valid.y[combine_df$count.y >= min_valid_sample] <- T
   combine_df$fold_change_category[combine_df$valid.x == F & combine_df$valid.y == F] <- "Invalid"
@@ -366,7 +367,7 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
   combine_df$fold_change_category[combine_df$count.x == 0 & combine_df$valid.y == T] <- "Infinite"
   combine_df$fold_change_category[(combine_df$valid.x == T & combine_df$valid.y == F & combine_df$count.y > 0)] <- "Compromised.x"
   combine_df$fold_change_category[(combine_df$valid.y == T & combine_df$valid.x == F & combine_df$count.x > 0)] <- "Compromised.y"
-  
+
   for (i in 1:nrow(combine_df)) {
     if (combine_df$fold_change_category[i] == "Normal" || combine_df$fold_change_category[i] == "Compromixed.x" || combine_df$fold_change_category[i] == "Compromised.y") {
       if (remove_na == T) {
@@ -395,6 +396,9 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
       combine_df$neg10logp[i] <- -log(combine_df$p_val[i], base = 10)
     }
   }
+
+  print(head(combine_df))
+  print("^^^ combined DF")
   
   return(combine_df)
 }
@@ -490,6 +494,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
   
 
   print(head(df))
+  print("^^^ final DF")
   
   print(maxx)
   print(minx)
@@ -514,7 +519,6 @@ create_volcano_plot <- function(df, fdr = 0.05,
     scale_x_continuous(breaks = round(minx):round(maxx), limits = c(minx*1.2, maxx*1.2)) +
     scale_y_continuous(breaks = 0:round(max(df$neg10logp, na.rm = T)))+
     scale_color_manual(values = color_list)
-  
 
   
   if (display_infinites) {

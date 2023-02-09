@@ -94,7 +94,8 @@ server <- function(input, output, session) {
     if (input$combinedbool1 == "Combined") {
       tipify(radioButtons(inputId = "combined_method",
                    label = "Combination Method",
-                   choices = c("Sum", "Average")), "This method will be used to combine data for all included columns. Options to sum data or average data.")
+                   choices = c("Sum", "Average"),
+                   selected = "Average"), "This method will be used to combine data for all included columns. Options to sum data or average data.")
     }
   })
 
@@ -1156,6 +1157,10 @@ PTM_regex_length <- reactive(length(PTM_regex()))
                                   equal_variance_bool = input$equal_var,
                                   remove_na = input$remove_na,
                                   set_na = input$set_na_value)
+    print(str(df))
+    print("^^^DF within server")
+    browser()
+    return(df)
   })
   
   volcano_plot_list <- reactive({

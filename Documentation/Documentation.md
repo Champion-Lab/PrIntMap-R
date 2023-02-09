@@ -160,7 +160,7 @@ Sometimes if your peptide file has many samples or your database is very large, 
 ## Citation  
 If you use PrIntMap-R, please cite [this article](https://pubs.acs.org/doi/10.1021/acs.jproteome.2c00606?ref=pdf):  
 
-Weaver, SD, DeRosa, CM, Schultz, SR, Champion, MM. **(2023)**. "PrIntMap-R: an Online Application for Intraprotein Intensity and Peptide Visualization in Bottom-Up Proteomics" *Journal of Proteome Research.* DOI: 10.1021/acs.jproteome.2c00606
+Weaver, SD, DeRosa, CM, Schultz, SR, Champion, MM. **(2023)**. "PrIntMap-R: an Online Application for Intraprotein Intensity and Peptide Visualization in Bottom-Up Proteomics" *Journal of Proteome Research.* 22 (2), 432–441. DOI: 10.1021/acs.jproteome.2c00606
 
 
 ## Questions, Comments, Suggestions, Bugs
