@@ -225,7 +225,7 @@ read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_met
   }
   else {
     if (length(names(peptides)[grepl("PSM", names(peptides))]) > 0) {
-      PSM_pattern <- paste0(sample_pattern, ".PSM")
+      PSM_pattern <- paste0(".*", sample_pattern, ".*", ".PSM")
       PSM_df <- peptide_import[,grepl(PSM_pattern, names(peptide_import))]
       PSM_df[is.na(PSM_df)] <- 0
       PSM_vec <- rowSums(as.data.frame(PSM_df))
@@ -236,7 +236,7 @@ read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_met
       peptides$PSM <- PSM_vec
     }
     if (length(names(peptides)[grepl("Intensity", names(peptides))]) > 0) {
-      Intensity_pattern <- paste0(sample_pattern, ".Intensity")
+      Intensity_pattern <- paste0(".*", sample_pattern,".*", ".Intensity")
       Intensity_df <- peptide_import[,grepl(Intensity_pattern, names(peptide_import))]
       Intensity_df[is.na(Intensity_df)] <- 0
       Intensity_vec <- rowSums(as.data.frame(Intensity_df))
@@ -247,7 +247,8 @@ read_peptide_csv_generic_comb <- function(peptide_file, sample_pattern, comb_met
       peptides$Intensity <- Intensity_vec
     }
     if (length(names(peptides)[grepl("Area", names(peptides))]) > 0) {
-      Area_pattern <- paste0(sample_pattern, ".Area")
+      Area_pattern <- paste0(".*", sample_pattern, ".*", ".Area")
+      print(Area_pattern)
       Area_df <- peptide_import[,grepl(Area_pattern, names(peptide_import))]
       Area_df[is.na(Area_df)] <- 0
       Area_vec <- rowSums(as.data.frame(Area_df))

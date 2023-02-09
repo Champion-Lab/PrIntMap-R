@@ -28,7 +28,7 @@ The program will ask for an `Accession ID`. This generally is the `UniqueIdentif
 The peptide files are exported from the database search. These are either `.csv`, `.tsv`, or `.txt` files. Currently supported formats are from [PEAKS](https://www.bioinfor.com/peaks-online/), [MSFragger](https://msfragger.nesvilab.org/), [MaxQuant](https://www.maxquant.org/), [MetaMorpheus](https://github.com/smith-chem-wisc/MetaMorpheus) and [Proteome Discoverer](https://www.thermofisher.com/us/en/home/industrial/mass-spectrometry/liquid-chromatography-mass-spectrometry-lc-ms/lc-ms-software/multi-omics-data-analysis/proteome-discoverer-software.html). Additionally, users can upload peptide data in a generic .csv format (described below) that they compile themselves.
 
 * __PEAKS:__  
-<img src="PEAKS_download_screenshot.png" alt="drawing" width="700"id="borderimage"/>  
+<img src="PEAKS_download_screenshot.png" alt="drawing" width="700" id="borderimage"/>  
 <br></br>
 To download the PEAKS peptide file from a database search, click on the export tab, and then select the `Peptide CSV` option as shown in the image above. If you click `DOWNLOAD BY SAMPLE`, then you will select the `Individual Sample` option in PrIntMap-R. If you select `DOWNLOAD`, then all your samples will be combined into one `.csv` file, and you will select `Combined` in PrIntMap-R. See the `Other Options` section below for more information on `Individual Sample` vs `Combined`. LFQ data from PEAKS can also be analyzed. All downloaded LFQ data will be in a combined file called `lfq.peptides.csv`, unless you have changed the default file name. LFQ intensity will be accessible by selecting the "Area" metric within PrIntMap-R.   
   
@@ -45,7 +45,7 @@ For individual files, create a csv file. Place peptide sequences in a column wit
 <img src="individual_generic_example.png" alt="drawing" width="700"id="borderimage"/>  
 <br></br>  
 For combined files, create a csv file. Place peptide sequences in a column with the title `Peptide`. For each peptide sequence, put intensity data in columns titled in the following pattern: `Sample1.Area`, `Sample2.Area`, `Sample1.Intensity`, `Sample2.Intensity`, `Sample1.PSM`, `Sample2.PSM`, etc. The important aspects for these columns are that the sample names are unique, and that they are separated from the `Area`, `PSM`, or `Intensity` label with a `.` Avoid spaces in the sample names for best results (Use periods or underscores instead). These columns can be in any order. At least one type of intensity must be present for each sample. An additional optional column called `protein` can be added, with accession information. Matching case for all column titles is required. See example below:  
-<img src="combined_generic_example.png" alt="drawing" width="700"id="borderimage"/>  
+<img src="combined_generic_example.png" alt="drawing" width="700" id="borderimage"/>  
 <br></br>
 
 
