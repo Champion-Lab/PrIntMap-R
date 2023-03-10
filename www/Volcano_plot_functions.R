@@ -115,36 +115,7 @@ read_peptide_tsv_Metamorpheus_volcano <- function(peptide_file, sample_pattern, 
   peptides <- read.csv(peptide_file, sep = "\t", header = T)
   filetype(peptides, "Combined", "Metamorpheus")
   if(length(names(peptides)[grepl("Total.Ion.Current", names(peptides))]) >0){
-    # if(!(any(grepl(sample_pattern, peptides$File.Name)))){
-    #   stop("Sample pattern not found in file.")
-    # }
-    # else{
-    #   peptides$sequence <- peptides$Base.Sequence
-    #   names(peptides)[grepl("Total.Ion.Current", names(peptides))] <- "Intensity"
-    #   names(peptides)[grepl("PSM.Count.*", names(peptides))] <- "PSM"
-    #   names(peptides)[names(peptides) == "Full.Sequence"] <- "PEPTIDE"
-    #   names(peptides)[names(peptides) == "Protein.Accession"] <- "protein"
-    #   peptides <- peptides[peptides$PSM > 0,]
-    #   peptides <- peptides[str_detect(peptides$File.Name, paste0(".*", sample_pattern, ".*")),]
-    #   sample_count <- length(unique(peptides$File.Name))
-    #   
-    #   return(peptides)
-    #   
-    #   if (intensity_metric == "PSM") {
-    #     peptides <- peptides %>% pivot_wider(names_from = File.Name, values_from = PSM)
-    #   } else if (intensity_metric == "Intensity") {
-    #     peptides <- peptides %>% pivot_wider(names_from = File.Name, values_from = Intensity)
-    #   }
-    #   
-    #   new_names <- rep(NA, sample_count)
-    #   for (i in 1:sample_count) {
-    #     new_names[i] <- paste0("Volcano_intensity_", i)
-    #   }
-    #   
-    #   colnames(peptides)[(ncol(peptides) - (sample_count-1)):ncol(peptides)] <- new_names
-    #   
-    #   return(peptides)
-    # }}
+   
     stop("Only quantified peptide results may be used for volcano plot from MetaMorpheus")
     } else {
     if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
@@ -335,9 +306,20 @@ read_peptide_csv_generic_volcano <- function(peptide_file, sample_pattern, min_v
 combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05,
                                     fold_change_cutoff_plot = 1, fold_change_cutoff_sig = 5,
                                     equal_variance_bool = T, remove_na = T, set_na = 0) {
+  
+  print(paste0("rows in df_1: " ,nrow(df_1)))
+  print(paste0("rows in df_2: " ,nrow(df_2)))
+  print(names(df_1))
+  
+  print(head(df_1$PEPTIDE))
+  print(head(df_1$sequence))
+  print(head(df_1$protien))
 
-  combine_df <- full_join(df_1, df_2, by = c("PEPTIDE", "sequence", "protein"))
+  combine_df <- full_join(df_1, df_2, by = c("PEPTIDE", "sequence", "protein"), multiple = "any")
 
+  print(paste0("rows in combined: " ,nrow(combine_df)))
+  print(names(combine_df))
+  
   volcano_df1 <- combine_df[,grepl("Volcano_intensity_.*\\.x", names(combine_df))]
   volcano_df2 <- combine_df[,grepl("Volcano_intensity_.*\\.y", names(combine_df))]
 
@@ -396,9 +378,6 @@ combine_two_volcano_dfs <- function(df_1, df_2, min_valid_sample = 2, fdr = 0.05
       combine_df$neg10logp[i] <- -log(combine_df$p_val[i], base = 10)
     }
   }
-
-  print(head(combine_df))
-  print("^^^ combined DF")
   
   return(combine_df)
 }
@@ -450,7 +429,7 @@ create_volcano_plot <- function(df, fdr = 0.05,
   df$color[df$l2fc_xy < -fold_change_cutoff_plot & df$neg10logp > y_cutoff] <- "Significant"
   
   if (!is.null(protein_of_interest)) {
-    df$color[grepl(protein_of_interest, df$protein)] <- "Prot_of_interest"
+    df$color[grepl(protein_of_interest, df$protein.x)] <- "Prot_of_interest"
   }
   
   if (length(unique(df$color)) == 1) {
@@ -491,13 +470,6 @@ create_volcano_plot <- function(df, fdr = 0.05,
   } else {
     plot_title <- paste0("Peptide Volcano Plot: ", intensity_metric, " (", protein_of_interest, ")")
   }
-  
-
-  print(head(df))
-  print("^^^ final DF")
-  
-  print(maxx)
-  print(minx)
   
   plot <- ggplot() +
     geom_vline(xintercept = fold_change_cutoff_plot, linetype = 2) +

@@ -53,3 +53,8 @@ Version 0.1.10
 Version 0.1.11
 2022-11-22
  - Added annotation option to display amino acid sequence along the x-axis.
+ 
+Version 0.1.12
+2023-03-10
+ - Fixed bug that displayed peptide multiple times on volcano plot
+ - Fixed PEAKS import bug
