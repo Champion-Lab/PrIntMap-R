@@ -120,6 +120,7 @@ server <- function(input, output, session) {
   
 
   output$plot_intensity1 <- renderPlotly({
+    print(intensity_vec1())
     validate(
       need(nrow(peptides1()) > 0, "Invalid peptide file. Check format.")
     )
@@ -1157,9 +1158,6 @@ PTM_regex_length <- reactive(length(PTM_regex()))
                                   equal_variance_bool = input$equal_var,
                                   remove_na = input$remove_na,
                                   set_na = input$set_na_value)
-    print(str(df))
-    print("^^^DF within server")
-    browser()
     return(df)
   })
   
