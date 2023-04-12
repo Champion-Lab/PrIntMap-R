@@ -83,14 +83,32 @@ create_PTM_df_stacked <- function(peptide_df, protein, regex_pattern, stacked_df
         mod_position_vec <- as.character(0)
       }
     }
+    
+    
+    matches <- sum(stacked_df$peptide == peptide)
+    if (matches != 1) {
+      print(matches)
+      print(paste0("i is: ", i))
+      print(stacked_df[stacked_df$peptide == peptide,])
+    }
     for(l in 1:nrow(stacked_df)){
       if(peptide == stacked_df$peptide[l]){
-        intensity_vec <-c(intensity_vec, stacked_df$intensity_value[l])
+        intensity_vec <- c(intensity_vec, stacked_df$intensity_value[l])
       }
     }
+    # print(paste0("i is ", i, ": intensity_vec is ", length(intensity_vec)))
+    
     start_position_vec <- c(start_position_vec, start)
     mod_vector_list[[i]] <- mod_position_vec
+    
+    
   }
+  
+  # print(paste0("peptide_Df: ", nrow(peptide_df)))
+  # print(paste0("intensity_vec: ", length(intensity_vec)))
+  # print(paste0("mod_vector_list: ", length(mod_vector_list)))
+  # print(paste0("start_postion_vec: ", length(start_position_vec)))
+  # print(paste0("stacked_peptide_df: ", length(stacked_df)))
   peptide_df$intensity_value <- intensity_vec
   peptide_df$mod_position <- mod_vector_list
   peptide_df$start_position <- start_position_vec
