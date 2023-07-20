@@ -5,7 +5,7 @@ filetype <- function(df, type_file, search_engine){
   store2 <- df[, grepl("Area", names(df))]
   store3 <- df[, grepl("PSM", names(df))]
   print(paste0("Search engine is ", search_engine))
-  if (search_engine == "Metamorpheus"){
+  if (search_engine == "Metamorpheus" | search_engine == "DIA-NN"){
     if(length(names(df)[grepl("File.Name", names(df))]) >0){ 
       if(uniqueN(df, by = "File.Name")>1 && type_file == "Individual"){
         stop('You have uploaded a combined file.')
@@ -50,13 +50,13 @@ filetype <- function(df, type_file, search_engine){
   }
   
   
-  if(type_file == "Individual" && (search_engine != "Metamorpheus" && search_engine != "Generic")){
+  if(type_file == "Individual" && (search_engine != "Metamorpheus" && search_engine != "DIA-NN" && search_engine != "Generic")){
     if(length(names(store)) >1){
       if (search_engine != "PEAKS") {
         stop("You have uploaded a combined file.")
       }
     }}
-  if(type_file == "Combined" && (search_engine != "Metamorpheus" && search_engine != "Generic")){
+  if(type_file == "Combined" && (search_engine != "Metamorpheus" && search_engine != "DIA-NN" && search_engine != "Generic")){
     if(length(names(store))<=1){   
       if (search_engine != "PEAKS") {
         stop("You have uploaded an individual file.")
@@ -108,6 +108,12 @@ check_file <- function(file_name, search_engine){
     if(! (any(store4 == "RT") | any(store5 == "RT") | any(store5 == "-10LgP") | any(store4 == "-10LgP"))){
       stop("You have not uploaded a PEAKS file.")
     }
+  }
+  if(search_engine == "DIA-NN"){
+    if(!any(store1 == "\t")) { 
+      stop("For the search software DIA-NN, the expected file type is .tsv")}
+    if(!any(store2 == "Stripped.Sequence")){
+      stop("You have not uploaded a DIA-NN file.")}
   }
   if(search_engine == "Generic"){
     if(!any(store1[1:50] ==",")){

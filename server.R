@@ -15,7 +15,7 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$file_type, {
-    if(input$file_type == "MaxQuant"){
+    if(input$file_type == "MaxQuant" | input$file_type == "DIA-NN"){
       updateRadioButtons(session,"combinedbool1",
                          selected = "Combined")
       updateRadioButtons(session,"combinedbool2",
@@ -56,7 +56,7 @@ server <- function(input, output, session) {
       read_peptide_tsv_MSFragger_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MSFragger" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_MSFragger_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, comb_method = input$combined_method)
-    } else if (input$file_type == "MaxQuant" ) {
+    } else if (input$file_type == "MaxQuant") {
       read_peptide_tsv_MaxQuant_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, comb_method = input$combined_method)
     } else if (input$file_type == "Proteome Discoverer" && input$combinedbool1 == "Individual Sample") {
       read_peptide_tsv_ProteomeDiscover_bysamp(input$peptide_file1$datapath)
@@ -66,6 +66,8 @@ server <- function(input, output, session) {
       read_peptide_tsv_Metamorpheus_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "MetaMorpheus" && input$combinedbool1 == "Combined") {
       read_peptide_tsv_Metamorpheus_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, comb_method = input$combined_method)
+    } else if (input$file_type == "DIA-NN"){
+      read_peptide_tsv_DIANN_comb(input$peptide_file1$datapath, sample_pattern = input$sample_regex1, comb_method = input$combined_method)
     } else if (input$file_type == "Generic csv" && input$combinedbool1 == "Individual Sample") {
       read_peptide_csv_generic_bysamp(input$peptide_file1$datapath)
     } else if (input$file_type == "Generic csv" && input$combinedbool1 == "Combined") {
@@ -87,7 +89,7 @@ server <- function(input, output, session) {
     mychoicesint <- intensity_metric_choices(peptides1())
     tipify(radioButtons(inputId = "intensity_metric",
                  label = "Intensity Metric",
-                 choices = mychoicesint), "Select which metric should be used for the y-axis. This applies to all plots. Different input data may have different otpions.")
+                 choices = mychoicesint), "Select which metric should be used for the y-axis. This applies to all plots. Different input data may have different options.")
   })
   
   output$combined_method_display <- renderUI({
@@ -196,27 +198,29 @@ server <- function(input, output, session) {
   
   peptides2_list <- reactive({
 
-      if (input$file_type == "PEAKS" && input$combinedbool2 == "Individual Sample") {
+      if (input$file_type2 == "PEAKS" && input$combinedbool2 == "Individual Sample") {
         read_peptide_csv_PEAKS_bysamp(peptide_file2())
-      } else if (input$file_type == "PEAKS" && input$combinedbool2 == "Combined"){
+      } else if (input$file_type2 == "PEAKS" && input$combinedbool2 == "Combined"){
         read_peptide_csv_PEAKS_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
-      } else if (input$file_type == "MSFragger" && input$combinedbool2 == "Individual Sample"){
+      } else if (input$file_type2 == "MSFragger" && input$combinedbool2 == "Individual Sample"){
         read_peptide_tsv_MSFragger_bysamp(peptide_file2())
-      } else if (input$file_type == "MSFragger" && input$combinedbool2 == "Combined") {
+      } else if (input$file_type2 == "MSFragger" && input$combinedbool2 == "Combined") {
         read_peptide_tsv_MSFragger_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
-      } else if (input$file_type == "MaxQuant" && input$combinedbool2 == "Combined") {
+      } else if (input$file_type2 == "MaxQuant" && input$combinedbool2 == "Combined") {
         read_peptide_tsv_MaxQuant_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
-      } else if (input$file_type == "Proteome Discoverer" && input$combinedbool2 == "Individual Sample") {
+      } else if (input$file_type2 == "Proteome Discoverer" && input$combinedbool2 == "Individual Sample") {
         read_peptide_tsv_ProteomeDiscover_bysamp(peptide_file2())
-      } else if (input$file_type == "Proteome Discoverer" && input$combinedbool2 == "Combined"){
+      } else if (input$file_type2 == "Proteome Discoverer" && input$combinedbool2 == "Combined"){
         read_peptide_tsv_ProteomeDiscover_bysamp(peptide_file2())
-      } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
+      } else if (input$file_type2 == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
         read_peptide_tsv_Metamorpheus_bysamp(peptide_file2())
-      } else if (input$file_type == "MetaMorpheus" && input$combinedbool2 == "Combined") {
+      } else if (input$file_type2 == "MetaMorpheus" && input$combinedbool2 == "Combined") {
         read_peptide_tsv_Metamorpheus_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
-      } else if (input$file_type == "Generic csv" && input$combinedbool2 == "Individual Sample"){
+      } else if (input$file_type2 == "DIA-NN" && input$combinedbool2 == "Combined"){
+        read_peptide_tsv_DIANN_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
+      } else if (input$file_type2 == "Generic csv" && input$combinedbool2 == "Individual Sample"){
         read_peptide_csv_generic_bysamp(peptide_file2())
-      } else if (input$file_type == "Generic csv" && input$combinedbool2 == "Combined") {
+      } else if (input$file_type2 == "Generic csv" && input$combinedbool2 == "Combined") {
         read_peptide_csv_generic_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
       } 
    
@@ -396,7 +400,7 @@ server <- function(input, output, session) {
         column(2, checkboxInput( inputId = paste0("duplicate_file_mult", i),
                                  label = "Use same peptide output file?", 
                                  value = F)),
-        if(input$file_type =="MaxQuant"){
+        if(input$file_type =="MaxQuant" | input$file_type == "DIA-NN"){
           column(2,radioButtons(inputId = paste0("combinedbool_mult",i),
                                 label = "Type of input file",
                                 choices = c("Combined"),

@@ -18,7 +18,7 @@ select_prot <- function(db, Accession) {
   if(length(protein_index) > 1) {
     stop("Multiple proteins found. Include additional characters in Accession number")
   } else if (length(protein_index) < 1) {
-    stop("Protein not found. Check that acession number is correct")
+    stop("Protein not found. Check that accession number is correct")
   } else {
     protein <- db[[protein_index[1]]]
   }
@@ -517,7 +517,35 @@ read_peptide_tsv_ProteomeDiscover_bysamp <- function(peptide_file, sample = NA, 
   return(return_list)
 }
 
-
+#import peptide file from DIANN (combined, not individual sample)
+#takes report.tsv file from DIANN and returns dataframe
+read_peptide_tsv_DIANN_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA, comb_method = "Sum") {
+  check_file(peptide_file, "DIA-NN")
+  peptide_import <- read.csv(peptide_file, sep = "\t", header = T)
+  filetype(peptide_import, "Combined", "DIA-NN")
+  if (length(grep(sample_pattern, unique(peptide_import$File.Name)))<=0){
+    stop("Sample Pattern not found in file.")
+  } else{
+    peptides <- peptide_import[grepl(sample_pattern, peptide_import$File.Name),]
+    names(peptides)[grepl("Stripped.Sequence", names(peptides))] <- "sequence"
+    names(peptides)[grepl("Precursor.Quantity", names(peptides))] <- "Intensity"
+    
+    sample_count <- length(unique(peptide_import$File.Name))
+    if (comb_method=="Average"){
+      peptides$Intensity <- peptides$Intensity / sample_count
+    }
+    
+    names(peptides)[grepl("Protein.Ids", names(peptides))] <- "Accession"
+    
+    if (!is.na(sample)) {
+      peptides$sample <- sample
+    }
+    if (!is.na(filter)) {
+      peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+    }
+    return_list <- list(peptides, sample_count)
+    return(return_list)
+  }}
 
 #generates appropriate choices for intensity metric based on uploaded data file
 #returns list of choices
