@@ -32,6 +32,9 @@ create_stack_line_df <- function(peptide_df,
     }
   }
   peptide_df <- as.data.frame(do.call(rbind, vector_list))
+  if (length(vector_list)==0){
+    stop(cbind("Chosen metric \"", intensity, "\"", " not found for this accession in one or more of your files."))
+  }
   names(peptide_df) <- c("peptide", "intensity_value", "length", "start", "end", "repeated")
   peptide_df$intensity_value <- as.numeric(peptide_df$intensity_value)
   peptide_df$length <- as.numeric(peptide_df$length)

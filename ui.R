@@ -144,19 +144,29 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                                       selected = "Individual Sample"),
                                                          tipify(textInput(inputId = "sample_regex2",
                                                                           label = "For combined files, input sample name (RegEx)"), "Same as above"),
+                                                         uiOutput("combined_method_display2"),
+                                                         tipify(checkboxInput(inputId = "duplicate_file2",
+                                                                              label = "Use same peptide output file?", 
+                                                                              value = F), "If this box is checked, the same peptide file from above will be used for the second sample. Useful for combined files where different columns will be compared."),
+                                                         uiOutput("intensity2"),
                                                          tipify(radioButtons(inputId = "two_sample_comparison",
                                                                              label = "Type of Comparison",
                                                                              choices = c("Overlay", "Difference", "Fold Change"),
                                                                              selected = "Overlay"), "Comparison types. Difference subtracts the first sample from the second. Fold Change divides the second sample by the first and displays the ratio."),
-                                                         tipify(checkboxInput(inputId = "duplicate_file2",
-                                                                              label = "Use same peptide output file?", 
-                                                                              value = F), "If this box is checked, the same peptide file from above will be used for the second sample. Useful for combined files where different columns will be compared."),
                                                          tipify(textOutput("peptides2_sample_count"), "How many samples were combined based on the RegEx pattern for sample 2."))
                                        )),
                                      navlistPanel(widths = c(3,9),
                                        tabPanel("Intensity Traces",
                                                 withSpinner(
                                                   plotlyOutput("plot_intensity2")
+                                                )),
+                                       tabPanel("Stacked Peptides",
+                                                radioButtons(inputId = "stacked_peptides_yunits2",
+                                                             label = "Units for y-axis",
+                                                             choices = c("AA Position", "Intensity"),
+                                                             selected = "AA Position"),
+                                                withSpinner(
+                                                  plotlyOutput("stacked_plotly2")
                                                 )),
                                        tabPanel("Volcano Plot",
                                                 bsCollapse(

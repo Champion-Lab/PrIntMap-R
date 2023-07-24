@@ -18,8 +18,6 @@ server <- function(input, output, session) {
     if(input$file_type == "MaxQuant" | input$file_type == "DIA-NN"){
       updateRadioButtons(session,"combinedbool1",
                          selected = "Combined")
-      updateRadioButtons(session,"combinedbool2",
-                         selected = "Combined")
     }
   })
   
@@ -46,7 +44,7 @@ server <- function(input, output, session) {
   
   peptides1_list <- reactive({
     validate(
-      need(!is.null(input$peptide_file1), "no peptide file provided")
+      need(!is.null(input$peptide_file1), "No Peptide File Provided")
     )
     if (input$file_type == "PEAKS" && input$combinedbool1 == "Individual Sample") {
       read_peptide_csv_PEAKS_bysamp(input$peptide_file1$datapath)
@@ -89,7 +87,7 @@ server <- function(input, output, session) {
     mychoicesint <- intensity_metric_choices(peptides1())
     tipify(radioButtons(inputId = "intensity_metric",
                  label = "Intensity Metric",
-                 choices = mychoicesint), "Select which metric should be used for the y-axis. This applies to all plots. Different input data may have different options.")
+                 choices = mychoicesint), "Select which metric should be used for the y-axis. Different input data may have different options.")
   })
   
   output$combined_method_display <- renderUI({
@@ -179,6 +177,13 @@ server <- function(input, output, session) {
     } 
     create_plotly(return_plot)
   })
+  
+  observeEvent(input$file_type2, {
+    if(input$file_type2 == "MaxQuant" | input$file_type2 == "DIA-NN"){
+      updateRadioButtons(session,"combinedbool2",
+                         selected = "Combined")
+    }
+  })
 
   AA_df2 <- reactive({
     create_AA_df(protein_obj1()[1])
@@ -189,7 +194,7 @@ server <- function(input, output, session) {
       input$peptide_file1$datapath
     }else{
       validate(
-        need(!is.null(input$peptide_file2), "no peptide file provided")
+        need(!is.null(input$peptide_file2), "No Peptide File Provided")
       )
       input$peptide_file2$datapath}
   })
@@ -201,13 +206,13 @@ server <- function(input, output, session) {
       if (input$file_type2 == "PEAKS" && input$combinedbool2 == "Individual Sample") {
         read_peptide_csv_PEAKS_bysamp(peptide_file2())
       } else if (input$file_type2 == "PEAKS" && input$combinedbool2 == "Combined"){
-        read_peptide_csv_PEAKS_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
+        read_peptide_csv_PEAKS_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method2)
       } else if (input$file_type2 == "MSFragger" && input$combinedbool2 == "Individual Sample"){
         read_peptide_tsv_MSFragger_bysamp(peptide_file2())
       } else if (input$file_type2 == "MSFragger" && input$combinedbool2 == "Combined") {
-        read_peptide_tsv_MSFragger_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
-      } else if (input$file_type2 == "MaxQuant" && input$combinedbool2 == "Combined") {
-        read_peptide_tsv_MaxQuant_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
+        read_peptide_tsv_MSFragger_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method2)
+      } else if (input$file_type2 == "MaxQuant") {
+        read_peptide_tsv_MaxQuant_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method2)
       } else if (input$file_type2 == "Proteome Discoverer" && input$combinedbool2 == "Individual Sample") {
         read_peptide_tsv_ProteomeDiscover_bysamp(peptide_file2())
       } else if (input$file_type2 == "Proteome Discoverer" && input$combinedbool2 == "Combined"){
@@ -215,13 +220,13 @@ server <- function(input, output, session) {
       } else if (input$file_type2 == "MetaMorpheus" && input$combinedbool2 == "Individual Sample"){
         read_peptide_tsv_Metamorpheus_bysamp(peptide_file2())
       } else if (input$file_type2 == "MetaMorpheus" && input$combinedbool2 == "Combined") {
-        read_peptide_tsv_Metamorpheus_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
-      } else if (input$file_type2 == "DIA-NN" && input$combinedbool2 == "Combined"){
-        read_peptide_tsv_DIANN_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
+        read_peptide_tsv_Metamorpheus_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method2)
+      } else if (input$file_type2 == "DIA-NN"){
+        read_peptide_tsv_DIANN_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method2)
       } else if (input$file_type2 == "Generic csv" && input$combinedbool2 == "Individual Sample"){
         read_peptide_csv_generic_bysamp(peptide_file2())
       } else if (input$file_type2 == "Generic csv" && input$combinedbool2 == "Combined") {
-        read_peptide_csv_generic_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method)
+        read_peptide_csv_generic_comb(peptide_file2(), sample_pattern = input$sample_regex2, comb_method = input$combined_method2)
       } 
    
   })
@@ -233,10 +238,25 @@ server <- function(input, output, session) {
       paste0("Samples/Replicates Combined: ", peptides2_list()[[2]])
     }
   })
+  
+  output$intensity2 <- renderUI({
+    mychoicesint <- intensity_metric_choices(peptides2())
+    tipify(radioButtons(inputId = "intensity_metric2",
+                        label = "Intensity Metric",
+                        choices = mychoicesint), "Select which metric should be used for the y-axis. Different input data may have different options.")
+  })
 
-
+  output$combined_method_display2 <- renderUI({
+    if (input$combinedbool2 == "Combined") {
+      tipify(radioButtons(inputId = "combined_method2",
+                          label = "Combination Method",
+                          choices = c("Sum", "Average"),
+                          selected = "Average"), "This method will be used to combine data for all included columns. Options to sum data or average data.")
+    }
+  })
+  
   intensity_vec2 <- reactive({
-    create_intensity_vec(peptides2(), protein_obj1()[1], intensity = input$intensity_metric)
+    create_intensity_vec(peptides2(), protein_obj1()[1], intensity = input$intensity_metric2)
   })
 
   AA_df_intensity2 <- reactive({
@@ -245,7 +265,7 @@ server <- function(input, output, session) {
 
 
   origin_vec2 <- reactive({
-    create_peptide_origin_vec(peptides2(), protein_obj1()[1], intensity = input$intensity_metric)
+    create_peptide_origin_vec(peptides2(), protein_obj1()[1], intensity = input$intensity_metric2)
   })
 
   AA_df_origin2 <- reactive({
@@ -321,6 +341,10 @@ server <- function(input, output, session) {
  
  
   ggplot_intensity2 <- reactive({
+    validate(
+      need(input$file_type==input$file_type2, "Sample search softwares do not match. Intensities cannot be accurately compared."),
+      need(input$intensity_metric==input$intensity_metric2, "Sample intensity metrics do not match. Intensities cannot be accurately compared."),
+    )
     if (input$two_sample_comparison == "Difference") {
       plot_difference_comb(wide_data_comb_plot(), protein_obj1()[2],
                            intensity_label = input$intensity_metric)
@@ -339,7 +363,6 @@ server <- function(input, output, session) {
   })
   
   output$plot_intensity2 <- renderPlotly({
-    
     
     if(input$y_axis_scale == "log"){
       return_plot <- ggplot_intensity2() + scale_y_continuous(trans = pseudo_log_trans(base = 2),
@@ -382,6 +405,61 @@ server <- function(input, output, session) {
     create_plotly(return_plot) 
   })
   
+  stacked_plot_dataframe2 <- reactive({
+    create_stack_line_df2(peptide_df1 = peptides1(), peptide_df2 = peptides2(),
+                          sample1 = input$sample_name1, sample2 = input$sample_name2,
+                          protein = protein_obj1()[1],
+                          intensity1 = input$intensity_metric, intensity2 = input$intensity_metric2)
+  })
+  
+  stacked_plot2 <- reactive({
+    if (input$stacked_peptides_yunits2 == "AA Position") {
+      return_plot <- create_stacked_line_plot_yval2(stacked_plot_dataframe2(),
+                                                   protein_name = protein_obj1()[2],
+                                                   protein_seq = protein_obj1()[1])
+    } else {
+      validate(
+        need(input$file_type==input$file_type2, "Sample search softwares do not match. Intensities cannot be accurately compared."),
+        need(input$intensity_metric==input$intensity_metric2, "Sample intensity metrics do not match. Intensities cannot be accurately compared."),
+      )
+      stacked_intensity_df <- stacked_plot_dataframe2()
+      stacked_intensity_df$intensity_value[is.na(stacked_intensity_df$intensity_value)] <- 0
+      return_plot <- create_stacked_line_plot_intensity2(stacked_intensity_df,
+                                                        protein_name = protein_obj1()[2],
+                                                        protein_seq = protein_obj1()[1],
+                                                        intensity_label = input$intensity_metric)
+      if(input$y_axis_scale == "log"){
+        return_plot <- return_plot + scale_y_continuous(trans = pseudo_log_trans(base = 2),
+                                                        breaks = base_breaks())
+      }
+    }
+    
+    if(input$displayAnnotations) {
+      return_plot <- add_annotation_layer(plot = return_plot,
+                                          annotation_df = annotation_df(),
+                                          color = input$annot_color)
+    }
+    
+    if (input$diplayAAs) {
+      return_plot <- add_amino_acids_layer(plot = return_plot,
+                                           proteinSeq = protein_obj1()[1])
+    }
+    
+    if(input$displayPTMs) {
+      if(input$stacked_peptides_yunits == "AA Position"){
+        return_plot <- add_PTM_layer_stacked(plot = return_plot,
+                                             PTM_df = PTM_stacked_bound())
+      }else{ 
+        return_plot <- add_PTM_layer_stacked_inten(plot = return_plot,
+                                                   PTM_df = PTM_stacked_bound())
+      }
+    }
+    return(return_plot)
+  })
+  
+  output$stacked_plotly2 <- renderPlotly({
+    create_stack_line_plotly(stacked_plot2())})
+
   number <- reactive({
     if(is.integer(input$number_sample)){ 
       as.integer(input$number_sample)}
@@ -437,7 +515,7 @@ server <- function(input, output, session) {
         input$peptide_file1$datapath
       }else {
       validate(
-        need(!is.null(input[[paste0("peptide_file_mult", i)]]), "no peptide file provided")
+        need(!is.null(input[[paste0("peptide_file_mult", i)]]), "No Peptide File Provided")
       )
         input[[paste0("peptide_file_mult",i)]][["datapath"]]
         }
@@ -1088,7 +1166,7 @@ PTM_regex_length <- reactive(length(PTM_regex()))
 
   peptides1_volcano <- reactive({
     validate(
-      need(!is.null(input$peptide_file1), "no peptide file provided")
+      need(!is.null(input$peptide_file1), "No Peptide File Provided")
     )
     if (input$file_type == "PEAKS" && input$combinedbool1 == "Individual Sample") {
       stop("Volcano plots can only be created with combined files for variance calculation")
