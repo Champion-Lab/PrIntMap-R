@@ -98,3 +98,49 @@ plot_foldchange_comb <- function(AA_df, protein, intensity_label = "PSM",
   
   return(plot)
 }
+
+#create dataframe for making a 2 sample stacked plot
+create_stack_line_df2 <- function(peptide_df1, peptide_df2,
+                                  sample1, sample2,
+                                  protein, 
+                                  intensity1="PSM", intensity2="PSM") {
+  stack_line_dataframe1 <- create_stack_line_df(peptide_df1, protein, intensity1)
+  stack_line_dataframe1$sample <- sample1
+  stack_line_dataframe2 <- create_stack_line_df(peptide_df2, protein, intensity2)
+  stack_line_dataframe2$sample <- sample2
+  combo_stack_line_dataframe <- bind_rows(stack_line_dataframe1, stack_line_dataframe2)
+  combo_stack_line_dataframe <- combo_stack_line_dataframe[order(combo_stack_line_dataframe$start, combo_stack_line_dataframe$sample), ]
+  combo_stack_line_dataframe$y_val <- 1:nrow(combo_stack_line_dataframe)
+  return(combo_stack_line_dataframe)
+}
+
+#create plot for 2 sample stacked plot with y value as y_val
+create_stacked_line_plot_yval2 <- function(peptide_dataframe, protein_name, protein_seq){
+  plot <- ggplot(data = peptide_dataframe) +
+    geom_segment(aes(y = y_val, x = start, xend = end, yend = y_val,
+                     length = length, peptide = peptide, color=sample),
+                 size = 1, lineend = "round") +
+    theme_bw(base_size = 18) +
+    theme(panel.grid = element_blank(),
+          legend.position = "right", legend.text = element_text(size = 8),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank()) +
+    labs(x = "Amino Acid Position", y = element_blank(),
+         title = protein_name)
+  return(plot)
+}
+
+#create plot for 2 sample stacked plot with intensity as y_val
+create_stacked_line_plot_intensity2 <- function(peptide_dataframe, protein_name, protein_seq,
+                                                intensity_label = "Intensity"){
+  plot <- ggplot(data = peptide_dataframe) +
+    geom_segment(aes(y = intensity_value, x = start, xend = end, yend = intensity_value,
+                     length = length, peptide = peptide, color=sample),
+                 size = 1, lineend = "round") +
+    theme_bw(base_size = 18) +
+    theme(panel.grid = element_blank(),
+          legend.position = "right", legend.text = element_text(size = 8)) +
+    labs(x = "Amino Acid Position", y = intensity_label,
+         title = protein_name)
+  return(plot)
+}

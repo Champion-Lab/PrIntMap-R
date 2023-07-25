@@ -6,7 +6,7 @@ filetype <- function(df, type_file, search_engine){
   store3 <- df[, grepl("PSM", names(df))]
   print(paste0("Search engine is ", search_engine))
   if (search_engine == "Metamorpheus" | search_engine == "DIA-NN"){
-    if(length(names(df)[grepl("File.Name", names(df))]) >0){ 
+    if(length(names(df)[grepl("File.Name", names(df))]) > 0){ 
       if(uniqueN(df, by = "File.Name")>1 && type_file == "Individual"){
         stop('You have uploaded a combined file.')
       }
