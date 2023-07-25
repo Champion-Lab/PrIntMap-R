@@ -517,35 +517,88 @@ read_peptide_tsv_ProteomeDiscover_bysamp <- function(peptide_file, sample = NA, 
   return(return_list)
 }
 
-#import peptide file from DIANN (combined, not individual sample)
-#takes report.tsv file from DIANN and returns dataframe
+#import peptide file from DIANN
+#accepts report.tsv or pr_matrix file from DIANN
 read_peptide_tsv_DIANN_comb <- function(peptide_file, sample_pattern, sample = NA, filter = NA, comb_method = "Sum") {
   check_file(peptide_file, "DIA-NN")
   peptide_import <- read.csv(peptide_file, sep = "\t", header = T)
   filetype(peptide_import, "Combined", "DIA-NN")
-  if (length(grep(sample_pattern, unique(peptide_import$File.Name)))<=0){
-    stop("Sample Pattern not found in file.")
+  if(length(names(peptide_import)[grepl("File.Name", names(peptide_import))]) > 0){
+    if (length(grep(sample_pattern, unique(peptide_import$File.Name)))<=0){
+      stop("Sample Pattern not found in file.")
+    } else{
+      peptides <- peptide_import[grepl(sample_pattern, peptide_import$File.Name),]
+      names(peptides)[grepl("Stripped.Sequence", names(peptides))] <- "sequence"
+      names(peptides)[grepl("Precursor.Quantity", names(peptides))] <- "Intensity"
+      
+      sample_count <- length(unique(peptide_import$File.Name))
+      if (comb_method=="Average"){
+        peptides$Intensity <- peptides$Intensity / sample_count
+      }
+      
+      names(peptides)[grepl("Protein.Ids", names(peptides))] <- "Accession"
+      
+      if (!is.na(sample)) {
+        peptides$sample <- sample
+      }
+      if (!is.na(filter)) {
+        peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+      }
+      return_list <- list(peptides, sample_count)
+      return(return_list)
+    }
   } else{
-    peptides <- peptide_import[grepl(sample_pattern, peptide_import$File.Name),]
-    names(peptides)[grepl("Stripped.Sequence", names(peptides))] <- "sequence"
-    names(peptides)[grepl("Precursor.Quantity", names(peptides))] <- "Intensity"
-    
-    sample_count <- length(unique(peptide_import$File.Name))
-    if (comb_method=="Average"){
-      peptides$Intensity <- peptides$Intensity / sample_count
+    if (sample_pattern != ""){
+      if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
+        stop("Sample Pattern not found in file.")
+      } else {
+        intensity_df <- peptides[,grepl(sample_pattern, names(peptides))]
+        intensity_df[is.na(intensity_df)] <- 0
+        intensity_vec <- rowSums(as.data.frame(intensity_df), na.rm = T)
+        sample_count <- ncol(as.data.frame(intensity_df))
+        if (comb_method == "Average") {
+          intensity_vec <- intensity_vec / sample_count
+        }
+        peptides$Intensity <- intensity_vec
+        names(peptides)[grepl("Stripped.Sequence", names(peptides))] <- "sequence"
+        names(peptides)[grepl("Protein.Ids", names(peptides))] <- "Accession"
+        
+        if (!is.na(sample)) {
+          peptides$sample <- sample
+        }
+        if (!is.na(filter)) {
+          peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+        }
+        return_list <- list(peptides, sample_count)
+        return(return_list)
+      }
+    } else{
+      peptides <- peptide_import
+      intensity_df <- peptides[, sapply(peptides, class) == "numeric"]
+      intensity_df[is.na(intensity_df)] <- 0
+      intensity_vec <- rowSums(as.data.frame(intensity_df), na.rm = T)
+      sample_count <- ncol(as.data.frame(intensity_df))
+      
+      if (comb_method == "Average") {
+        intensity_vec <- intensity_vec / sample_count
+      }
+      
+      peptides$Intensity <- intensity_vec
+      names(peptides)[grepl("Stripped.Sequence", names(peptides))] <- "sequence"
+      names(peptides)[grepl("Protein.Ids", names(peptides))] <- "Accession"
+      
+      if (!is.na(sample)) {
+        peptides$sample <- sample
+      }
+      if (!is.na(filter)) {
+        peptides <- peptides[grepl(filter, peptides$Accession) == F,]
+      }
+      return_list <- list(peptides, sample_count)
+      return(return_list)
     }
-    
-    names(peptides)[grepl("Protein.Ids", names(peptides))] <- "Accession"
-    
-    if (!is.na(sample)) {
-      peptides$sample <- sample
-    }
-    if (!is.na(filter)) {
-      peptides <- peptides[grepl(filter, peptides$Accession) == F,]
-    }
-    return_list <- list(peptides, sample_count)
-    return(return_list)
-  }}
+  }
+}
+
 
 #generates appropriate choices for intensity metric based on uploaded data file
 #returns list of choices
