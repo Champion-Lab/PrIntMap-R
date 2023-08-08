@@ -15,6 +15,8 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$file_type, {
+    updateSelectInput(session, "file_type2",
+                      selected = input$file_type)
     if(input$file_type == "MaxQuant" | input$file_type == "DIA-NN"){
       updateRadioButtons(session,"combinedbool1",
                          selected = "Combined")
