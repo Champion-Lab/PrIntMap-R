@@ -42,7 +42,9 @@ For individual files containing intensity (TIC) and PSMs, navigate to the `Searc
 Export PeptideGroups as a `.txt` file which will be in tab delineated format.  
 * __Generic csv:__  
 For individual files, create a csv file. Place peptide sequences in a column with the title `Peptide`. Place intensity data in columns called `Area`, `Intensity`, and `PSM`. At least one of these columns is required. An additional optional column called `protein` can be added, with accession information. Matching case for these column titles is required. See example below:  
-<img src="individual_generic_example.png" alt="drawing" width="700"id="borderimage"/>  
+
+<img src="individual_generic_example.png" alt="drawing" width="700" id="borderimage"/>  
+
 <br></br>  
 For combined files, create a csv file. Place peptide sequences in a column with the title `Peptide`. For each peptide sequence, put intensity data in columns titled in the following pattern: `Sample1.Area`, `Sample2.Area`, `Sample1.Intensity`, `Sample2.Intensity`, `Sample1.PSM`, `Sample2.PSM`, etc. The important aspects for these columns are that the sample names are unique, and that they are separated from the `Area`, `PSM`, or `Intensity` label with a `.` Avoid spaces in the sample names for best results (Use periods or underscores instead). These columns can be in any order. At least one type of intensity must be present for each sample. An additional optional column called `protein` can be added, with accession information. Matching case for all column titles is required. See example below:  
 <img src="combined_generic_example.png" alt="drawing" width="700" id="borderimage"/>  
