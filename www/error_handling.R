@@ -102,7 +102,7 @@ check_file <- function(file_name, search_engine){
     }
   }
   if(search_engine == "PEAKS")  { 
-  if(!any(store1[1:15] ==",")){
+  if(!any(store1[1:30] ==",")){
       stop("For the search software PEAKS, the expected file type is .csv")
   }
     if(! (any(store4 == "RT") | any(store5 == "RT") | any(store5 == "-10LgP") | any(store4 == "-10LgP"))){
