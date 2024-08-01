@@ -531,7 +531,7 @@ read_peptide_tsv_DIANN_comb <- function(peptide_file, sample_pattern, sample = N
       names(peptides)[grepl("Stripped.Sequence", names(peptides))] <- "sequence"
       names(peptides)[grepl("Precursor.Quantity", names(peptides))] <- "Intensity"
       
-      sample_count <- length(unique(peptide_import$File.Name))
+      sample_count <- length(unique(peptides$File.Name))
       if (comb_method=="Average"){
         peptides$Intensity <- peptides$Intensity / sample_count
       }
@@ -549,6 +549,7 @@ read_peptide_tsv_DIANN_comb <- function(peptide_file, sample_pattern, sample = N
     }
   } else{
     if (sample_pattern != ""){
+      peptides <- peptide_import
       if(length(names(peptides)[grepl(sample_pattern, names(peptides))])<=0){
         stop("Sample Pattern not found in file.")
       } else {
