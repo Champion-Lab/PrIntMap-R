@@ -71,26 +71,17 @@ ui <- navbarPage(title = "PrIntMap-R",
                                 fluidRow(
                                   checkboxInput(inputId = "displayPTMs",
                                                 label = "Display PTMs"),
-                                  tipify(checkboxGroupInput(inputId = "PTM",
-                                                            label = "PTMs",
-                                                            choiceNames = c("Carbamidomethylation",
-                                                                            "Deamidation",
-                                                                            "Oxidation" ,
-                                                                            "Pyro_glu_from_E" ,
-                                                                            "Pyro_glu_from_Q",
-                                                                            "Sodium_adduct"
-                                                            ),
-                                                            choiceValues = c("(+57.02)",
-                                                                             "(+0.98)",
-                                                                             "(+15.99)",
-                                                                             "(-18.01)",
-                                                                             "(-17.03)",
-                                                                             "(+21.98)"
-                                                            )), "Select one or more PTMs to annotate"),
+                                  fileInput(inputId = "custom_ptm_file", 
+                                            label = "Upload Custom PTM CSV", 
+                                            accept = c(".csv")),
+                                  uiOutput("ptm_selection"),  # Dynamically generated UI
                                   checkboxInput(inputId = "custom_PTM_check",
-                                                label = "CUSTOM", value = F),
+                                                label = "CUSTOM", value = FALSE),
                                   tipify(textInput(inputId = "custom_PTM",
-                                                   label = "Custom PTM"), "Enter a custom PTM (CUSTOM checkbox must be selected. Enter the PTM as a string as it is seen in the peptide column of your sample input."),))
+                                                   label = "Custom PTM"), 
+                                         "Enter a custom PTM (CUSTOM checkbox must be selected. Enter the PTM as a string as it is seen in the peptide column of your sample input."),    
+                                )
+                              )
                             ),
                             tipify(checkboxInput(inputId = "disp_origin",
                                                  label = "Display Origin Peptides",

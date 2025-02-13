@@ -706,18 +706,22 @@ create_peptide_origin_vec <- function(peptide_df,
   vector_list <- list()
   for (i in 1:nrow(peptide_df)) {
     peptide <- peptide_df$sequence[i]
+    modpeptide <- peptide_df$Peptide[i]
     intensity_value <- peptide_df[[intensity]][i]
     matches_df <- str_locate_all(protein, peptide)[[1]]
     matches_count <- nrow(matches_df)
     origin_vector <- rep("", nchar(protein))
+    mod_origin_vector <- rep("", nchar(protein))
     if (matches_count > 0) {
       for (j in 1:matches_count) {
         start <- matches_df[[j,1]]
         end <- matches_df[[j,2]]
         origin_vector[start:end] <- paste0(peptide, "|")
+        mod_origin_vector[start:end] <- paste0(modpeptide, "|")
       }
     }
     vector_list[[i]] <- origin_vector
+    vector_list[[i]] <- mod_origin_vector
   }
   origin_df <- as.data.frame(sapply(vector_list, unlist))
   origin_vec <- apply(origin_df, 1, paste, collapse="")

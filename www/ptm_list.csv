@@ -1,0 +1,10 @@
+Choice,Value
+Carbamidomethylation,(+57.02)
+Deamidation,(+0.98)
+Oxidation,(+15.99)
+Pyro_glu_from_E,(-18.01)
+Pyro_glu_from_Q,(-17.03)
+Sodium_adduct,(+21.98)
+Acetylation,(+42.0106)
+iTRAQ 4-plex,(+229.1629)
+TMT 10-plex,(+144.1021)
