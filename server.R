@@ -7,6 +7,30 @@ options(shiny.maxRequestSize=100*1024^2)
 
 server <- function(input, output, session) {
   
+  
+  ptm_data <- reactive({
+    # Check if user uploaded a file
+    if (!is.null(input$custom_ptm_file)) {
+      file_path <- input$custom_ptm_file$datapath  # Path of uploaded file
+    } else {
+      file_path <- "www/ptm_list.csv"  # Default file
+    }
+    
+    # Read CSV and return as dataframe
+    read.csv(file_path, stringsAsFactors = FALSE)
+  })
+  
+  # Render dynamic UI based on the selected PTM file
+  output$ptm_selection <- renderUI({
+    tipify(
+      checkboxGroupInput(inputId = "PTM",
+                         label = "PTMs",
+                         choiceNames = ptm_data()$Choice,  # Display names from CSV
+                         choiceValues = ptm_data()$Value   # Corresponding values
+      ), "Select one or more PTMs to annotate"
+    )
+  })
+  
   database <- reactive({
     validate(
       need(!is.null(input$database_file), "No Database File Provided")
