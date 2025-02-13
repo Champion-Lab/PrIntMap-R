@@ -78,14 +78,20 @@ ui <- navbarPage(title = "PrIntMap-R",
                                                                             "Oxidation" ,
                                                                             "Pyro_glu_from_E" ,
                                                                             "Pyro_glu_from_Q",
-                                                                            "Sodium_adduct"
+                                                                            "Sodium_adduct",
+                                                                            "Acetylation",
+                                                                            "iTRAQ 4-plex",
+                                                                            "TMT 10-plex"
                                                             ),
                                                             choiceValues = c("(+57.02)",
                                                                              "(+0.98)",
                                                                              "(+15.99)",
                                                                              "(-18.01)",
                                                                              "(-17.03)",
-                                                                             "(+21.98)"
+                                                                             "(+21.98)",
+                                                                             "(+42.0106)",
+                                                                             "(+229.1629)",
+                                                                             "(+144.1021)"
                                                             )), "Select one or more PTMs to annotate"),
                                   checkboxInput(inputId = "custom_PTM_check",
                                                 label = "CUSTOM", value = F),
